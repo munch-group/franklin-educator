@@ -1,0 +1,127 @@
+project:
+  type: website
+  output-dir: _build
+  # resources:
+    # - objects.txt
+    # - objects-test.txt
+
+execute:
+  freeze: auto
+  echo: true
+
+metadata-files:
+  - api/_sidebar.yml
+
+filters:
+  - "interlinks"
+
+interlinks:
+  fast: true
+  sources:
+    python:
+      url: https://docs.python.org/3/
+    griffe:
+      url: https://mkdocstrings.github.io/griffe/
+    numpy:
+      url: https://numpy.org/doc/stable/
+    pandas:
+      url: https://pandas.pydata.org/docs/
+    matplotlib:
+      url: https://matplotlib.org/stable/
+    scipy:
+      url: https://docs.scipy.org/doc/scipy/
+    statsmodels:
+      url: https://www.statsmodels.org/stable/      
+    # quartodoc-test:
+    #   url: https://machow.github.io/quartodoc
+    #   inv: objects-test.txt
+
+website:
+  title: "franklin-git"
+  page-navigation: true
+  navbar:
+    left:
+      # - file: examples/
+      #   text: Examples
+      - href: api/
+        text: API reference
+    right:
+      - icon: github
+        href: https://github.com/munch-group/franklin-git/
+  sidebar:
+    - id: pages
+      title: Get Started
+      style: floating
+      align: left
+      contents:
+        - pages/getting_started.qmd       
+        - section: "Overview"
+          contents:
+            - pages/overview.qmd
+        # - section: "Tutorials"
+        #   contents:
+        #     - pages/developing_exercises.qmd
+        #     - pages/jupyterlab.ipynb
+        #     - pages/r_to_python.ipynb
+        #     - pages/numpy_pandas.ipynb
+        #     - pages/plotting.ipynb
+        # - section: "Key concepts"
+        #   contents:
+        #     - pages/terminal.qmd
+        #     - pages/docker.qmd
+        #     - pages/jupyter.qmd
+        #     - pages/ssh.qmd
+        #     - pages/git.qmd
+        #     - pages/gitlab.qmd
+
+comments:
+  hypothesis: true
+
+lightbox: true
+
+format:
+  html:
+    theme: cosmo
+    css:
+      - api/_styles-quartodoc.css
+      - styles.css
+    toc: true
+    mermaid:
+      theme: neutral     
+
+quartodoc:
+  style: pkgdown
+  dir: api
+  package: franklin
+  render_interlinks: true
+  options:
+    signature_name: full
+  renderer:
+    style: markdown
+    table_style: description-list
+  sidebar: "api/_sidebar.yml"
+  css: "api/_styles-quartodoc.css"
+
+  sections:
+    - title: Jupyter
+      package: franklin.jupyter
+      desc: |
+        Some description...
+      contents:
+        - _run
+    - title: Docker
+      package: franklin.docker
+      desc: |
+        Some description...
+      contents:
+        - run
+        - pull
+          
+
+    # - title: Some other section
+    #   package: franklin.docker
+    #   desc: |
+    #     Some description...
+    #   contents:
+    #     - scriptname
+

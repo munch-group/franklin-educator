@@ -1,0 +1,13 @@
+# pull { #franklin.docker.pull }
+
+```python
+franklin.docker.pull(image_url)
+```
+
+Pull Docker image.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+<code>[**image_url**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Image URL.

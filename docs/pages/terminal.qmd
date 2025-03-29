@@ -1,0 +1,8 @@
+---
+title: The terminal
+---
+
+::: {.callout-caution }
+## This pages are under construction
+
+:::

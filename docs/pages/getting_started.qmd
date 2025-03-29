@@ -1,0 +1,246 @@
+---
+title: Getting started
+aliases:
+  - ../index.html
+---
+
+::: {.callout-caution }
+## These pages are under construction
+
+:::
+
+
+
+::: {.callout-note }
+## Feedback to the documentation
+
+These pages are linked to Hypothes.is, that lets you suggest changes or additions to these pages. Click the small arrow icon at the top right of the page. In the sidebar that expands, you click "Sign up" to create a Hypothes.is account. Once you are logged in to that, you click [this invite link](https://hypothes.is/groups/99akKdQZ/franklin) to add yourself to the Franklin group on Hypothe.is. Then you can just highlight some text on a page and click "Annotate" to add your suggestion/comment. 
+
+:::
+
+
+
+**franklin** lets you ... 
+
+{{< lipsum 1 >}}
+
+## Installation
+
+```bash
+conda install munch-group::franklin
+```
+
+## Basic use
+
+{{< lipsum 1 >}}
+
+<!-- 
+## Some use case
+
+The [functionname function](`franklin.modulename.functionname`) does ... [](`franklin.modulename.functionname`) does ... [](`~franklin.modulename.functionname`) does ...
+
+{{< lipsum 1 >}}
+
+--- -->
+
+## Including BibTex references
+
+There are many ways to manage BibTex references. In [ReadCube Papers](https://www.papersapp.com/), you just right-click to select `Copy...>BibTex entry` and paste it into your BibTex file (I also have a script that formats your entire Papers library for BibTex with meaningful labels).
+
+You can render citations in different ways to accommodate their sentence. Skov et al. reported strong selection on the human X chromosome [-@Skov2023]. Lineages in small populations have shorter coalescence times [see @NielsenSlatkin2016, chap. 1]. The Neanderthal genome has been sequenced [@Prufer2012]. The X chromosome is subject to recurrent sweeps [@Nam2015; @Dutheil2015]. Following @Munch2014, we blah blah...
+
+## images
+
+You can see an elephant in @fig-elephant. 
+
+::: {#fig-elephant }
+
+![](images/elephant.png){width="50%"}
+
+Some caption for an illustration showing an elephant
+:::
+
+Elephants are big (@fig-bigelephant):
+
+:::{#fig-bigelephant .column-screen-inset-right}
+![](images/elephant.png)
+:::
+
+There are two elephants in @fig-twoelephants. The elephants in @fig-surus and @fig-hanno look similar.
+
+::: {#fig-twoelephants layout-ncol=2}
+
+![](images/elephant.png){#fig-surus}
+
+![](images/elephant.png){#fig-hanno}
+
+Some caption you wrote for an illustration of two elephants.
+:::
+
+## Footnotes
+
+Here is a footnote reference[^elephant] so you can read about elephants in the margin too.
+
+[^elephant]: Elephants have long trunks and big ears if they are African. The one on the picture is Indian.
+
+
+## Asides
+
+If you like, [you can make comments in the margin without footnote a reference.]{.aside}
+
+## Plot included from notebook
+
+See plot @fig-danishinteraction below.
+
+{{< embed ../notebooks/example.ipynb#fig-danishinteraction echo=false >}}
+
+Or this really wide plot below (@fig-danishinteractionfacets).
+
+:::{.column-screen}
+{{< embed ../notebooks/example.ipynb#fig-danishinteractionfacets echo=false >}}
+:::
+
+## Text included from notebook
+
+{{< embed ../notebooks/example.ipynb#doc-sampling echo=false >}}
+
+## Table included from notebook
+
+These were selected to represent as many nationalities as possible (@tbl-subjects). 
+
+you can also allow the table to be wider
+
+{{< embed ../notebooks/example.ipynb#tbl-subjects echo=false >}}
+
+
+## Margin content
+
+You can anything in the margin like @fig-meaninformality.
+
+::: {.column-margin}
+{{< embed ../notebooks/example.ipynb#fig-meaninformality echo=false >}}
+:::
+
+
+## Diagrams
+
+Diagram in @fig-diag.
+
+::: {#fig-diag width=10%}
+
+```{dot}
+//| label: fig-graphviz
+//| fig-cap: "This is a simple graphviz graph."
+graph G {
+  layout=neato
+  run -- intr;
+  intr -- runbl;
+  runbl -- run;
+  run -- kernel;
+  kernel -- zombie;
+  kernel -- sleep;
+  kernel -- runmem;
+  sleep -- swap;
+  swap -- runswap;
+  runswap -- new;
+  runswap -- runmem;
+  new -- runmem;
+  sleep -- runmem;
+}
+```
+
+:::
+
+
+```{mermaid}
+flowchart LR
+  A[Beginning] --> B[Middle]
+  B --> C[End]
+```
+
+
+::: {.column-margin}
+
+```{mermaid}
+flowchart LR
+  A[Beginning] --> B[Middle]
+  B --> C[End]
+```
+
+This is a flow chart.
+:::
+
+
+
+## Code
+
+Executed but hide code and any output:
+
+```{python}
+#| echo: false
+#| output: false
+
+x = 5
+```
+
+
+Show and execute Python code:
+
+```{python}
+
+x = 5
+```
+
+Values can be embedded in the text, too. The value of `x` is `{python} x`.
+
+Shown, not executed, Python code:
+
+```python
+y = 4
+```
+
+::: {.column-margin}
+A for loop:
+
+```python
+for i in range(10):
+    print(i)
+```
+:::
+
+Shown, not executed, R code:
+
+```r
+z <- 7
+```
+
+## Math
+
+This is calculated as $\pi_k = \prod_{i=1}^K x_i$. You can crossref formulas (@eq-definition).
+
+$$
+\lambda = \sum_{k=1}^N \pi_k
+$$ {#eq-definition}
+
+::: {.column-margin}
+We know from *the first fundamental theorem of calculus* that for $x$ in $[a, b]$:
+
+$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$
+:::
+
+
+## Bold and italics
+
+**This is bold**, __so is this__. *This is italics*, _so is this_. __*This is both*__, **_so is this_**. 
+
+## Section
+
+{{< lipsum 1 >}} 
+
+### Subsection
+
+{{< lipsum 1 >}} 
+
+### Subsubsection
+
+{{< lipsum 1 >}} 

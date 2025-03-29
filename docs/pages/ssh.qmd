@@ -1,0 +1,55 @@
+---
+title: SSH keys
+---
+
+## TLDR;
+
+
+Firstly, you have to understand what public/private encryption keys are. A *private* key is a very long, random sequence of bits. A private key is kept secret and never leaves your laptop. A *public* key is another string of bits that is a derivative of the private key. 
+
+You can generate a unique public key from the private key but cannot get the private key from a public key: It is a one-way process. You can encrypt (or sign) any message using the public key, and it will only be possible to decrypt it using the private key it is derived from. In other words, anyone with your public key can send you encrypted messages that only you will be able to read. 
+
+So, if the cluster has your public key saved, it can authenticate you like this: The cluster sends your laptop a message encrypted using the public key. Your laptop then decrypts the message using its private key and sends it back. If the cluster receives a correctly decrypted message it knows it is you and logs you in.
+
+
+First, check if you have these two authentication files on your local machine: 
+
+```
+~/.ssh/id_rsa
+~/.ssh/id_rsa.pub
+```
+
+You can do so using the `ls` commmand:
+
+```{.bash filename="Terminal"}
+ls -a ~/.ssh
+```
+
+You most likely do not. If so, you generate authentication keys with the command below. Just press Enter when prompted for a file in which to save the key. Do not enter a passphrase when prompted - just press enter:
+
+```{.bash filename="Terminal"}
+ssh-keygen -t rsa
+
+```
+
+Now use `ssh` to create a directory `~/.ssh` on the cluster (assuming your username on the cluster is `<cluster user name>`). SSH will prompt you for your password.
+
+```{.bash filename="Terminal"}
+ssh <cluster user name>@login.genome.au.dk mkdir -p .ssh
+```
+
+Finally, append the public `ssh` key on your local machine to the file `.ssh/authorized_keys` on the cluster and enter your password (replace `<cluster user name>` with your cluster user name):
+
+```{.bash filename="Terminal"}
+cat ~/.ssh/id_rsa.pub | ssh username@login.genome.au.dk 'cat >> .ssh/authorized_keys'
+```
+
+From now on, you can log into the cluster from your local machine without being prompted for a password.
+
+Try it:
+
+```{.bash filename="Terminal"}
+ssh <cluster user name>@login.genome.au.dk
+```
+
+(see, no password).

@@ -1,0 +1,13 @@
+website:
+  sidebar:
+  - contents:
+    - api/index.qmd
+    - contents:
+      - api/_run.qmd
+      section: Jupyter
+    - contents:
+      - api/run.qmd
+      - api/pull.qmd
+      section: Docker
+    id: api
+  - id: dummy-sidebar

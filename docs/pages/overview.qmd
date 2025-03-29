@@ -1,0 +1,70 @@
+---
+title: Franklin overview
+---
+
+## TLDR;
+
+
+## Purpose
+
+
+## Git
+
+
+
+## GitLab
+
+
+### AU hosting
+
+
+### GitLab Franklin group
+
+
+### GitLab Course subgroups
+
+
+### GitLab exercise repositories
+
+
+## Authentication
+
+Web GUI: UNI-AD login
+
+### Admin
+
+Kasper (and someone else for backup) 
+
+ssh keys
+
+
+### VIP
+
+ssh keys
+
+
+### Students
+
+Read-only token distributed with franklin.
+
+
+## Docker
+
+### Image hierarchy
+
+- Base images maintained in the Base
+- Course base images only refer to a versioned base image
+
+### Templates
+
+- Every course has a repo template with a docker file that that refers to the course base image
+- These templates are forked from franklin/base-templates/base-template
+
+### Tag policy
+
+- Franklin base images are versioned and must referred to with their version tag
+- Course base images are tagged latest so that courses always pulls updated version.
+- Exercise images are always tagged latest, which is the tag franklin pulls
+
+
+## Container registry

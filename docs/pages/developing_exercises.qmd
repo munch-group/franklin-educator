@@ -1,0 +1,29 @@
+---
+title: Developing exercises
+---
+
+## TLDR;
+
+    conda create -n franklin -c conda-forge munch-group::franklin
+    conda activate franklin
+
+    franklin exercise down
+    cd <repo>
+    franklin jupyter run
+    franklin up
+    cd ..
+
+
+## Create an exercise repository
+
+A git repository is where an exercise lives
+
+- **exercise.ipynb:**: blah blah
+- **Dockerfile:** blah blah
+- **README.md:**: blah blah
+- **docker-entrypoint.sh:**: blah blah
+- **tagged-release.sh:**: blah blah
+
+
+
+## Develop/change a new exercise on GitLab

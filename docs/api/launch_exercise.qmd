@@ -1,0 +1,6 @@
+# launch_exercise { #franklin.jupyter.launch_exercise }
+
+```python
+franklin.jupyter.launch_exercise()
+```
+

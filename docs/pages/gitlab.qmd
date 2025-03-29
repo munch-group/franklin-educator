@@ -1,0 +1,13 @@
+---
+title: Gitlab
+---
+
+::: {.callout-caution }
+## This pages are under construction
+
+:::
+
+
+![alt text](images/pipeline_example.png)
+
+![alt text](images/pipeline_example_nomenu.png)

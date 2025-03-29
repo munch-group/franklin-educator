@@ -1,0 +1,7 @@
+# Sphinx inventory version 2
+# Project: franklin
+# Version: 0.0.9999
+# The remainder of this file is compressed using zlib.
+franklin.jupyter._run py:function 1 api/_run.html#franklin.jupyter._run -
+franklin.docker.run py:function 1 api/run.html#franklin.docker.run -
+franklin.docker.pull py:function 1 api/pull.html#franklin.docker.pull -

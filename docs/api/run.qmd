@@ -1,0 +1,19 @@
+# run { #franklin.docker.run }
+
+```python
+franklin.docker.run(image_url)
+```
+
+Runs a container from an image.
+
+## Parameters {.doc-section .doc-section-parameters}
+
+<code>[**image_url**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Image URL.
+
+## Returns {.doc-section .doc-section-returns}
+
+<code>[]{.parameter-name} [:]{.parameter-annotation-sep} [[Tuple](`typing.Tuple`)\[[Popen](`subprocess.Popen`), [str](`str`)\]]{.parameter-annotation}</code>
+
+:   Tuple of subprocess handle for 'docker run' and host port used for jupyter display.

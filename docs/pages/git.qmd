@@ -1,0 +1,54 @@
+---
+title: Git
+---
+
+::: {.callout-caution }
+## This pages are under construction
+
+:::
+
+## TLDR;
+
+
+# Version control {#sec-git-101}
+
+## Git as journaled backup
+
+When you are in your `<repositoryname>` folder, you can run git commands to manage your files, record their changes and sync them to the repository on GitHub for safe keeping. [These tutorials](https://www.atlassian.com/git) are good introductions to git. 
+
+To journal the creation or modification of a file, you need to `add` it to git:
+
+```{.bash filename="Terminal"}
+git add <the_changed_file>
+```
+
+ This "stages" the change. This adds the file to the a "group" of changes that represent some modification to your project. You can add more files to that "group" by running the command again with other files. If you run `git status` you can see that the files are now staged.
+
+So maybe you added or changed two python files addressing some parcitular problem or advancing some part of your project. Now you want to store those of changes to the journal maintained by Git and associate it with a short message describing the changes. For that you use:
+
+```{.bash filename="Terminal"}
+git commit -m '<message>'
+```
+    
+If you added two python files, your description could be `'Added two python files for my analysis'`. If you fixed a bug or added new code to the files, your message should reflect that. 
+
+Now your changes are recorded in the version of the `<repositoryname>` *on the cluster*, but that does not serve as a backup in case you accidentally delete your entire folder or the cluster burns down. To backup your repository you need to synchronize your *local* `<repositoryname>` repository on the cluster with the `<repositoryname>` repository *on GitHub*. To du that use:
+
+```{.bash filename="Terminal"}
+git push
+```
+
+In addition to keeping your precious files safe and backed up, your GitHub repository also serve as a journal documenting of your progress. Each commit is a snapshot if your project that can be retrieved at any time.
+
+## Git 
+
+
+There is a cheat sheet [here](https://training.github.com/downloads/github-git-cheat-sheet/) and some good visual guides [here](https://ndpsoftware.com/git-cheatsheet.html) and [here](https://marklodato.github.io/visual-git-guide/index-en.html).
+
+
+The three most important commands to learn are: [git status](https://git-scm.com/docs/git-status), [git add](https://git-scm.com/docs/git-add), [git rm](https://git-scm.com/docs/git-rm), [git mv](https://git-scm.com/docs/git-mv), [git commit](https://git-scm.com/docs/git-commit) and [git push](https://git-scm.com/docs/git-push). 
+
+
+### Resolving conflicts
+
+Blah blah...

@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools >= 65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "franklin-git"
+version = "0.1.0"
+classifiers = [
+  "Development Status :: 5 - Beta",
+  "Intended Audience :: Education",
+  "Topic :: Software Development :: Build Tools",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+requires-python = ">= 3.9"
+# dynamic = ["dependencies"]
+dependencies = [
+    'requests>=2.32.3',
+    'colorama>=0.4.6',
+    'readchar>=4.0.5',
+    'click',
+    'click-plugins',
+    'psutil',
+    'jupyter',
+    'packaging',
+    'pyyaml',
+    'pyperclip',
+]
+authors = [
+  {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
+]
+maintainers = [
+  {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
+]
+description = "Terminal client for Jupyter exercises"
+keywords = ["teaching", "jupyter", "docker", "gitlab"]
+readme = "README.md"
+license = {file = "LICENSE"}
+
+[project.urls]
+Homepage = "https://munch-group.org/franklin-git"
+Documentation = "https://munch-group.org/franklin-git"
+Repository = "https://github.com/munch-group/franklin-git.git"
+Issues = "https://github.com/munch-group/franklin-git/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points."franklin.plugins"]
+fruit = "franklin_git.git:annanas"
+
+# [project.entry-points."franklin.jupyter.plugins"]
+# hola = "franklin_git.git:hejsa"
+
+# [project.entry-points."franklin.docker.plugins"]
+
+
