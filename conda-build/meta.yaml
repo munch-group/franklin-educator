@@ -14,7 +14,7 @@
 #     {% endfor %}
 
 package:
-  name: franklin-educator
+  name: franklin_educator
   version: {{ pyproject.get("project").get("version") }}
 
 source:
