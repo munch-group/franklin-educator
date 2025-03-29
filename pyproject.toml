@@ -3,8 +3,8 @@ requires = ["setuptools >= 65.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "franklin-git"
-version = "0.1.0"
+name = "franklin-educator"
+version = "0.1.1"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -43,16 +43,16 @@ readme = "README.md"
 license = {file = "LICENSE"}
 
 [project.urls]
-Homepage = "https://munch-group.org/franklin-git"
-Documentation = "https://munch-group.org/franklin-git"
-Repository = "https://github.com/munch-group/franklin-git.git"
-Issues = "https://github.com/munch-group/franklin-git/issues"
+Homepage = "https://munch-group.org/franklin-educator"
+Documentation = "https://munch-group.org/franklin-educator"
+Repository = "https://github.com/munch-group/franklin-git.educator"
+Issues = "https://github.com/munch-group/franklin-educator/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [project.entry-points."franklin.plugins"]
-fruit = "franklin_git.git:annanas"
+fruit = "franklin_educator.git:annanas"
 
 # [project.entry-points."franklin.jupyter.plugins"]
 # hola = "franklin_git.git:hejsa"
