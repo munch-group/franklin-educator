@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = "0.1.3"
+version = "0.2.0"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -52,11 +52,7 @@ Issues = "https://github.com/munch-group/franklin-educator/issues"
 where = ["src"]
 
 [project.entry-points."franklin.plugins"]
-fruit = "franklin_educator.git:annanas"
+git = "franklin_educator.git:git"
 
-# [project.entry-points."franklin.jupyter.plugins"]
-# hola = "franklin_git.git:hejsa"
-
-# [project.entry-points."franklin.docker.plugins"]
-
-
+[project.entry-points."franklin.howto.plugins"]
+docker = "franklin_educator.howto:docker"
