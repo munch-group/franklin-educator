@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = "0.2.0"
+version = "0.2.3"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -18,7 +18,6 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">= 3.9"
-# dynamic = ["dependencies"]
 dependencies = [
     'requests>=2.32.3',
     'colorama>=0.4.6',

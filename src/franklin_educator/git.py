@@ -1,5 +1,5 @@
-import requests
 import time
+import sys
 import click
 import subprocess
 from subprocess import DEVNULL, STDOUT, PIPE
@@ -14,10 +14,23 @@ from pkg_resources import iter_entry_points
 from click_plugins import with_plugins
 
 from franklin.config import GITLAB_API_URL, GITLAB_GROUP, GITLAB_TOKEN, GITLAB_DOMAIN
+# from franklin import utils
+# from franklin import terminal as term
+# from franklin.logger import logger
+# from franklin.gitlab import get_registry_listing, select_exercise
+# from franklin.jupyter import launch_jupyter
+# from franklin.docker import failsafe_start_docker_desktop
+# from franklin.update import update_client
+
 from franklin import utils
 from franklin import terminal as term
+from franklin import logger
+from franklin import gitlab
+from franklin import jupyter
+from franklin import docker
+from franklin import update
+
 from franklin.logger import logger
-from franklin.gitlab import get_registry_listing, select_exercise
 
 def check_ssh_set_up():
     cmd = 'ssh -T git@gitlab.au.dk <<<yes'
@@ -121,7 +134,7 @@ def git_safe_pull(repo_local_path: str) -> bool:
         term.echo("https://munch-group/franklin/git.html#resolving-conflicts", fg='blue')
         click.pause("Press Enter to launch vscode's mergetool")
 
-        launch_mergetool(repo_local_path)
+        gitlab.launch_mergetool(repo_local_path)
 
         merge_conflict = True
 
@@ -170,7 +183,7 @@ def finish_any_merge_in_progress(repo_local_path):
             print(e.output.decode())
             term.secho("You have merge conflicts. Please resolve the conflicts and then run the command again.", fg='red')
             click.pause("Press Enter to launch vscode's mergetool")
-            launch_mergetool(repo_local_path)
+            gitlab.launch_mergetool(repo_local_path)
             return
 
 
@@ -181,10 +194,10 @@ def git_down() -> None:
 
     # get images for available exercises
     registry = f'{GITLAB_API_URL}/groups/{GITLAB_GROUP}/registry/repositories'
-    exercises_images = get_registry_listing(registry)
+    exercises_images = gitlab.get_registry_listing(registry)
 
     # pick course and exercise
-    course, exercise = select_exercise(exercises_images)
+    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
 
     # url for cloning the repository
     repo_name = exercise.split('/')[-1]
@@ -222,6 +235,10 @@ def git_down() -> None:
 
     config_local_repo(repo_local_path)
 
+    image = exercises_images[(course, exercise)]
+    return image, repo_local_path
+
+
 
 def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     """
@@ -250,6 +267,8 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     # Finish any umcompleted merge
     finish_any_merge_in_progress(repo_local_path)
 
+    term.secho("\nChecking for changes to local files.", fg='red')
+
     # add
     try:
         output = subprocess.check_output(utils.fmt_cmd(f'git -C {repo_local_path} add -u')).decode()
@@ -263,12 +282,10 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
         print(e.output.decode())
         raise click.Abort()
     
-    if not staged_changes:
-        term.secho("No changes to your local files.", fg='green')
-    else:
+    if staged_changes:
 
         # commit
-        msg = click.prompt("Enter short description of the nature of the changes", default="an update", show_default=True)
+        msg = click.prompt("Files changed. Enter short description of the nature of the changes made", default="an update", show_default=True)
         try:
             output = subprocess.check_output(utils.fmt_cmd(f'git -C {repo_local_path} commit -m "{msg}"')).decode()
         except subprocess.CalledProcessError as e:        
@@ -276,10 +293,10 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
             raise click.Abort()
         
         # pull
-        term.echo("Pulling changes from the remote repository.")
+        # term.secho("Pulling changes from the remote repository.", fg='yellow')
         merge_conflict = git_safe_pull(repo_local_path)
         if merge_conflict:
-            return
+            sys.exit(1)
         
         # push
         try:
@@ -288,7 +305,9 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
             print(e.output.decode())
             raise click.Abort()
 
-        term.secho(f"Changes uploaded to GitLab.", fg='green')
+        term.secho(f"Changes uploaded to GitLab.", fg='yellow')
+    else:
+        term.secho("\nNo changes to your local files.", fg='yellow')
 
     # # Check the status to see if there are any upstream changes
     # status_output = subprocess.check_output(utils._cmd(f'git -C {repo_local_path} status')).decode()
@@ -309,7 +328,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
         if 'nothing to commit, working tree clean' in output:
             shutil.rmtree(repo_local_path)
-            term.secho("Local repository removed.", fg='green')
+            term.secho("Local files removed.", fg='green')
 
         elif 'nothing added to commit but untracked files present' in output:
 
@@ -404,6 +423,37 @@ def ui():
         ssh_keygen()
 
     subprocess.run(utils.fmt_cmd(f'gitui'), check=False)
+
+
+
+
+@git.command()
+@utils.crash_report
+def edit():
+
+    utils.check_internet_connection()
+
+    if not os.environ.get('DEVEL', None):
+        update.update_client()
+
+    utils.check_free_disk_space()
+
+    logger.debug('Starting Docker Desktop')
+    docker.failsafe_start_docker_desktop()
+    time.sleep(2)
+
+    with utils.DelayedKeyboardInterrupt():
+        image_url, repo_local_path = git_down()
+        jupyter.launch_jupyter(image_url)
+        git_up(repo_local_path, remove_tracked_files=True)
+
+        # term.secho("There was a merge conflict. Please resolve it and run 'franklin git up.", fg='red')
+
+
+
+
+
+
 
 
 
