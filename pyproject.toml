@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = "0.2.3"
+version = "0.3.0"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -51,6 +51,7 @@ Issues = "https://github.com/munch-group/franklin-educator/issues"
 where = ["src"]
 
 [project.entry-points."franklin.plugins"]
+edit_cycle = "franklin_educator.git:edit_cycle"
 git = "franklin_educator.git:git"
 
 [project.entry-points."franklin.howto.plugins"]

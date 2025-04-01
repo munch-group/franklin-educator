@@ -13,15 +13,7 @@ import platform
 from pkg_resources import iter_entry_points
 from click_plugins import with_plugins
 
-from franklin.config import GITLAB_API_URL, GITLAB_GROUP, GITLAB_TOKEN, GITLAB_DOMAIN
-# from franklin import utils
-# from franklin import terminal as term
-# from franklin.logger import logger
-# from franklin.gitlab import get_registry_listing, select_exercise
-# from franklin.jupyter import launch_jupyter
-# from franklin.docker import failsafe_start_docker_desktop
-# from franklin.update import update_client
-
+from franklin import config as cfg
 from franklin import utils
 from franklin import terminal as term
 from franklin import logger
@@ -39,7 +31,7 @@ def check_ssh_set_up():
     utils.run_cmd(cmd, check=False)
     cmd = 'ssh -T git@gitlab.au.dk'
     logger.debug(cmd)
-    cmd = f'ssh -T git@{GITLAB_DOMAIN}'
+    cmd = f'ssh -T git@{cfg.gitlab_domain}'
     output = utils.run_cmd(cmd)
     if output.startswith('Welcome to GitLab'):
         return True
@@ -193,7 +185,7 @@ def git_down() -> None:
     """
 
     # get images for available exercises
-    registry = f'{GITLAB_API_URL}/groups/{GITLAB_GROUP}/registry/repositories'
+    registry = f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
     exercises_images = gitlab.get_registry_listing(registry)
 
     # pick course and exercise
@@ -201,7 +193,7 @@ def git_down() -> None:
 
     # url for cloning the repository
     repo_name = exercise.split('/')[-1]
-    clone_url = f'git@gitlab.au.dk:{GITLAB_GROUP}/{course}/{repo_name}.git'
+    clone_url = f'git@gitlab.au.dk:{cfg.gitlab_group}/{course}/{repo_name}.git'
     repo_local_path = os.path.join(os.getcwd(), repo_name)
     if utils.system() == 'Windows':
         repo_local_path = PureWindowsPath(repo_local_path)
@@ -425,12 +417,40 @@ def ui():
     subprocess.run(utils.fmt_cmd(f'gitui'), check=False)
 
 
+@click.group(cls=utils.AliasedGroup)
+def _exercise():
+    """Convenience command for full edit workflow.
+    """
 
-
-@git.command()
+@click.command()
 @utils.crash_report
-def edit():
+def edit_cycle():
+    """Edit exercise in JupyterLab
 
+    The command runs a full cycle of downloading the exercise from GitLab,
+    launching JupyterLab, and uploading changes back to GitLab. To avoid
+    merge conflicts, and loss of work, the cycle must be completed once stated.
+
+    The workflow goes through the following steps:
+
+    \b
+    1. Clone the exercise from GitLab.
+    2. Download the exercise docker image.
+    3. Start the docker container.
+    4. Launch Jupyter in the local repository folder.
+    5. [The user can now edit the exercise in JupyterLab]
+    6. When Jupyter is shut down (by pressing Q), modified files 
+       will be added to git.
+    7. The user is prompted for a commit message to label the set of 
+       changes made.
+    8. Changes are committed and pushed to GiLab, where a new version
+       of the exercise docker image is generated.
+    9. The local repository is removed to avoid future merge conflicts.
+
+    NB: Problems may arise if an exercise has more than one ongoing/incomplete 
+    edit-cycle at the same time. The best way to avoid this is to complete
+    each edit-cycle in one sitting.
+    """
     utils.check_internet_connection()
 
     if not os.environ.get('DEVEL', None):
@@ -444,7 +464,7 @@ def edit():
 
     with utils.DelayedKeyboardInterrupt():
         image_url, repo_local_path = git_down()
-        jupyter.launch_jupyter(image_url)
+        jupyter.launch_jupyter(image_url, cwd=os.path.basename(repo_local_path))
         git_up(repo_local_path, remove_tracked_files=True)
 
         # term.secho("There was a merge conflict. Please resolve it and run 'franklin git up.", fg='red')
