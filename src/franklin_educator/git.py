@@ -424,6 +424,8 @@ def ui():
 def exercise():
     """Convenience command for full edit workflow.
     """
+    if not check_ssh_set_up():
+        ssh_keygen()
 
 
 def create_repository_from_template(course, repo_name):
