@@ -1,5 +1,7 @@
 import time
 import sys
+import re
+import tempfile
 import click
 import subprocess
 from subprocess import DEVNULL, STDOUT, PIPE
@@ -12,6 +14,7 @@ import pyperclip
 import platform
 from pkg_resources import iter_entry_points
 from click_plugins import with_plugins
+import importlib_resources
 
 from franklin import config as cfg
 from franklin import utils
@@ -21,15 +24,15 @@ from franklin import gitlab
 from franklin import jupyter
 from franklin import docker
 from franklin import update
-
+from franklin import options
 from franklin.logger import logger
 
 def check_ssh_set_up():
-    cmd = 'ssh -T git@gitlab.au.dk <<<yes'
+    cmd = f'ssh -T git@{cfg.gitlab_domain} <<<yes'
     logger.debug(cmd)
     term.echo(f"Checking encrypted connection to GitLab")
     utils.run_cmd(cmd, check=False)
-    cmd = 'ssh -T git@gitlab.au.dk'
+    cmd = f'ssh -T git@g{cfg.gitlab_domain}'
     logger.debug(cmd)
     cmd = f'ssh -T git@{cfg.gitlab_domain}'
     output = utils.run_cmd(cmd)
@@ -418,11 +421,88 @@ def ui():
 
 
 @click.group(cls=utils.AliasedGroup)
-def _exercise():
+def exercise():
     """Convenience command for full edit workflow.
     """
 
-@click.command()
+
+def create_repository_from_template(course, repo_name):
+
+    repo_dir = os.path.join(tempfile.gettempdir(), repo_name)
+    repo_template_files = [p.name for p in importlib_resources.files().joinpath('data/repo_templates/exercise').iterdir()]
+
+    os.makedirs(repo_dir, exist_ok=False)
+    for path in repo_template_files:
+        if path.is_file():
+            shutil.copy(path, os.path.join(repo_dir, path.name))
+        # else:
+        #     shutil.copytree(path, os.path.join(repo_dir, path.name))
+
+    utils.run_cmd('git -C repo init --initial-branch=main')
+    utils.run_cmd(f'git -C repo remote add origin git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git')
+    utils.run_cmd('git -C repo add .')
+    utils.run_cmd('git -C repo commit -m "Initial commit"')
+    utils.run_cmd('git -C repo push -u origin main')
+
+    shutil.rmtree(repo_dir)
+
+
+@exercise.command('create')
+@utils.crash_report
+def create_exercise():
+    """
+    Create a new exercise repository for a course.
+
+    Parameters
+    ----------
+    course : 
+        Course name.
+    new_repo_name : 
+        Name of the new repository.
+    """
+
+    course, danish_course_name = gitlab.pick_course()
+
+    term.echo(f"You will creating a new exercise for course:\n'{danish_course_name}'")
+    click.confirm(f"Do you want to continue?", default=True)
+
+    def validate_repo_name(name):
+        return name and name[0].isalpha() and re.match(r'^[\w-]+$', str) is not None
+
+    repo_name = None
+    while not validate_repo_name(repo_name):
+        repo_name = click.prompt("Enter the name of the new exercise repository. The name must start with a letter and can only contain letters, numbers, underscores and dashes:")
+        if not validate_repo_name(repo_name):
+            term.secho("Invalid repository name. Please try again.", fg='red')
+
+    create_repository_from_template(course, repo_name)
+
+    term.secho(f"Created new repository", fg='green')
+
+    term.echo(f"The GitLab settings page will open in your browser.")
+    term.echo(f'You only need to add the (brief) title of the exercise in the "Project description" field and click "save"')
+    term.echo(f'(If you want to hide the exercise from students, you add "HIDDEN" to the title.)')
+    term.echo('')
+    term.echo('You can now use the "franklin exercise edit" command to edit the exercise.')
+    time.sleep(2)
+
+    repo_settings_gitlab_url = f'https://git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}/edit'
+
+    webbrowser.open(repo_settings_gitlab_url, new=1)
+
+
+    # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
+
+    # s = requests.Session()
+    # s.headers.update({'PRIVATE-TOKEN': '<token>'})
+    # url = f'{GITLAB_API_URL}/projects?name={new_repo_name}&namespace_id={GITLAB_GROUP}%2F{course_name}'
+    # r  = s.post(url, headers={ "Content-Type" : "application/json"})
+    # if not r.ok:
+    #     r.raise_for_status()
+    # term.secho(f"New repository '{new_repo_name}' created for '{course_name}'.", fg='green')
+
+
+@exercise.command('edit')
 @utils.crash_report
 def edit_cycle():
     """Edit exercise in JupyterLab
@@ -468,55 +548,7 @@ def edit_cycle():
         git_up(repo_local_path, remove_tracked_files=True)
 
         # term.secho("There was a merge conflict. Please resolve it and run 'franklin git up.", fg='red')
-
-
-
-
-
-
-
-
-
-# def git_new_exercise():
-#     """
-#     Create a new exercise repository for a course.
-
-#     Parameters
-#     ----------
-#     course : 
-#         Course name.
-#     new_repo_name : 
-#         Name of the new repository.
-#     """
-
-#     course_name, danish_course_name = pick_course()
-
-#     # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
-
-#     new_repo_name = 'tester'
-
-#     s = requests.Session()
-#     s.headers.update({'PRIVATE-TOKEN': '<token>'})
-#     url = f'{GITLAB_API_URL}/projects?name={new_repo_name}&namespace_id={GITLAB_GROUP}%2F{course_name}'
-#     r  = s.post(url, headers={ "Content-Type" : "application/json"})
-#     if not r.ok:
-#         r.raise_for_status()
-#     term.secho(f"New repository '{new_repo_name}' created for '{course_name}'.", fg='green')
-
-#     # populate repo from data/template/exercise
-
-#     # add commit push
-
-
-# @git.command("new")
-# @utils.crash_report
-# def _new():
-#     """Create new exercise repository for a course.
-#     """
-#     git_new_exercise()
-
-
-
+        
 
 # ###########################################################
 # # Group alias "exercise" the status, down and up  commands 

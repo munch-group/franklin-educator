@@ -51,8 +51,12 @@ Issues = "https://github.com/munch-group/franklin-educator/issues"
 where = ["src"]
 
 [project.entry-points."franklin.plugins"]
-edit_cycle = "franklin_educator.git:edit_cycle"
 git = "franklin_educator.git:git"
+
+[project.entry-points."franklin.exercise.plugins"]
+create = "franklin_educator.git:create_exercise"
+edit = "franklin_educator.git:edit_cycle"
+
 
 [project.entry-points."franklin.howto.plugins"]
 docker = "franklin_educator.howto:docker"
