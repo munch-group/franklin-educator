@@ -469,7 +469,7 @@ def create_exercise():
     click.confirm(f"Do you want to continue?", default=True)
 
     def validate_repo_name(name):
-        return name and name[0].isalpha() and re.match(r'^[\w-]+$', str) is not None
+        return name and name[0].isalpha() and re.match(r'^[\w-]+$', name) is not None
 
     repo_name = None
     while not validate_repo_name(repo_name):
