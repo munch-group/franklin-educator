@@ -302,7 +302,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
         term.secho(f"Changes uploaded to GitLab.", fg='yellow')
     else:
-        term.secho("\nNo changes to your local files.", fg='yellow')
+        term.secho("No changes to your local files.", fg='yellow')
 
     # # Check the status to see if there are any upstream changes
     # status_output = subprocess.check_output(utils._cmd(f'git -C {repo_local_path} status')).decode()
