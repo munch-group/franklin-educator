@@ -417,7 +417,12 @@ def ui():
     if not check_ssh_set_up():
         ssh_keygen()
 
-    subprocess.run(utils.fmt_cmd(f'gitui'), check=False)
+    # subprocess.run(utils.fmt_cmd(f'gitui'), check=False)
+
+    # if utils.system() != 'Windows':
+    utils.run_cmd('eval $(ssh-agent)', stderr2stdout=True)
+    utils.run_cmd('ssh-add ~/.ssh/id_rsa', stderr2stdout=True)
+    utils.run_cmd(f'gitui -t {str(Path.home() / '.gitui/theme.ron')}', check=False)
 
 
 @click.group(cls=utils.AliasedGroup)
