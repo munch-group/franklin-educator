@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = "0.3.3"
+version = "0.3.4"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -29,6 +29,9 @@ dependencies = [
     'packaging',
     'pyyaml',
     'pyperclip',
+    'git',
+    'gitui',
+    'importlib_resources',
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
