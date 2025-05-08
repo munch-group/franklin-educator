@@ -436,20 +436,23 @@ def exercise():
 def create_repository_from_template(course, repo_name):
 
     repo_dir = os.path.join(tempfile.gettempdir(), repo_name)
+    if os.path.exists(repo_dir):
+        shutil.rmtree(repo_dir)
     repo_template_files = [p.name for p in importlib_resources.files().joinpath('data/repo_templates/exercise').iterdir()]
 
     os.makedirs(repo_dir, exist_ok=False)
     for path in repo_template_files:
+        path = Path(path)
         if path.is_file():
             shutil.copy(path, os.path.join(repo_dir, path.name))
         # else:
         #     shutil.copytree(path, os.path.join(repo_dir, path.name))
 
-    utils.run_cmd('git -C repo init --initial-branch=main')
-    utils.run_cmd(f'git -C repo remote add origin git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git')
-    utils.run_cmd('git -C repo add .')
-    utils.run_cmd('git -C repo commit -m "Initial commit"')
-    utils.run_cmd('git -C repo push -u origin main')
+    utils.run_cmd(f'git -C {repo_dir} init --initial-branch=main')
+    utils.run_cmd(f'git -C {repo_dir} remote add origin git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git')
+    utils.run_cmd(f'git -C {repo_dir} add .')
+    utils.run_cmd(f'git -C {repo_dir} commit -m "Initial commit"')
+    utils.run_cmd(f'git -C {repo_dir} push -u origin main')
 
     shutil.rmtree(repo_dir)
 
@@ -487,14 +490,15 @@ def create_exercise():
     term.secho(f"Created new repository", fg='green')
 
     term.echo(f"The GitLab settings page will open in your browser.")
+    term.echo('')
     term.echo(f'You only need to add the (brief) title of the exercise in the "Project description" field and click "save"')
     term.echo(f'(If you want to hide the exercise from students, you add "HIDDEN" to the title.)')
     term.echo('')
     term.echo('You can now use the "franklin exercise edit" command to edit the exercise.')
     time.sleep(2)
 
-    repo_settings_gitlab_url = f'https://git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}/edit'
-
+    repo_settings_gitlab_url = f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{repo_name}/edit'
+    print(repo_settings_gitlab_url)
     webbrowser.open(repo_settings_gitlab_url, new=1)
 
 
