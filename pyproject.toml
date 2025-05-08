@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = "0.3.12"
+version = "0.3.13"
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
