@@ -1,0 +1,836 @@
+[
+  {
+    "objectID": "notebooks/example.html",
+    "href": "notebooks/example.html",
+    "title": "Workplace interaction",
+    "section": "",
+    "text": "Import some plotting libraries and set some defaults:\nimport sys\nimport numpy as np\nimport pandas as pd\nfrom IPython.display import display, Markdown\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nsns.set()\n\nsns.set_context(context='paper', font_scale=0.8, rc=None)\n# sns.set_context(context='notebook', font_scale=1, rc=None)\n\nsns.set_style(\"ticks\", {\"axes.spines.top\": False, \n                        \"axes.spines.right\": False,\n                       \"legend.edgecolor\": 'white'})\nimport random\nrandom_seed = 5\n\nsys.path.append('..')\nfrom global_params import load_params\n%%html\n&lt;style&gt; table { font-variant-numeric: tabular-nums; } &lt;/style&gt;\n%config InlineBackend.figure_formats = ['retina']\nparams = load_params('../global_params.yml')\nparams\n\n{'sample_size': 24}\nparams.sample_size\n\n24"
+  },
+  {
+    "objectID": "notebooks/example.html#sampling",
+    "href": "notebooks/example.html#sampling",
+    "title": "Workplace interaction",
+    "section": "Sampling",
+    "text": "Sampling\n\nsubjects = pd.read_csv('../data/data_table.csv')\nassert subjects.index.size == params.sample_size\nsubjects\n\n\n\n\n\n\n\n\nname\nage\nsex\nposition\nnationality\n\n\n\n\n0\nJulie\n27\nF\nPhDstudent\nDK\n\n\n1\nThomas\n33\nM\nPostdoc\nGB\n\n\n2\nEmilie\n23\nF\nPhDstudent\nCH\n\n\n3\nSofie\n31\nF\nPostdoc\nDK\n\n\n4\nSara\n29\nF\nPostdoc\nUS\n\n\n5\nCecilie\n34\nF\nPostdoc\nDK\n\n\n6\nAnders\n32\nM\nPhDstudent\nUK\n\n\n7\nEmma\n42\nF\nProfessor\nDK\n\n\n8\nCaroline\n31\nF\nPhDstudent\nDK\n\n\n9\nLaura\n30\nF\nPostdoc\nDK\n\n\n10\nMikkel\n33\nM\nPostdoc\nNL\n\n\n11\nJens\n27\nM\nPhDstudent\nDK\n\n\n12\nAndreas\n29\nM\nPhDstudent\nDK\n\n\n13\nJakob\n28\nM\nPhDstudent\nDK\n\n\n14\nMathilde\n61\nF\nProfessor\nDK\n\n\n15\nKatrine\n35\nF\nPostdoc\nDK\n\n\n16\nPoul\n30\nM\nPostdoc\nDK\n\n\n17\nAnna\n26\nF\nPhDstudent\nDK\n\n\n18\nPeter\n42\nM\nProfessor\nGB\n\n\n19\nIda\n53\nF\nPostdoc\nDK\n\n\n20\nFreja\n30\nF\nPostdoc\nDK\n\n\n21\nMaria\n39\nF\nProfessor\nUK\n\n\n22\nAmalie\n29\nF\nPhDstudent\nDK\n\n\n23\nCamilla\n35\nF\nPostdoc\nDK\n\n\n\n\n\n\n\n\nTip:\nBy adding a label and caption to a cell displaying a table, you can refer to that table elsewhere and insert it in a manuscript.\n\n\n# with pd.option_context('display.max_rows', None,): # prints *all* rows\n#     display(subjects.style.hide()) # .style.hide() hides the index)\nsubjects.style.hide()\n\n\n\nTable 1: People included in the analysis.\n\n\n\n\n\n\n\n\nname\nage\nsex\nposition\nnationality\n\n\n\n\nJulie\n27\nF\nPhDstudent\nDK\n\n\nThomas\n33\nM\nPostdoc\nGB\n\n\nEmilie\n23\nF\nPhDstudent\nCH\n\n\nSofie\n31\nF\nPostdoc\nDK\n\n\nSara\n29\nF\nPostdoc\nUS\n\n\nCecilie\n34\nF\nPostdoc\nDK\n\n\nAnders\n32\nM\nPhDstudent\nUK\n\n\nEmma\n42\nF\nProfessor\nDK\n\n\nCaroline\n31\nF\nPhDstudent\nDK\n\n\nLaura\n30\nF\nPostdoc\nDK\n\n\nMikkel\n33\nM\nPostdoc\nNL\n\n\nJens\n27\nM\nPhDstudent\nDK\n\n\nAndreas\n29\nM\nPhDstudent\nDK\n\n\nJakob\n28\nM\nPhDstudent\nDK\n\n\nMathilde\n61\nF\nProfessor\nDK\n\n\nKatrine\n35\nF\nPostdoc\nDK\n\n\nPoul\n30\nM\nPostdoc\nDK\n\n\nAnna\n26\nF\nPhDstudent\nDK\n\n\nPeter\n42\nM\nProfessor\nGB\n\n\nIda\n53\nF\nPostdoc\nDK\n\n\nFreja\n30\nF\nPostdoc\nDK\n\n\nMaria\n39\nF\nProfessor\nUK\n\n\nAmalie\n29\nF\nPhDstudent\nDK\n\n\nCamilla\n35\nF\nPostdoc\nDK\n\n\n\n\n\n\n\n\n\nTip:\nBy generaing markdown for descriptions that will eventually end up in the manuscript, you can imbed python values. It also ensures that the manuscript exactly reflects the notebook.\n\n\n\nThe 24 subjects from workplaces in Denmark were interviewed …. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
+  },
+  {
+    "objectID": "notebooks/example.html#interviews",
+    "href": "notebooks/example.html#interviews",
+    "title": "Workplace interaction",
+    "section": "Interviews",
+    "text": "Interviews\nIn interviewed {python} params.sample_size workplace individuals were interviewed by …. blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah, blah,\n\n# generate some random sample data\nscores = pd.DataFrame({\n    'name': subjects.name, \n    'informality': np.random.normal(loc=10, scale=1, size=params.sample_size)\n})\ndata = pd.merge(subjects, scores, on='name')\ndata\n\n\n\n\n\n\n\n\nname\nage\nsex\nposition\nnationality\ninformality\n\n\n\n\n0\nJulie\n27\nF\nPhDstudent\nDK\n9.089594\n\n\n1\nThomas\n33\nM\nPostdoc\nGB\n8.348845\n\n\n2\nEmilie\n23\nF\nPhDstudent\nCH\n9.860340\n\n\n3\nSofie\n31\nF\nPostdoc\nDK\n9.236473\n\n\n4\nSara\n29\nF\nPostdoc\nUS\n10.770385\n\n\n5\nCecilie\n34\nF\nPostdoc\nDK\n10.257653\n\n\n6\nAnders\n32\nM\nPhDstudent\nUK\n8.047080\n\n\n7\nEmma\n42\nF\nProfessor\nDK\n11.498945\n\n\n8\nCaroline\n31\nF\nPhDstudent\nDK\n11.498402\n\n\n9\nLaura\n30\nF\nPostdoc\nDK\n9.067757\n\n\n10\nMikkel\n33\nM\nPostdoc\nNL\n8.440463\n\n\n11\nJens\n27\nM\nPhDstudent\nDK\n10.007813\n\n\n12\nAndreas\n29\nM\nPhDstudent\nDK\n9.779177\n\n\n13\nJakob\n28\nM\nPhDstudent\nDK\n8.666128\n\n\n14\nMathilde\n61\nF\nProfessor\nDK\n9.234076\n\n\n15\nKatrine\n35\nF\nPostdoc\nDK\n10.215683\n\n\n16\nPoul\n30\nM\nPostdoc\nDK\n9.251555\n\n\n17\nAnna\n26\nF\nPhDstudent\nDK\n11.388422\n\n\n18\nPeter\n42\nM\nProfessor\nGB\n9.946008\n\n\n19\nIda\n53\nF\nPostdoc\nDK\n10.150439\n\n\n20\nFreja\n30\nF\nPostdoc\nDK\n11.432069\n\n\n21\nMaria\n39\nF\nProfessor\nUK\n10.748114\n\n\n22\nAmalie\n29\nF\nPhDstudent\nDK\n9.131887\n\n\n23\nCamilla\n35\nF\nPostdoc\nDK\n11.510536\n\n\n\n\n\n\n\n\nplt.figure(figsize=(4,3))\nsns.scatterplot(x='age', y='informality', data=data, hue='position', palette='viridis')\nplt.ylabel('How informal you can be')\nplt.xlabel('Age')\nplt.legend(title='Seniority', loc='lower right')\nplt.ylim(bottom=0) ;\n\n\n\n\n\n\n\nFigure 1: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.\n\n\n\n\n\nor plotted differently:\n\n#plt.figure(figsize=(4,3))\ng = sns.FacetGrid(data=data, col=\"nationality\",hue=\"position\", palette='viridis', aspect=0.9)\ng.map(sns.scatterplot, 'age', 'informality')\n#sns.scatterplot(x='age', y='informality', data=data, hue='position', palette='viridis')\nplt.ylabel('How informal you can be')\nplt.xlabel('Age')\nplt.legend(title='Seniority', loc='lower right') ;\n\n\n\n\n\n\n\nFigure 2: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.\n\n\n\n\n\nSeems Danish people act very informally unaffected by age and seniority.\n\ninformality_age_cor = data.informality.corr(data.age)\ninformality_age_cor\n\n0.0502201862207874\n\n\n\nmean_informality = data.groupby(['position', 'nationality']).informality.mean().to_frame().reset_index()\nmean_informality = mean_informality.sort_values('informality')#.style.hide() # hide index\n\nTo show the mean_informality table, in a way that allow you to cite and embed it elsewhere, you need to provide a label, and preferably a caption, for it, as shown below. For this use, you also need to use the display function:\n\ndisplay(mean_informality)\n\n\n\nTable 2: Mean interaction scores by position and nationality.\n\n\n\n\n\n\n\n\n\n\nposition\nnationality\ninformality\n\n\n\n\n2\nPhDstudent\nUK\n8.047080\n\n\n4\nPostdoc\nGB\n8.348845\n\n\n5\nPostdoc\nNL\n8.440463\n\n\n0\nPhDstudent\nCH\n9.860340\n\n\n1\nPhDstudent\nDK\n9.937346\n\n\n8\nProfessor\nGB\n9.946008\n\n\n3\nPostdoc\nDK\n10.140271\n\n\n7\nProfessor\nDK\n10.366510\n\n\n9\nProfessor\nUK\n10.748114\n\n\n6\nPostdoc\nUS\n10.770385\n\n\n\n\n\n\n\n\n\n\n\nTip: To render a nice table without the index column, you can do this to the display function instead: Markdown(df.to_markdown(index=False))\n\n\nThe table above shows the mean informality scores by\n\n\n\n\n\n\n\n\n\nFigure 3: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.\n\n\n\n\n\n\n\nThe correlation between informality and age was -0.163.\n\n\n\nsns.lmplot(x='age', y='informality', data=data, hue='position', palette='viridis', height=3, aspect=4/3)\nplt.ylabel('How informal you can be')\nplt.xlabel('Age') ;\n\n\n\n\n\n\n\nFigure 4: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches."
+  },
+  {
+    "objectID": "pages/developing_exercises.html",
+    "href": "pages/developing_exercises.html",
+    "title": "Developing exercises",
+    "section": "",
+    "text": "conda create -n franklin -c conda-forge munch-group::franklin\nconda activate franklin\n\nfranklin exercise down\ncd &lt;repo&gt;\nfranklin jupyter run\nfranklin up\ncd ..",
+    "crumbs": [
+      "Tutorials",
+      "Developing exercises"
+    ]
+  },
+  {
+    "objectID": "pages/developing_exercises.html#tldr",
+    "href": "pages/developing_exercises.html#tldr",
+    "title": "Developing exercises",
+    "section": "",
+    "text": "conda create -n franklin -c conda-forge munch-group::franklin\nconda activate franklin\n\nfranklin exercise down\ncd &lt;repo&gt;\nfranklin jupyter run\nfranklin up\ncd ..",
+    "crumbs": [
+      "Tutorials",
+      "Developing exercises"
+    ]
+  },
+  {
+    "objectID": "pages/developing_exercises.html#create-an-exercise-repository",
+    "href": "pages/developing_exercises.html#create-an-exercise-repository",
+    "title": "Developing exercises",
+    "section": "Create an exercise repository",
+    "text": "Create an exercise repository\nA git repository is where an exercise lives\n\nexercise.ipynb:: blah blah\nDockerfile: blah blah\nREADME.md:: blah blah\ndocker-entrypoint.sh:: blah blah\ntagged-release.sh:: blah blah",
+    "crumbs": [
+      "Tutorials",
+      "Developing exercises"
+    ]
+  },
+  {
+    "objectID": "pages/developing_exercises.html#developchange-a-new-exercise-on-gitlab",
+    "href": "pages/developing_exercises.html#developchange-a-new-exercise-on-gitlab",
+    "title": "Developing exercises",
+    "section": "Develop/change a new exercise on GitLab",
+    "text": "Develop/change a new exercise on GitLab",
+    "crumbs": [
+      "Tutorials",
+      "Developing exercises"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html",
+    "href": "pages/jupyterlab.html",
+    "title": "Jupyterlab",
+    "section": "",
+    "text": "JupyterLab is a highly extensible, feature-rich notebook authoring application and editing environment, and is a part of Project Jupyter, a large umbrella project centered around the goal of providing tools (and standards) for interactive computing with computational notebooks.\nA computational notebook is a shareable document that combines computer code, plain language descriptions, data, rich visualizations like 3D models, charts, graphs and figures, and interactive controls. A notebook, along with an editor like JupyterLab, provides a fast interactive environment for prototyping and explaining code, exploring and visualizing data, and sharing ideas with others.\nJupyterLab is a sibling to other notebook authoring applications under the Project Jupyter umbrella, like Jupyter Notebook and Jupyter Desktop. JupyterLab offers a more advanced, feature rich, customizable experience compared to Jupyter Notebook.MM",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#menu-toolbar-context-menu",
+    "href": "pages/jupyterlab.html#menu-toolbar-context-menu",
+    "title": "Jupyterlab",
+    "section": "Menu, Toolbar, Context menu",
+    "text": "Menu, Toolbar, Context menu",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#command-palette-commandctrl-shift-c",
+    "href": "pages/jupyterlab.html#command-palette-commandctrl-shift-c",
+    "title": "Jupyterlab",
+    "section": "Command palette: Command/Ctrl Shift C",
+    "text": "Command palette: Command/Ctrl Shift C",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#keyboard-short-cuts-commandctrl-shift-h",
+    "href": "pages/jupyterlab.html#keyboard-short-cuts-commandctrl-shift-h",
+    "title": "Jupyterlab",
+    "section": "Keyboard short-cuts: Command/Ctrl Shift H",
+    "text": "Keyboard short-cuts: Command/Ctrl Shift H",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#code-blocks",
+    "href": "pages/jupyterlab.html#code-blocks",
+    "title": "Jupyterlab",
+    "section": "Code blocks",
+    "text": "Code blocks\n\nx = 0",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#last-value-is-displayed",
+    "href": "pages/jupyterlab.html#last-value-is-displayed",
+    "title": "Jupyterlab",
+    "section": "Last value is displayed",
+    "text": "Last value is displayed\n\nx = 1\nx\n\n1",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#everything-is-one-python-process",
+    "href": "pages/jupyterlab.html#everything-is-one-python-process",
+    "title": "Jupyterlab",
+    "section": "Everything is one Python process",
+    "text": "Everything is one Python process\n\nx += 1\nx\n\n2",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#restarting-the-kernel",
+    "href": "pages/jupyterlab.html#restarting-the-kernel",
+    "title": "Jupyterlab",
+    "section": "Restarting the kernel",
+    "text": "Restarting the kernel",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#lists",
+    "href": "pages/jupyterlab.html#lists",
+    "title": "Jupyterlab",
+    "section": "Lists",
+    "text": "Lists\n\nfoo\nbar\nbaz",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#numbered-lists",
+    "href": "pages/jupyterlab.html#numbered-lists",
+    "title": "Jupyterlab",
+    "section": "Numbered lists",
+    "text": "Numbered lists\n\nfoo\nbar\nbaz",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#quotes",
+    "href": "pages/jupyterlab.html#quotes",
+    "title": "Jupyterlab",
+    "section": "Quotes",
+    "text": "Quotes\n\nThis is a quote",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#formulas",
+    "href": "pages/jupyterlab.html#formulas",
+    "title": "Jupyterlab",
+    "section": "Formulas",
+    "text": "Formulas\n\\(\\sum_{i=0}^n i\\)\n\nHTML",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#header-2",
+    "href": "pages/jupyterlab.html#header-2",
+    "title": "Jupyterlab",
+    "section": "Header 2",
+    "text": "Header 2\n\nHeader 3\n\nHeader 4",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#formulas-1",
+    "href": "pages/jupyterlab.html#formulas-1",
+    "title": "Jupyterlab",
+    "section": "Formulas",
+    "text": "Formulas\n\\(\\sum_{i=0}^n i\\)",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/jupyterlab.html#tables",
+    "href": "pages/jupyterlab.html#tables",
+    "title": "Jupyterlab",
+    "section": "Tables",
+    "text": "Tables\n\n\n\nName\nValue\n\n\n\n\nfoo\n2\n\n\nbar\n3",
+    "crumbs": [
+      "Tutorials",
+      "Jupyterlab"
+    ]
+  },
+  {
+    "objectID": "pages/docker.html",
+    "href": "pages/docker.html",
+    "title": "Docker",
+    "section": "",
+    "text": "This pages are under construction",
+    "crumbs": [
+      "Key concepts",
+      "Docker"
+    ]
+  },
+  {
+    "objectID": "pages/docker.html#tldr",
+    "href": "pages/docker.html#tldr",
+    "title": "Docker",
+    "section": "TLDR;",
+    "text": "TLDR;",
+    "crumbs": [
+      "Key concepts",
+      "Docker"
+    ]
+  },
+  {
+    "objectID": "pages/docker.html#what-is-docker",
+    "href": "pages/docker.html#what-is-docker",
+    "title": "Docker",
+    "section": "What is Docker",
+    "text": "What is Docker\n\nImages\n\n\nContainers",
+    "crumbs": [
+      "Key concepts",
+      "Docker"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#purpose",
+    "href": "pages/overview.html#purpose",
+    "title": "Franklin overview",
+    "section": "Purpose",
+    "text": "Purpose",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#git",
+    "href": "pages/overview.html#git",
+    "title": "Franklin overview",
+    "section": "Git",
+    "text": "Git",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#gitlab",
+    "href": "pages/overview.html#gitlab",
+    "title": "Franklin overview",
+    "section": "GitLab",
+    "text": "GitLab\n\nAU hosting\n\n\nGitLab Franklin group\n\n\nGitLab Course subgroups\n\n\nGitLab exercise repositories",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#authentication",
+    "href": "pages/overview.html#authentication",
+    "title": "Franklin overview",
+    "section": "Authentication",
+    "text": "Authentication\nWeb GUI: UNI-AD login\n\nAdmin\nKasper (and someone else for backup)\nssh keys\n\n\nVIP\nssh keys\n\n\nStudents\nRead-only token distributed with franklin.",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#docker",
+    "href": "pages/overview.html#docker",
+    "title": "Franklin overview",
+    "section": "Docker",
+    "text": "Docker\n\nImage hierarchy\n\nBase images maintained in the Base\nCourse base images only refer to a versioned base image\n\n\n\nTemplates\n\nEvery course has a repo template with a docker file that that refers to the course base image\nThese templates are forked from franklin/base-templates/base-template\n\n\n\nTag policy\n\nFranklin base images are versioned and must referred to with their version tag\nCourse base images are tagged latest so that courses always pulls updated version.\nExercise images are always tagged latest, which is the tag franklin pulls",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/overview.html#container-registry",
+    "href": "pages/overview.html#container-registry",
+    "title": "Franklin overview",
+    "section": "Container registry",
+    "text": "Container registry",
+    "crumbs": [
+      "Overview",
+      "Franklin overview"
+    ]
+  },
+  {
+    "objectID": "pages/jupyter.html",
+    "href": "pages/jupyter.html",
+    "title": "Jupyter",
+    "section": "",
+    "text": "This pages are under construction",
+    "crumbs": [
+      "Key concepts",
+      "Jupyter"
+    ]
+  },
+  {
+    "objectID": "api/run.html",
+    "href": "api/run.html",
+    "title": "run",
+    "section": "",
+    "text": "franklin.docker.run(image_url)\nRuns a container from an image.\n\n\n\nimage_url : str\n\nImage URL.\n\n\n\n\n\n\n : Tuple[Popen, str]\n\nTuple of subprocess handle for ‘docker run’ and host port used for jupyter display.",
+    "crumbs": [
+      "Docker",
+      "run"
+    ]
+  },
+  {
+    "objectID": "api/run.html#parameters",
+    "href": "api/run.html#parameters",
+    "title": "run",
+    "section": "",
+    "text": "image_url : str\n\nImage URL.",
+    "crumbs": [
+      "Docker",
+      "run"
+    ]
+  },
+  {
+    "objectID": "api/run.html#returns",
+    "href": "api/run.html#returns",
+    "title": "run",
+    "section": "",
+    "text": ": Tuple[Popen, str]\n\nTuple of subprocess handle for ‘docker run’ and host port used for jupyter display.",
+    "crumbs": [
+      "Docker",
+      "run"
+    ]
+  },
+  {
+    "objectID": "api/index.html",
+    "href": "api/index.html",
+    "title": "Function reference",
+    "section": "",
+    "text": "Some description…\n\n\n\n_run\n\n\n\n\n\n\n\nSome description…\n\n\n\nrun\nRuns a container from an image.\n\n\npull\nPull Docker image.",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "api/index.html#jupyter",
+    "href": "api/index.html#jupyter",
+    "title": "Function reference",
+    "section": "",
+    "text": "Some description…\n\n\n\n_run",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "api/index.html#docker",
+    "href": "api/index.html#docker",
+    "title": "Function reference",
+    "section": "",
+    "text": "Some description…\n\n\n\nrun\nRuns a container from an image.\n\n\npull\nPull Docker image.",
+    "crumbs": [
+      "Function reference"
+    ]
+  },
+  {
+    "objectID": "api/pull.html",
+    "href": "api/pull.html",
+    "title": "pull",
+    "section": "",
+    "text": "franklin.docker.pull(image_url)\nPull Docker image.\n\n\n\nimage_url : str\n\nImage URL.",
+    "crumbs": [
+      "Docker",
+      "pull"
+    ]
+  },
+  {
+    "objectID": "api/pull.html#parameters",
+    "href": "api/pull.html#parameters",
+    "title": "pull",
+    "section": "",
+    "text": "image_url : str\n\nImage URL.",
+    "crumbs": [
+      "Docker",
+      "pull"
+    ]
+  },
+  {
+    "objectID": "api/launch_exercise.html",
+    "href": "api/launch_exercise.html",
+    "title": "launch_exercise",
+    "section": "",
+    "text": "launch_exercise\nfranklin.jupyter.launch_exercise()"
+  },
+  {
+    "objectID": "pages/gitlab.html",
+    "href": "pages/gitlab.html",
+    "title": "Gitlab",
+    "section": "",
+    "text": "This pages are under construction\n\n\n\n\n\n\n\n\n\nalt text\n\n\n\n\n\nalt text",
+    "crumbs": [
+      "Key concepts",
+      "Gitlab"
+    ]
+  },
+  {
+    "objectID": "pages/terminal.html",
+    "href": "pages/terminal.html",
+    "title": "The terminal",
+    "section": "",
+    "text": "This pages are under construction",
+    "crumbs": [
+      "Key concepts",
+      "The terminal"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html",
+    "href": "pages/getting_started.html",
+    "title": "Getting started",
+    "section": "",
+    "text": "These pages are under construction\nfranklin lets you …\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#installation",
+    "href": "pages/getting_started.html#installation",
+    "title": "Getting started",
+    "section": "Installation",
+    "text": "Installation\nconda install munch-group::franklin",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#basic-use",
+    "href": "pages/getting_started.html#basic-use",
+    "title": "Getting started",
+    "section": "Basic use",
+    "text": "Basic use\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#including-bibtex-references",
+    "href": "pages/getting_started.html#including-bibtex-references",
+    "title": "Getting started",
+    "section": "Including BibTex references",
+    "text": "Including BibTex references\nThere are many ways to manage BibTex references. In ReadCube Papers, you just right-click to select Copy...&gt;BibTex entry and paste it into your BibTex file (I also have a script that formats your entire Papers library for BibTex with meaningful labels).\nYou can render citations in different ways to accommodate their sentence. Skov et al. reported strong selection on the human X chromosome [-@Skov2023]. Lineages in small populations have shorter coalescence times [see @NielsenSlatkin2016, chap. 1]. The Neanderthal genome has been sequenced [@Prufer2012]. The X chromosome is subject to recurrent sweeps [@Nam2015; @Dutheil2015]. Following @Munch2014, we blah blah…",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#images",
+    "href": "pages/getting_started.html#images",
+    "title": "Getting started",
+    "section": "images",
+    "text": "images\nYou can see an elephant in Figure 1.\n\n\n\n\n\n\nFigure 1: Some caption for an illustration showing an elephant\n\n\n\nElephants are big (Figure 2):\n\n\n\n\n\n\nFigure 2\n\n\n\nThere are two elephants in Figure 3. The elephants in Figure 3 (a) and Figure 3 (b) look similar.\n\n\n\n\n\n\n\n\n\n\n\n(a)\n\n\n\n\n\n\n\n\n\n\n\n(b)\n\n\n\n\n\n\n\nFigure 3: Some caption you wrote for an illustration of two elephants.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#footnotes",
+    "href": "pages/getting_started.html#footnotes",
+    "title": "Getting started",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nElephants have long trunks and big ears if they are African. The one on the picture is Indian.↩︎",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#asides",
+    "href": "pages/getting_started.html#asides",
+    "title": "Getting started",
+    "section": "Asides",
+    "text": "Asides\nIf you like, you can make comments in the margin without footnote a reference.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#plot-included-from-notebook",
+    "href": "pages/getting_started.html#plot-included-from-notebook",
+    "title": "Getting started",
+    "section": "Plot included from notebook",
+    "text": "Plot included from notebook\nSee plot Figure 4 below.\n\n\n\n\n\n\n\n\n\nFigure 4: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.\n\n\n\n\n\nSource: Workplace interaction\nOr this really wide plot below (Figure 5).\n\n\n\n\n\n\n\n\n\n\nFigure 5: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#text-included-from-notebook",
+    "href": "pages/getting_started.html#text-included-from-notebook",
+    "title": "Getting started",
+    "section": "Text included from notebook",
+    "text": "Text included from notebook\n\n\n\nThe 24 subjects from workplaces in Denmark were interviewed …. blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#table-included-from-notebook",
+    "href": "pages/getting_started.html#table-included-from-notebook",
+    "title": "Getting started",
+    "section": "Table included from notebook",
+    "text": "Table included from notebook\nThese were selected to represent as many nationalities as possible (Table 1).\nyou can also allow the table to be wider\n\n\n\n\n\nTable 1: People included in the analysis.\n\n\n\n\n\n\n\n\nname\nage\nsex\nposition\nnationality\n\n\n\n\nJulie\n27\nF\nPhDstudent\nDK\n\n\nThomas\n33\nM\nPostdoc\nGB\n\n\nEmilie\n23\nF\nPhDstudent\nCH\n\n\nSofie\n31\nF\nPostdoc\nDK\n\n\nSara\n29\nF\nPostdoc\nUS\n\n\nCecilie\n34\nF\nPostdoc\nDK\n\n\nAnders\n32\nM\nPhDstudent\nUK\n\n\nEmma\n42\nF\nProfessor\nDK\n\n\nCaroline\n31\nF\nPhDstudent\nDK\n\n\nLaura\n30\nF\nPostdoc\nDK\n\n\nMikkel\n33\nM\nPostdoc\nNL\n\n\nJens\n27\nM\nPhDstudent\nDK\n\n\nAndreas\n29\nM\nPhDstudent\nDK\n\n\nJakob\n28\nM\nPhDstudent\nDK\n\n\nMathilde\n61\nF\nProfessor\nDK\n\n\nKatrine\n35\nF\nPostdoc\nDK\n\n\nPoul\n30\nM\nPostdoc\nDK\n\n\nAnna\n26\nF\nPhDstudent\nDK\n\n\nPeter\n42\nM\nProfessor\nGB\n\n\nIda\n53\nF\nPostdoc\nDK\n\n\nFreja\n30\nF\nPostdoc\nDK\n\n\nMaria\n39\nF\nProfessor\nUK\n\n\nAmalie\n29\nF\nPhDstudent\nDK\n\n\nCamilla\n35\nF\nPostdoc\nDK",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#margin-content",
+    "href": "pages/getting_started.html#margin-content",
+    "title": "Getting started",
+    "section": "Margin content",
+    "text": "Margin content\nYou can anything in the margin like Figure 6.\n\n\n\n\n\n\n\n\n\n\n\nFigure 6: Figure legends are defined alongside the figure in the notebook. The figure size in the notebook is determines its size when embedded in a document 4x3 inches.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#diagrams",
+    "href": "pages/getting_started.html#diagrams",
+    "title": "Getting started",
+    "section": "Diagrams",
+    "text": "Diagrams\nDiagram in Figure 7.\n\n\n\n\ngraph G {\n  layout=neato\n  run -- intr;\n  intr -- runbl;\n  runbl -- run;\n  run -- kernel;\n  kernel -- zombie;\n  kernel -- sleep;\n  kernel -- runmem;\n  sleep -- swap;\n  swap -- runswap;\n  runswap -- new;\n  runswap -- runmem;\n  new -- runmem;\n  sleep -- runmem;\n}\n\n\n\n\n\n\n\nG\n\n\n\nrun\n\nrun\n\n\n\nintr\n\nintr\n\n\n\nrun--intr\n\n\n\n\nkernel\n\nkernel\n\n\n\nrun--kernel\n\n\n\n\nrunbl\n\nrunbl\n\n\n\nintr--runbl\n\n\n\n\nrunbl--run\n\n\n\n\nzombie\n\nzombie\n\n\n\nkernel--zombie\n\n\n\n\nsleep\n\nsleep\n\n\n\nkernel--sleep\n\n\n\n\nrunmem\n\nrunmem\n\n\n\nkernel--runmem\n\n\n\n\nsleep--runmem\n\n\n\n\nswap\n\nswap\n\n\n\nsleep--swap\n\n\n\n\nrunswap\n\nrunswap\n\n\n\nswap--runswap\n\n\n\n\nrunswap--runmem\n\n\n\n\nnew\n\nnew\n\n\n\nrunswap--new\n\n\n\n\nnew--runmem\n\n\n\n\n\n\n\n(a) This is a simple graphviz graph.\n\n\n\n\n\n\n\nFigure 7\n\n\n\n\nflowchart LR\n  A[Beginning] --&gt; B[Middle]\n  B --&gt; C[End]\n\n\n\n\nflowchart LR\n  A[Beginning] --&gt; B[Middle]\n  B --&gt; C[End]\n\n\n\n\n\n\n\n\n\nflowchart LR\n  A[Beginning] --&gt; B[Middle]\n  B --&gt; C[End]\n\n\n\n\nflowchart LR\n  A[Beginning] --&gt; B[Middle]\n  B --&gt; C[End]\n\n\n\n\n\n\nThis is a flow chart.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#code",
+    "href": "pages/getting_started.html#code",
+    "title": "Getting started",
+    "section": "Code",
+    "text": "Code\nExecuted but hide code and any output:\nShow and execute Python code:\n\nx = 5\n\nValues can be embedded in the text, too. The value of x is 5.\nShown, not executed, Python code:\ny = 4\n\n\nA for loop:\nfor i in range(10):\n    print(i)\nShown, not executed, R code:\nz &lt;- 7",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#math",
+    "href": "pages/getting_started.html#math",
+    "title": "Getting started",
+    "section": "Math",
+    "text": "Math\nThis is calculated as \\(\\pi_k = \\prod_{i=1}^K x_i\\). You can crossref formulas (Equation 1).\n\\[\n\\lambda = \\sum_{k=1}^N \\pi_k\n\\tag{1}\\]\n\n\nWe know from the first fundamental theorem of calculus that for \\(x\\) in \\([a, b]\\):\n\\[\\frac{d}{dx}\\left( \\int_{a}^{x} f(u)\\,du\\right)=f(x).\\]",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#bold-and-italics",
+    "href": "pages/getting_started.html#bold-and-italics",
+    "title": "Getting started",
+    "section": "Bold and italics",
+    "text": "Bold and italics\nThis is bold, so is this. This is italics, so is this. This is both, so is this.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/getting_started.html#section",
+    "href": "pages/getting_started.html#section",
+    "title": "Getting started",
+    "section": "Section",
+    "text": "Section\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\nSubsection\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\n\nSubsubsection\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sagittis posuere ligula sit amet lacinia. Duis dignissim pellentesque magna, rhoncus congue sapien finibus mollis. Ut eu sem laoreet, vehicula ipsum in, convallis erat. Vestibulum magna sem, blandit pulvinar augue sit amet, auctor malesuada sapien. Nullam faucibus leo eget eros hendrerit, non laoreet ipsum lacinia. Curabitur cursus diam elit, non tempus ante volutpat a. Quisque hendrerit blandit purus non fringilla. Integer sit amet elit viverra ante dapibus semper. Vestibulum viverra rutrum enim, at luctus enim posuere eu. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    "crumbs": [
+      "Getting started"
+    ]
+  },
+  {
+    "objectID": "pages/git.html",
+    "href": "pages/git.html",
+    "title": "Git",
+    "section": "",
+    "text": "This pages are under construction",
+    "crumbs": [
+      "Key concepts",
+      "Git"
+    ]
+  },
+  {
+    "objectID": "pages/git.html#tldr",
+    "href": "pages/git.html#tldr",
+    "title": "Git",
+    "section": "TLDR;",
+    "text": "TLDR;",
+    "crumbs": [
+      "Key concepts",
+      "Git"
+    ]
+  },
+  {
+    "objectID": "pages/git.html#git-as-journaled-backup",
+    "href": "pages/git.html#git-as-journaled-backup",
+    "title": "Git",
+    "section": "Git as journaled backup",
+    "text": "Git as journaled backup\nWhen you are in your &lt;repositoryname&gt; folder, you can run git commands to manage your files, record their changes and sync them to the repository on GitHub for safe keeping. These tutorials are good introductions to git.\nTo journal the creation or modification of a file, you need to add it to git:\n\n\nTerminal\n\ngit add &lt;the_changed_file&gt;\n\nThis “stages” the change. This adds the file to the a “group” of changes that represent some modification to your project. You can add more files to that “group” by running the command again with other files. If you run git status you can see that the files are now staged.\nSo maybe you added or changed two python files addressing some parcitular problem or advancing some part of your project. Now you want to store those of changes to the journal maintained by Git and associate it with a short message describing the changes. For that you use:\n\n\nTerminal\n\ngit commit -m '&lt;message&gt;'\n\nIf you added two python files, your description could be 'Added two python files for my analysis'. If you fixed a bug or added new code to the files, your message should reflect that.\nNow your changes are recorded in the version of the &lt;repositoryname&gt; on the cluster, but that does not serve as a backup in case you accidentally delete your entire folder or the cluster burns down. To backup your repository you need to synchronize your local &lt;repositoryname&gt; repository on the cluster with the &lt;repositoryname&gt; repository on GitHub. To du that use:\n\n\nTerminal\n\ngit push\n\nIn addition to keeping your precious files safe and backed up, your GitHub repository also serve as a journal documenting of your progress. Each commit is a snapshot if your project that can be retrieved at any time.",
+    "crumbs": [
+      "Key concepts",
+      "Git"
+    ]
+  },
+  {
+    "objectID": "pages/git.html#git",
+    "href": "pages/git.html#git",
+    "title": "Git",
+    "section": "Git",
+    "text": "Git\nThere is a cheat sheet here and some good visual guides here and here.\nThe three most important commands to learn are: git status, git add, git rm, git mv, git commit and git push.\n\nResolving conflicts\nBlah blah…",
+    "crumbs": [
+      "Key concepts",
+      "Git"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html",
+    "href": "pages/numpy_pandas.html",
+    "title": "Numpy and Pandas",
+    "section": "",
+    "text": "Fast computation using vectors and matrices\nlist1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\nlist2 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]\n\nsummed = []\nfor i in range(len(list1)):\n    summed.append(list1[i] + list2[i])\nsummed\n\n[9, 9, 9, 9, 9, 9, 9, 9, 9, 9]",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#arrays",
+    "href": "pages/numpy_pandas.html#arrays",
+    "title": "Numpy and Pandas",
+    "section": "Arrays",
+    "text": "Arrays\n\nimport numpy as np\n\n\na = np.array(list1)\nb = np.array(list2)\na, b\n\n(array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([9, 8, 7, 6, 5, 4, 3, 2, 1, 0]))",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#broadcasting",
+    "href": "pages/numpy_pandas.html#broadcasting",
+    "title": "Numpy and Pandas",
+    "section": "Broadcasting",
+    "text": "Broadcasting\n\na + b\n\narray([9, 9, 9, 9, 9, 9, 9, 9, 9, 9])\n\n\n\na * b\n\narray([ 0,  8, 14, 18, 20, 20, 18, 14,  8,  0])\n\n\n\na - 10\n\narray([-10,  -9,  -8,  -7,  -6,  -5,  -4,  -3,  -2,  -1])\n\n\n\na.sum()\n\n45\n\n\n\na.mean()\n\n4.5",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#multidimentional-arrays",
+    "href": "pages/numpy_pandas.html#multidimentional-arrays",
+    "title": "Numpy and Pandas",
+    "section": "Multidimentional arrays",
+    "text": "Multidimentional arrays\n\nlist_of_lists = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\nlist_of_lists\n\n[[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n\n\n\nlist_of_lists[1][1]\n\n5\n\n\n\nmatrix = np.array(list_of_lists)\nmatrix\n\narray([[1, 2, 3],\n       [4, 5, 6],\n       [7, 8, 9]])\n\n\n\nmatrix[1][1] # not efficient\n\n5\n\n\n\nmatrix[1, 1] # efficient\n\n5\n\n\n\nmatrix - 10\n\narray([[-9, -8, -7],\n       [-6, -5, -4],\n       [-3, -2, -1]])\n\n\n\nmatrix.sum()\n\n45\n\n\n\nlist_of_lists_of_lists = [[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[1, 2, 3], [4, 5, 6], [7, 8, 9]]]\nlist_of_lists_of_lists\n\n[[[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[1, 2, 3], [4, 5, 6], [7, 8, 9]]]\n\n\n\ntensor = np.array(list_of_lists_of_lists)\ntensor\n\narray([[[1, 2, 3],\n        [4, 5, 6],\n        [7, 8, 9]],\n\n       [[1, 2, 3],\n        [4, 5, 6],\n        [7, 8, 9]]])\n\n\n\ntensor[1, 1, 1]\n\n5",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#dataframe",
+    "href": "pages/numpy_pandas.html#dataframe",
+    "title": "Numpy and Pandas",
+    "section": "DataFrame",
+    "text": "DataFrame\n\ndf = pd.DataFrame({'name': ['Mike', 'Mia', 'Jake'], 'weight': [82, 62, 75]})\ndf\n\n\n\n\n\n\n\n\nname\nweight\n\n\n\n\n0\nMike\n82\n\n\n1\nMia\n62\n\n\n2\nJake\n75\n\n\n\n\n\n\n\n\ntype(df)\n\npandas.core.frame.DataFrame\n\n\n\ndf = pd.DataFrame(dict(name=['Mike', 'Mia', 'Jake'], weight=[82, 62, 75]))\ndf\n\n\n\n\n\n\n\n\nname\nweight\n\n\n\n\n0\nMike\n82\n\n\n1\nMia\n62\n\n\n2\nJake\n75\n\n\n\n\n\n\n\n\nrecords = [('Mike', 82), ('Mia', 62), ('Jake', 75)]\n\ndf = pd.DataFrame().from_records(records, columns=['age', 'weight'])\ndf\n\n\n\n\n\n\n\n\nage\nweight\n\n\n\n\n0\nMike\n82\n\n\n1\nMia\n62\n\n\n2\nJake\n75\n\n\n\n\n\n\n\n\ndf.index\n\nRangeIndex(start=0, stop=3, step=1)\n\n\n\ndf.index.values\n\narray([0, 1, 2])\n\n\n\ndf.columns\n\nIndex(['age', 'weight'], dtype='object')\n\n\n\ndf.dtypes\n\nage       object\nweight     int64\ndtype: object\n\n\nAdd a column to an existing dataframe:\n\ndf['height'] = [182.5, 173.0, 192.5]\ndf\n\n\n\n\n\n\n\n\nage\nweight\nheight\n\n\n\n\n0\nMike\n82\n182.5\n\n\n1\nMia\n62\n173.0\n\n\n2\nJake\n75\n192.5\n\n\n\n\n\n\n\nAdd another, categorical, column:\n\ndf['sex'] = pd.Categorical(['male', 'female', 'male'], categories=['female', 'male'], ordered=True)\ndf\n\n\n\n\n\n\n\n\nage\nweight\nheight\nsex\n\n\n\n\n0\nMike\n82\n182.5\nmale\n\n\n1\nMia\n62\n173.0\nfemale\n\n\n2\nJake\n75\n192.5\nmale\n\n\n\n\n\n\n\n\ndf.dtypes\n\nage         object\nweight       int64\nheight     float64\nsex       category\ndtype: object\n\n\nA Series just wraps an array:\n\ndf.height.to_numpy()\n\narray([182.5, 173. , 192.5])",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#example-penguin-data-set",
+    "href": "pages/numpy_pandas.html#example-penguin-data-set",
+    "title": "Numpy and Pandas",
+    "section": "Example penguin data set",
+    "text": "Example penguin data set\n\nimport seaborn as sns\n\npenguins = sns.load_dataset('penguins')\n\n\npenguins\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nMale\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nFemale\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nFemale\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nFemale\n\n\n...\n...\n...\n...\n...\n...\n...\n...\n\n\n339\nGentoo\nBiscoe\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n340\nGentoo\nBiscoe\n46.8\n14.3\n215.0\n4850.0\nFemale\n\n\n341\nGentoo\nBiscoe\n50.4\n15.7\n222.0\n5750.0\nMale\n\n\n342\nGentoo\nBiscoe\n45.2\n14.8\n212.0\n5200.0\nFemale\n\n\n343\nGentoo\nBiscoe\n49.9\n16.1\n213.0\n5400.0\nMale\n\n\n\n\n344 rows × 7 columns\n\n\n\n\npenguins.dtypes\n\nspecies               object\nisland                object\nbill_length_mm       float64\nbill_depth_mm        float64\nflipper_length_mm    float64\nbody_mass_g          float64\nsex                   object\ndtype: object\n\n\n\npenguins.head()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nMale\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nFemale\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nFemale\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nFemale\n\n\n\n\n\n\n\n\npenguins.tail()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n339\nGentoo\nBiscoe\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n340\nGentoo\nBiscoe\n46.8\n14.3\n215.0\n4850.0\nFemale\n\n\n341\nGentoo\nBiscoe\n50.4\n15.7\n222.0\n5750.0\nMale\n\n\n342\nGentoo\nBiscoe\n45.2\n14.8\n212.0\n5200.0\nFemale\n\n\n343\nGentoo\nBiscoe\n49.9\n16.1\n213.0\n5400.0\nMale",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#series",
+    "href": "pages/numpy_pandas.html#series",
+    "title": "Numpy and Pandas",
+    "section": "Series",
+    "text": "Series\n\npenguins['flipper_length_mm']\n\n0      181.0\n1      186.0\n2      195.0\n3        NaN\n4      193.0\n       ...  \n339      NaN\n340    215.0\n341    222.0\n342    212.0\n343    213.0\nName: flipper_length_mm, Length: 344, dtype: float64\n\n\n\npenguins.flipper_length_mm\n\n0      181.0\n1      186.0\n2      195.0\n3        NaN\n4      193.0\n       ...  \n339      NaN\n340    215.0\n341    222.0\n342    212.0\n343    213.0\nName: flipper_length_mm, Length: 344, dtype: float64\n\n\n\ntype(penguins.flipper_length_mm)\n\npandas.core.series.Series",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#broadcasting-1",
+    "href": "pages/numpy_pandas.html#broadcasting-1",
+    "title": "Numpy and Pandas",
+    "section": "Broadcasting",
+    "text": "Broadcasting\n\npenguins.bill_depth_mm - 1000\n\n0     -981.3\n1     -982.6\n2     -982.0\n3        NaN\n4     -980.7\n       ...  \n339      NaN\n340   -985.7\n341   -984.3\n342   -985.2\n343   -983.9\nName: bill_depth_mm, Length: 344, dtype: float64\n\n\n\npenguins.bill_depth_mm * penguins.flipper_length_mm\n\n0      3384.7\n1      3236.4\n2      3510.0\n3         NaN\n4      3724.9\n        ...  \n339       NaN\n340    3074.5\n341    3485.4\n342    3137.6\n343    3429.3\nLength: 344, dtype: float64",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#indexing",
+    "href": "pages/numpy_pandas.html#indexing",
+    "title": "Numpy and Pandas",
+    "section": "Indexing",
+    "text": "Indexing\n\nGet a cell\n\npenguins.loc[4, 'island']\n\n'Torgersen'\n\n\n\n\nGet a row\n\npenguins.loc[4]\n\nspecies                 Adelie\nisland               Torgersen\nbill_length_mm            36.7\nbill_depth_mm             19.3\nflipper_length_mm        193.0\nbody_mass_g             3450.0\nsex                     Female\nName: 4, dtype: object\n\n\n\n\nGet a column\n\npenguins['bill_depth_mm']\n\n0      18.7\n1      17.4\n2      18.0\n3       NaN\n4      19.3\n       ... \n339     NaN\n340    14.3\n341    15.7\n342    14.8\n343    16.1\nName: bill_depth_mm, Length: 344, dtype: float64\n\n\n\npenguins.bill_depth_mm\n\n0      18.7\n1      17.4\n2      18.0\n3       NaN\n4      19.3\n       ... \n339     NaN\n340    14.3\n341    15.7\n342    14.8\n343    16.1\nName: bill_depth_mm, Length: 344, dtype: float64\n\n\n\n\nGet a range of rows and multiple columns\n\npenguins.loc[40:45, ['island', 'body_mass_g']]\n\n\n\n\n\n\n\n\nisland\nbody_mass_g\n\n\n\n\n40\nDream\n3150.0\n\n\n41\nDream\n3900.0\n\n\n42\nDream\n3100.0\n\n\n43\nDream\n4400.0\n\n\n44\nDream\n3000.0\n\n\n45\nDream\n4600.0\n\n\n\n\n\n\n\n\n\nUse boolean series as index to subset data\n\nidx = penguins.bill_length_mm &gt; 55\nidx\n\n0      False\n1      False\n2      False\n3      False\n4      False\n       ...  \n339    False\n340    False\n341    False\n342    False\n343    False\nName: bill_length_mm, Length: 344, dtype: bool\n\n\n\npenguins.loc[idx]\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n169\nChinstrap\nDream\n58.0\n17.8\n181.0\n3700.0\nFemale\n\n\n215\nChinstrap\nDream\n55.8\n19.8\n207.0\n4000.0\nMale\n\n\n253\nGentoo\nBiscoe\n59.6\n17.0\n230.0\n6050.0\nMale\n\n\n321\nGentoo\nBiscoe\n55.9\n17.0\n228.0\n5600.0\nMale\n\n\n335\nGentoo\nBiscoe\n55.1\n16.0\n230.0\n5850.0\nMale\n\n\n\n\n\n\n\n\npenguins.loc[(penguins.bill_length_mm &gt; 55) & (penguins.sex == 'Female')]\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n169\nChinstrap\nDream\n58.0\n17.8\n181.0\n3700.0\nFemale\n\n\n\n\n\n\n\n\n\nSetting and resetting the index\n\npenguins\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nMale\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nFemale\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nFemale\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nFemale\n\n\n...\n...\n...\n...\n...\n...\n...\n...\n\n\n339\nGentoo\nBiscoe\nNaN\nNaN\nNaN\nNaN\nNaN\n\n\n340\nGentoo\nBiscoe\n46.8\n14.3\n215.0\n4850.0\nFemale\n\n\n341\nGentoo\nBiscoe\n50.4\n15.7\n222.0\n5750.0\nMale\n\n\n342\nGentoo\nBiscoe\n45.2\n14.8\n212.0\n5200.0\nFemale\n\n\n343\nGentoo\nBiscoe\n49.9\n16.1\n213.0\n5400.0\nMale\n\n\n\n\n344 rows × 7 columns\n\n\n\n\ndf = penguins.set_index(['species', 'sex', 'island'])\ndf.head(10)\n\n\n\n\n\n\n\n\n\n\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\n\n\nspecies\nsex\nisland\n\n\n\n\n\n\n\n\nAdelie\nMale\nTorgersen\n39.1\n18.7\n181.0\n3750.0\n\n\nFemale\nTorgersen\n39.5\n17.4\n186.0\n3800.0\n\n\nTorgersen\n40.3\n18.0\n195.0\n3250.0\n\n\nNaN\nTorgersen\nNaN\nNaN\nNaN\nNaN\n\n\nFemale\nTorgersen\n36.7\n19.3\n193.0\n3450.0\n\n\nMale\nTorgersen\n39.3\n20.6\n190.0\n3650.0\n\n\nFemale\nTorgersen\n38.9\n17.8\n181.0\n3625.0\n\n\nMale\nTorgersen\n39.2\n19.6\n195.0\n4675.0\n\n\nNaN\nTorgersen\n34.1\n18.1\n193.0\n3475.0\n\n\nTorgersen\n42.0\n20.2\n190.0\n4250.0\n\n\n\n\n\n\n\n\ndf.reset_index()\n\n\n\n\n\n\n\n\nspecies\nsex\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\n\n\n\n\n0\nAdelie\nMale\nTorgersen\n39.1\n18.7\n181.0\n3750.0\n\n\n1\nAdelie\nFemale\nTorgersen\n39.5\n17.4\n186.0\n3800.0\n\n\n2\nAdelie\nFemale\nTorgersen\n40.3\n18.0\n195.0\n3250.0\n\n\n3\nAdelie\nNaN\nTorgersen\nNaN\nNaN\nNaN\nNaN\n\n\n4\nAdelie\nFemale\nTorgersen\n36.7\n19.3\n193.0\n3450.0\n\n\n...\n...\n...\n...\n...\n...\n...\n...\n\n\n339\nGentoo\nNaN\nBiscoe\nNaN\nNaN\nNaN\nNaN\n\n\n340\nGentoo\nFemale\nBiscoe\n46.8\n14.3\n215.0\n4850.0\n\n\n341\nGentoo\nMale\nBiscoe\n50.4\n15.7\n222.0\n5750.0\n\n\n342\nGentoo\nFemale\nBiscoe\n45.2\n14.8\n212.0\n5200.0\n\n\n343\nGentoo\nMale\nBiscoe\n49.9\n16.1\n213.0\n5400.0\n\n\n\n\n344 rows × 7 columns",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#sorting-rows",
+    "href": "pages/numpy_pandas.html#sorting-rows",
+    "title": "Numpy and Pandas",
+    "section": "Sorting rows",
+    "text": "Sorting rows\n\nsorted_df = penguins.sort_values(by=\"bill_length_mm\")\nsorted_df.head()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\n142\nAdelie\nDream\n32.1\n15.5\n188.0\n3050.0\nFemale\n\n\n98\nAdelie\nDream\n33.1\n16.1\n178.0\n2900.0\nFemale\n\n\n70\nAdelie\nTorgersen\n33.5\n19.0\n190.0\n3600.0\nFemale\n\n\n92\nAdelie\nDream\n34.0\n17.1\n185.0\n3400.0\nFemale\n\n\n8\nAdelie\nTorgersen\n34.1\n18.1\n193.0\n3475.0\nNaN\n\n\n\n\n\n\n\n\nsorted_df.index.values\n\narray([142,  98,  70,  92,   8,  18,  54,  80,  14, 100,  52,  83, 124,\n        25,  66,  74, 136,  60,  90, 118,  68,  22,  42,  48, 150, 148,\n        78,  94, 120,  86,  34,  64,  58,  40,  15, 147,   4,  82, 132,\n        87,  44, 138,  77,  31, 144, 117,  84,  47, 133,  62,  38,  59,\n        21, 121, 102, 103,  10,  20,  11, 149, 104,  28,  96, 108, 134,\n       110, 107,  23,  88, 130,  13, 106, 116,  16,  24, 126,  36,  89,\n         6, 128, 145,  56,   0,  35, 146,   7,   5,  30,   1,  32, 114,\n        45,  50,  72,  93, 112, 105, 139,  71,  39,  51, 137, 140, 122,\n        97,   2,  27,  29, 125, 141,  26,  57, 143,  95,  41, 230, 182,\n        33,  76, 101, 135, 119,  46,  63,  91,  67,  12,  61,  85, 123,\n        55, 127, 151,  65, 326,  69, 236,  53,   9,  79, 113,  37,  49,\n       172, 184, 206,  17, 256, 115, 260,  75, 251,  81, 244, 131, 278,\n       109, 174,  99, 228, 328, 306, 216, 332, 288, 265, 276, 258, 129,\n        43, 257, 246, 336, 314, 268, 304, 275, 241, 252, 272, 208, 298,\n       299, 269, 342, 157, 280, 262, 226, 155, 232, 277, 195, 312, 266,\n       111, 211, 214, 204, 282,  73, 284, 234, 166, 160,  19, 158, 245,\n       220, 286, 238, 334, 281, 193, 243, 170, 180, 291, 294, 293, 225,\n       274, 152, 242, 162, 270, 227, 176, 325, 229, 340, 213, 317, 190,\n       164, 338, 322, 324, 250, 302, 310, 296, 187, 308, 188, 224, 290,\n       247, 329, 202, 248, 292, 318, 233, 255, 271, 173, 320, 295, 259,\n       239, 222, 337, 192, 199, 231, 300, 323, 254, 171, 237, 235, 209,\n       316, 313, 179, 287, 263, 261, 217, 186, 331, 201, 285, 343, 303,\n       153, 221, 223, 249, 198, 273, 210, 219, 240, 168, 279, 341, 267,\n       330, 167, 178, 264, 175, 289, 205, 305, 218, 197, 315, 196, 194,\n       185, 297, 319, 154, 159, 161, 307, 203, 333, 200, 163, 212, 165,\n       177, 189, 309, 207, 311, 301, 156, 181, 327, 191, 183, 283, 335,\n       215, 321, 169, 253,   3, 339])\n\n\nClick to the left of an output cell to enable/disable scrolling of the output (usefull for large amounts of output).\n\nsorted_df.loc[0]\n\nspecies                 Adelie\nisland               Torgersen\nbill_length_mm            39.1\nbill_depth_mm             18.7\nflipper_length_mm        181.0\nbody_mass_g             3750.0\nsex                       Male\nName: 0, dtype: object\n\n\n\nsorted_df.flipper_length_mm[0]\n\n181.0\n\n\n\nsorted_df.iloc[0] # iloc !!!\n\nspecies              Adelie\nisland                Dream\nbill_length_mm         32.1\nbill_depth_mm          15.5\nflipper_length_mm     188.0\nbody_mass_g          3050.0\nsex                  Female\nName: 142, dtype: object\n\n\n\nsorted_df.flipper_length_mm.iloc[0]\n\n188.0",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#summary-stats",
+    "href": "pages/numpy_pandas.html#summary-stats",
+    "title": "Numpy and Pandas",
+    "section": "Summary stats",
+    "text": "Summary stats\n\npenguins.describe()\n\n\n\n\n\n\n\n\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\n\n\n\n\ncount\n342.000000\n342.000000\n342.000000\n342.000000\n\n\nmean\n43.921930\n17.151170\n200.915205\n4201.754386\n\n\nstd\n5.459584\n1.974793\n14.061714\n801.954536\n\n\nmin\n32.100000\n13.100000\n172.000000\n2700.000000\n\n\n25%\n39.225000\n15.600000\n190.000000\n3550.000000\n\n\n50%\n44.450000\n17.300000\n197.000000\n4050.000000\n\n\n75%\n48.500000\n18.700000\n213.000000\n4750.000000\n\n\nmax\n59.600000\n21.500000\n231.000000\n6300.000000\n\n\n\n\n\n\n\n\npenguins.bill_length_mm.mean()\n\n43.9219298245614\n\n\n\npenguins.bill_length_mm.count()\n\n342",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/numpy_pandas.html#grouping",
+    "href": "pages/numpy_pandas.html#grouping",
+    "title": "Numpy and Pandas",
+    "section": "Grouping",
+    "text": "Grouping\n\npenguins.groupby('island')\n\n&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x15cc9e5e0&gt;\n\n\n\nAggregate\nAggregating produces a single value for each variable in each group:\nMeans for all numeric variables for each island:\n\npenguins.groupby('island').aggregate(\"mean\", numeric_only=True)\n\n\n\n\n\n\n\n\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\n\n\nisland\n\n\n\n\n\n\n\n\nBiscoe\n45.257485\n15.874850\n209.706587\n4716.017964\n\n\nDream\n44.167742\n18.344355\n193.072581\n3712.903226\n\n\nTorgersen\n38.950980\n18.429412\n191.196078\n3706.372549\n\n\n\n\n\n\n\n\npenguins.groupby('island').mean(numeric_only=True)\n\n\n\n\n\n\n\n\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\n\n\nisland\n\n\n\n\n\n\n\n\nBiscoe\n45.257485\n15.874850\n209.706587\n4716.017964\n\n\nDream\n44.167742\n18.344355\n193.072581\n3712.903226\n\n\nTorgersen\n38.950980\n18.429412\n191.196078\n3706.372549\n\n\n\n\n\n\n\nMeans for bill_length_mm and flipper_length_mm:\n\npenguins.groupby('island')[['bill_length_mm', 'flipper_length_mm']].mean()\n\n\n\n\n\n\n\n\nbill_length_mm\nflipper_length_mm\n\n\nisland\n\n\n\n\n\n\nBiscoe\n45.257485\n209.706587\n\n\nDream\n44.167742\n193.072581\n\n\nTorgersen\n38.950980\n191.196078\n\n\n\n\n\n\n\nJust for flipper_length_mm:\n\npenguins.groupby('island').flipper_length_mm.mean()\n\nisland\nBiscoe       209.706587\nDream        193.072581\nTorgersen    191.196078\nName: flipper_length_mm, dtype: float64\n\n\n\n\nTransform\nTransforming produces new colums with the same length as the input:\n\npenguins.groupby('island')[['bill_length_mm', 'flipper_length_mm']].transform(\"mean\")\n\n\n\n\n\n\n\n\nbill_length_mm\nflipper_length_mm\n\n\n\n\n0\n38.950980\n191.196078\n\n\n1\n38.950980\n191.196078\n\n\n2\n38.950980\n191.196078\n\n\n3\n38.950980\n191.196078\n\n\n4\n38.950980\n191.196078\n\n\n...\n...\n...\n\n\n339\n45.257485\n209.706587\n\n\n340\n45.257485\n209.706587\n\n\n341\n45.257485\n209.706587\n\n\n342\n45.257485\n209.706587\n\n\n343\n45.257485\n209.706587\n\n\n\n\n344 rows × 2 columns\n\n\n\n\ndef z_value(sr):\n    return (sr - sr.mean()) / sr.std()\n\npenguins.groupby('island')[['bill_length_mm', 'flipper_length_mm']].transform(z_value)\n\n\n\n\n\n\n\n\nbill_length_mm\nflipper_length_mm\n\n\n\n\n0\n0.049258\n-1.636022\n\n\n1\n0.181475\n-0.833742\n\n\n2\n0.445910\n0.610362\n\n\n3\nNaN\nNaN\n\n\n4\n-0.744048\n0.289450\n\n\n...\n...\n...\n\n\n339\nNaN\nNaN\n\n\n340\n0.323193\n0.374297\n\n\n341\n1.077478\n0.869267\n\n\n342\n-0.012044\n0.162167\n\n\n343\n0.972717\n0.232877\n\n\n\n\n344 rows × 2 columns\n\n\n\n\n\nApply\nFlexible method allowing any operation on grouped data.\nReturn a single value:\n\ndef fun(df):\n    return df.bill_length_mm + df.flipper_length_mm.mean() / df.body_mass_g\n\npenguins.groupby('island').apply(fun)#.to_frame('my_stat')\n\nisland        \nBiscoe     20     37.861678\n           21     37.758252\n           22     35.955186\n           23     38.253090\n           24     38.855186\n                    ...    \nTorgersen  127    41.544464\n           128    39.062687\n           129    44.147799\n           130    38.557503\n           131    43.154627\nLength: 344, dtype: float64\n\n\nReturn a dataframe:\n\ndef fun(df):\n    return pd.DataFrame({'sqrt_bill': np.sqrt(df.bill_length_mm),\n                         'bill_squared': df.bill_length_mm**2})\n\npenguins.groupby('island').apply(fun)\n\n\n\n\n\n\n\n\n\nsqrt_bill\nbill_squared\n\n\nisland\n\n\n\n\n\n\n\nBiscoe\n20\n6.148170\n1428.84\n\n\n21\n6.140033\n1421.29\n\n\n22\n5.991661\n1288.81\n\n\n23\n6.180615\n1459.24\n\n\n24\n6.228965\n1505.44\n\n\n...\n...\n...\n...\n\n\nTorgersen\n127\n6.442049\n1722.25\n\n\n128\n6.244998\n1521.00\n\n\n129\n6.640783\n1944.81\n\n\n130\n6.204837\n1482.25\n\n\n131\n6.565059\n1857.61\n\n\n\n\n344 rows × 2 columns",
+    "crumbs": [
+      "Tutorials",
+      "Numpy and Pandas"
+    ]
+  },
+  {
+    "objectID": "pages/plotting.html",
+    "href": "pages/plotting.html",
+    "title": "Plots with matplotlib",
+    "section": "",
+    "text": "import matplotlib.pyplot as plt\nimport seaborn as sns\nsns.set_style(\"darkgrid\")\n\n# make graphics sharper on a good screen\nfrom matplotlib_inline.backend_inline import set_matplotlib_formats\nset_matplotlib_formats('retina', 'png')\nplt.scatter(penguins.bill_length_mm, penguins.flipper_length_mm) ;  # semi colon makes last value None\nsns.set_style(\"ticks\")\n# sns.set_style(\"darkgrid\")\n# sns.set_style(\"whitegrid\")\n# sns.set_style(\"white\")\n# sns.set_style(\"dark\")\n\nplt.scatter(penguins.bill_length_mm, penguins.flipper_length_mm)\nsns.despine()\nplt.hist(penguins.bill_length_mm) ;",
+    "crumbs": [
+      "Tutorials",
+      "Plots with matplotlib"
+    ]
+  },
+  {
+    "objectID": "pages/plotting.html#facetgrid.map-vs.-facetgrid.map_dataframe",
+    "href": "pages/plotting.html#facetgrid.map-vs.-facetgrid.map_dataframe",
+    "title": "Plots with matplotlib",
+    "section": "FacetGrid.map vs. FacetGrid.map_dataframe",
+    "text": "FacetGrid.map vs. FacetGrid.map_dataframe\nWhen you use FacetGrid.map(func, \"col1\", \"col2\", ...), the function func is passed the values of the columns \"col1\" and \"col2\" (and more if needed) as parameters 1 and 2 (args[0], args[1], …). In addition, the function always receives a keyword argument named color=.\n\ndef scatter(*args, **kwargs):\n    return plt.scatter(args[0], args[1], **kwargs)\n    \ng = sns.FacetGrid(penguins, row=\"sex\", col=\"island\", hue=\"species\") ;\ng.map(scatter, \"bill_length_mm\", \"flipper_length_mm\") ;\n\n\n\n\n\n\n\n\nWhen you use FacetGrid.map_dataframe(func, \"col1\", \"col2\", ...), the function func is passed the names \"col1\" and \"col2\" (and more if needed) as parameters 1 and 2 (args[0], args[1], …), and the filtered dataframe as keyword argument data=. In addition, the function always receives a keyword argument named color=.\n\ndef scatterplot(*args, **kwargs):\n    return sns.scatterplot(x=args[0], y=args[1], **kwargs)\n\ng = sns.FacetGrid(penguins, row=\"sex\", col=\"island\", hue=\"species\") ;\ng.map_dataframe(scatterplot, \"bill_length_mm\", \"flipper_length_mm\") ;\n\n\n\n\n\n\n\n\n\ng = sns.FacetGrid(penguins, row=\"sex\", col=\"island\", hue=\"species\") ;\ng.map(sns.histplot, \"bill_length_mm\") ;\n\n\n\n\n\n\n\n\n\ng = sns.FacetGrid(penguins, row=\"sex\", col=\"island\", hue=\"species\") ;\ng.map(sns.kdeplot, \"bill_length_mm\") ;\n\n\n\n\n\n\n\n\n\nsns.pairplot(penguins, hue=\"species\") ;\n\n\n\n\n\n\n\n\n\nsns.pairplot(penguins, hue=\"sex\") ;",
+    "crumbs": [
+      "Tutorials",
+      "Plots with matplotlib"
+    ]
+  },
+  {
+    "objectID": "pages/ssh.html",
+    "href": "pages/ssh.html",
+    "title": "SSH keys",
+    "section": "",
+    "text": "Firstly, you have to understand what public/private encryption keys are. A private key is a very long, random sequence of bits. A private key is kept secret and never leaves your laptop. A public key is another string of bits that is a derivative of the private key.\nYou can generate a unique public key from the private key but cannot get the private key from a public key: It is a one-way process. You can encrypt (or sign) any message using the public key, and it will only be possible to decrypt it using the private key it is derived from. In other words, anyone with your public key can send you encrypted messages that only you will be able to read.\nSo, if the cluster has your public key saved, it can authenticate you like this: The cluster sends your laptop a message encrypted using the public key. Your laptop then decrypts the message using its private key and sends it back. If the cluster receives a correctly decrypted message it knows it is you and logs you in.\nFirst, check if you have these two authentication files on your local machine:\n~/.ssh/id_rsa\n~/.ssh/id_rsa.pub\nYou can do so using the ls commmand:\n\n\nTerminal\n\nls -a ~/.ssh\n\nYou most likely do not. If so, you generate authentication keys with the command below. Just press Enter when prompted for a file in which to save the key. Do not enter a passphrase when prompted - just press enter:\n\n\nTerminal\n\nssh-keygen -t rsa\n\nNow use ssh to create a directory ~/.ssh on the cluster (assuming your username on the cluster is &lt;cluster user name&gt;). SSH will prompt you for your password.\n\n\nTerminal\n\nssh &lt;cluster user name&gt;@login.genome.au.dk mkdir -p .ssh\n\nFinally, append the public ssh key on your local machine to the file .ssh/authorized_keys on the cluster and enter your password (replace &lt;cluster user name&gt; with your cluster user name):\n\n\nTerminal\n\ncat ~/.ssh/id_rsa.pub | ssh username@login.genome.au.dk 'cat &gt;&gt; .ssh/authorized_keys'\n\nFrom now on, you can log into the cluster from your local machine without being prompted for a password.\nTry it:\n\n\nTerminal\n\nssh &lt;cluster user name&gt;@login.genome.au.dk\n\n(see, no password).",
+    "crumbs": [
+      "Key concepts",
+      "SSH keys"
+    ]
+  },
+  {
+    "objectID": "pages/ssh.html#tldr",
+    "href": "pages/ssh.html#tldr",
+    "title": "SSH keys",
+    "section": "",
+    "text": "Firstly, you have to understand what public/private encryption keys are. A private key is a very long, random sequence of bits. A private key is kept secret and never leaves your laptop. A public key is another string of bits that is a derivative of the private key.\nYou can generate a unique public key from the private key but cannot get the private key from a public key: It is a one-way process. You can encrypt (or sign) any message using the public key, and it will only be possible to decrypt it using the private key it is derived from. In other words, anyone with your public key can send you encrypted messages that only you will be able to read.\nSo, if the cluster has your public key saved, it can authenticate you like this: The cluster sends your laptop a message encrypted using the public key. Your laptop then decrypts the message using its private key and sends it back. If the cluster receives a correctly decrypted message it knows it is you and logs you in.\nFirst, check if you have these two authentication files on your local machine:\n~/.ssh/id_rsa\n~/.ssh/id_rsa.pub\nYou can do so using the ls commmand:\n\n\nTerminal\n\nls -a ~/.ssh\n\nYou most likely do not. If so, you generate authentication keys with the command below. Just press Enter when prompted for a file in which to save the key. Do not enter a passphrase when prompted - just press enter:\n\n\nTerminal\n\nssh-keygen -t rsa\n\nNow use ssh to create a directory ~/.ssh on the cluster (assuming your username on the cluster is &lt;cluster user name&gt;). SSH will prompt you for your password.\n\n\nTerminal\n\nssh &lt;cluster user name&gt;@login.genome.au.dk mkdir -p .ssh\n\nFinally, append the public ssh key on your local machine to the file .ssh/authorized_keys on the cluster and enter your password (replace &lt;cluster user name&gt; with your cluster user name):\n\n\nTerminal\n\ncat ~/.ssh/id_rsa.pub | ssh username@login.genome.au.dk 'cat &gt;&gt; .ssh/authorized_keys'\n\nFrom now on, you can log into the cluster from your local machine without being prompted for a password.\nTry it:\n\n\nTerminal\n\nssh &lt;cluster user name&gt;@login.genome.au.dk\n\n(see, no password).",
+    "crumbs": [
+      "Key concepts",
+      "SSH keys"
+    ]
+  }
+]
