@@ -58,21 +58,21 @@ website:
         - section: "Overview"
           contents:
             - pages/overview.qmd
-        # - section: "Tutorials"
-        #   contents:
-        #     - pages/developing_exercises.qmd
-        #     - pages/jupyterlab.ipynb
-        #     - pages/r_to_python.ipynb
-        #     - pages/numpy_pandas.ipynb
-        #     - pages/plotting.ipynb
-        # - section: "Key concepts"
-        #   contents:
-        #     - pages/terminal.qmd
-        #     - pages/docker.qmd
-        #     - pages/jupyter.qmd
-        #     - pages/ssh.qmd
-        #     - pages/git.qmd
-        #     - pages/gitlab.qmd
+        - section: "Tutorials"
+          contents:
+            - pages/developing_exercises.qmd
+            - pages/jupyterlab.ipynb
+            - pages/r_to_python.ipynb
+            - pages/numpy_pandas.ipynb
+            - pages/plotting.ipynb
+        - section: "Key concepts"
+          contents:
+            - pages/terminal.qmd
+            - pages/docker.qmd
+            - pages/jupyter.qmd
+            - pages/ssh.qmd
+            - pages/git.qmd
+            - pages/gitlab.qmd
 
 comments:
   hypothesis: true
