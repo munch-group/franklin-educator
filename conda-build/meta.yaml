@@ -1,0 +1,58 @@
+{% set pyproject = load_file_data("../pyproject.toml", from_recipe_dir=True) %}
+
+# requirements:
+#   host:
+#     {% for dep in pyproject["build-system"]["requires"] %}
+#     - {{ dep.lower() }}
+#     {% endfor %}
+#     {% for dep in requirements["dependencies"] %}
+#     - {{ dep.lower() }}
+#     {% endfor %}
+#   run:
+#     {% for dep in pyproject.get("project").get("dependencies") %}
+#     - {{ dep.lower() }}
+#     {% endfor %}
+
+package:
+  name: franklin-educator
+  version: {{ pyproject.get("project").get("version") }}
+
+source:
+  git_url: https://github.com/munch-group/franklin-educator.git
+
+build:
+  number: 0
+  script: python -m pip install . -vv
+  python_version_independent: true
+  entry_points."franklin.plugins":
+    - fruit = "franklin_educator.git:annanas"
+
+requirements:
+  host:
+    - python
+    - pip
+  run:  # your library dependencies
+    {% for dep in pyproject.get("project").get("dependencies") %}
+    - {{ dep.lower() }}
+    {% endfor %}  
+
+channels:  # channels for your library dependencies
+  - conda-forge
+
+dependencies:   # keep this block with only these packages
+  - anaconda-client
+  - conda-build>=25.1.3 # from 25 the output file is a .conda not .tar.bz2
+  - conda-verify
+  - conda-package-handling
+  # - anaconda::py-lief>=16
+  # - conda-forge/label/python_rc::_python_rc # Dummy package to force selection of python_rc channel when channel_priority is set to strict
+
+test:
+  imports:
+    - franklin_educator
+
+about:
+  home: https://github.com/munch-group/franklin-educator.git
+  license: MIT
+  dev_url: https://github.com/munch-group/franklin-educator.git
+  doc_url: https://munch-group.org/franklin-educator

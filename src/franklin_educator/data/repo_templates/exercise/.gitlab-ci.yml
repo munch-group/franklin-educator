@@ -1,0 +1,36 @@
+variables:
+  COMMIT_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+  FF_TIMESTAMPS: true
+
+stages:
+  - build
+  - test
+  - push
+  
+build_image:  
+  stage: build
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker build --no-cache -t $COMMIT_TAG -t $LATEST_TAG .
+    
+test_notebooks_with_image:
+  stage: test
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker run --entrypoint /bin/test-notebook.sh $CI_REGISTRY_IMAGE
+
+push_image_to_registry:
+  stage: push
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind  
+  script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - docker push $CI_REGISTRY_IMAGE --all-tags 

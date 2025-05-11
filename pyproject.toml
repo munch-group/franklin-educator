@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools >= 65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "franklin-educator"
+version = "0.3.27"
+classifiers = [
+  "Development Status :: 5 - Beta",
+  "Intended Audience :: Education",
+  "Topic :: Software Development :: Build Tools",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+requires-python = ">= 3.9"
+dependencies = [
+    'requests>=2.32.3',
+    'colorama>=0.4.6',
+    'readchar>=4.0.5',
+    'click',
+    'click-plugins',
+    'psutil',
+    'jupyter',
+    'packaging',
+    'pyyaml',
+    'pyperclip',
+    'importlib_resources',
+]
+authors = [
+  {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
+]
+maintainers = [
+  {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
+]
+description = "Terminal client for Jupyter exercises"
+keywords = ["teaching", "jupyter", "docker", "gitlab"]
+readme = "README.md"
+license = {file = "LICENSE"}
+
+[project.urls]
+Homepage = "https://munch-group.org/franklin-educator"
+Documentation = "https://munch-group.org/franklin-educator"
+Repository = "https://github.com/munch-group/franklin-git.educator"
+Issues = "https://github.com/munch-group/franklin-educator/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points."franklin.plugins"]
+exercise = "franklin_educator.git:exercise"
+
+
+# [project.entry-points."franklin.plugins"]
+# create = "franklin_educator.git:create_exercise"
+# edit = "franklin_educator.git:edit_cycle"
+
+# [project.entry-points."franklin..plugins"]
+# git = "franklin_educator.git:git"
+
+# [project.entry-points."franklin.manage.plugins"]
+# create = "franklin_educator.git:create_exercise"
+# edit = "franklin_educator.git:edit_cycle"
+
+# [project.entry-points."franklin.howto.plugins"]
+# docker = "franklin_educator.howto:docker"
+
+[tool.setuptools.package-data]
+franklin_educator = ["data/*.yaml", "data/gitui/*", "data/repo_templates/exercise/*", "data/repo_templates/base/*"]
