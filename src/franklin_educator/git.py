@@ -98,7 +98,7 @@ def gitlab_ssh_access(func: Callable) -> Callable:
 def _git_cmd(cmd, path=None, commands=False) -> None:
 
     if path is not None:
-        if utils.system() == 'Windows':
+        if system.system() == 'Windows':
             path = PurePosixPath(path)
         else:
             path = Path(path)
@@ -248,7 +248,7 @@ def git_down(commands=False) -> None:
     repo_name = exercise.split('/')[-1]
     clone_url = f'git@gitlab.au.dk:{cfg.gitlab_group}/{course}/{repo_name}.git'
     repo_local_path = os.path.join(os.getcwd(), repo_name)
-    if utils.system() == 'Windows':
+    if system.system() == 'Windows':
         repo_local_path = PureWindowsPath(repo_local_path)
 
     # check if we are in an already cloned repo
@@ -444,7 +444,7 @@ def upload(directory, remove):
     """
     if directory is None:
         directory = os.getcwd()
-    if utils.system() == 'Windows':
+    if system.system() == 'Windows':
         directory = PureWindowsPath(directory)
     if not os.path.exists('.git'):
         term.secho(f"To use this command, you must be in the folder of a retrieve exercise.", fg='red')
