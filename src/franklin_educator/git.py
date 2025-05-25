@@ -25,6 +25,7 @@ from franklin import docker
 from franklin import update
 from franklin import options
 from franklin.logger import logger
+from franklin import system
 
 
 def check_ssh_set_up():
