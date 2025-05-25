@@ -414,32 +414,32 @@ def exercise():
     """
 
 
-@exercise.command()
-@utils.crash_report
-def status():
-    """Sync status of retrieved exercise.
-    """
-    if not os.path.exists('.git'):
-        term.secho(f"To use this command, you must be in the folder of a retrieve exercise.", fg='red')
-        click.Abort()
-    git_status()
+# @exercise.command()
+# @utils.crash_report
+# def status():
+#     """Sync status of retrieved exercise.
+#     """
+#     if not os.path.exists('.git'):
+#         term.secho(f"To use this command, you must be in the folder of a retrieve exercise.", fg='red')
+#         click.Abort()
+#     git_status()
 
 
-@exercise.command()
+@exercise.command(hidden=True)
 @utils.crash_report
 @gitlab_ssh_access
-def retrieve():
+def down():
     """Retrieve exercise from GitLab.
     """
     git_down()
 
 
-@exercise.command()
+@exercise.command(hidden=True)
 @click.option('-d', '--directory', default=None)
 @click.option('--remove/--no-remove', default=True, show_default=True)
 @utils.crash_report
 @gitlab_ssh_access
-def upload(directory, remove):
+def up(directory, remove):
     """Upload retrieved exercise to Gitlab.
     """
     if directory is None:
@@ -500,7 +500,7 @@ def repository_exists(course, repo_name):
         return False
 
 
-@exercise.command('create')
+@exercise.command('new')
 @utils.crash_report
 @gitlab_ssh_access
 def create_exercise():
