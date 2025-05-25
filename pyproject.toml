@@ -39,7 +39,7 @@ maintainers = [
 description = "Terminal client for Jupyter exercises"
 keywords = ["teaching", "jupyter", "docker", "gitlab"]
 readme = "README.md"
-license = "MIT"
+# license = "MIT"
 
 [project.urls]
 Homepage = "https://munch-group.org/franklin-educator"
