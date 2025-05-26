@@ -117,7 +117,7 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
             pass
         # cmd = cmd.replace('git', f'git -C {path}')
         assert cmd[:4] == 'git '
-        cmd = f'git -C {path}' + cmd[4:]
+        cmd = f'git -C {path} ' + cmd[4:]
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
     subprocess.check_call(utils.fmt_cmd(cmd))
@@ -577,7 +577,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
 
     term.echo()
     term.secho(f"You will creating a new exercise for:", fg='green', nl=False)
-    term.secho(f"'{danish_course_name}'", bold=True)
+    term.secho(f" {danish_course_name}", bold=True)
     click.confirm(f"Do you want to continue?", default=True)
 
     def validate_repo_name(name):
