@@ -587,25 +587,35 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
         return name and name[0].isalpha() \
             and re.match(r'^[\w-]+$', name) is not None
 
-    while not validate_repo_name(new_repo_name):
-        term.echo()
-        term.echo("Enter a short descriptive label for the new exercise "
-                  "repository.", fg='green')
-        term.echo("The following restrictions apply:")
-        term.echo(" - It must begin with a letter.")
-        term.echo(" - It must only contain lowercase letters, numbers, "
-                  "underscores, and dashes.")
-        term.echo("")
+    term.echo()
+    term.echo("Enter a short descriptive label for the new exercise "
+                "repository.", fg='green')
+    term.echo("The following restrictions apply:")
+    term.echo(" - It must begin with a letter.")
+    term.echo(" - It must only contain lowercase letters, numbers, "
+                "underscores, and dashes.")
+    term.echo("")
+
+    for _ in range(10):
+        name_valid, name_avail = False, False
         new_repo_name = click.prompt("Repository name", default="my-exercise")
-        if not validate_repo_name(new_repo_name):
+        if validate_repo_name(new_repo_name):
+            name_valid = True
+        else:
             term.secho("Invalid name. Read restrictions above and try again.", 
                        fg='red')
             continue
-
         if repository_exists(course, new_repo_name):
             term.secho("An exercise with that name already exists. "
                        "Please try another again.", fg='red')
             continue
+        else:
+            name_avail = True
+        if name_valid and name_avail:
+            break
+    else:
+        click.Abort()
+
 
     create_repository_from_template(course, new_repo_name)
 
