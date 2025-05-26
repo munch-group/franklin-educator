@@ -551,10 +551,12 @@ def repository_exists(course, repo_name):
         return False
 
 
+@click.option('--course', default=None)
+@click.option('--new-repo-name', default=None)
 @exercise.command('new')
 @utils.crash_report
 @gitlab_ssh_access
-def create_exercise():
+def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     """Create a new exercise repository for a course.
 
     Parameters
@@ -565,7 +567,8 @@ def create_exercise():
         Name of the new repository.
     """
 
-    course, danish_course_name = gitlab.pick_course()
+    if course is None:
+        course, danish_course_name = gitlab.pick_course()
 
     term.echo()
     term.secho(f"You will creating a new exercise for course:", fg='green')
@@ -576,8 +579,7 @@ def create_exercise():
         return name and name[0].isalpha() \
             and re.match(r'^[\w-]+$', name) is not None
 
-    repo_name = None
-    while not validate_repo_name(repo_name):
+    while not validate_repo_name(new_repo_name):
         term.echo()
         term.echo("Enter a short descriptive label for the new exercise "
                   "repository.", fg='green')
@@ -586,18 +588,18 @@ def create_exercise():
         term.echo(" - It must only contain lowercase letters, numbers, "
                   "underscores, and dashes.")
         term.echo("")
-        repo_name = click.prompt("Repository name", default="my-exercise")
-        if not validate_repo_name(repo_name):
+        new_repo_name = click.prompt("Repository name", default="my-exercise")
+        if not validate_repo_name(new_repo_name):
             term.secho("Invalid name. Read restrictions above and try again.", 
                        fg='red')
             continue
 
-        if repository_exists(course, repo_name):
+        if repository_exists(course, new_repo_name):
             term.secho("An exercise with that name already exists. "
                        "Please try another again.", fg='red')
             continue
 
-    create_repository_from_template(course, repo_name)
+    create_repository_from_template(course, new_repo_name)
 
     term.secho(f"Created new repository", fg='green')
 
@@ -613,7 +615,7 @@ def create_exercise():
     time.sleep(2)
 
     repo_settings_gitlab_url = \
-    f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{repo_name}/edit'
+    f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
 
     print(repo_settings_gitlab_url)
     webbrowser.open(repo_settings_gitlab_url, new=1)
@@ -629,6 +631,41 @@ def create_exercise():
     #     r.raise_for_status()
     # term.secho(f"New repository '{new_repo_name}' created for"
     #            " '{course_name}'.", fg='green')
+
+
+
+@click.option('--course', default=None)
+@click.option('--exercise', default=None)
+@exercise.command()
+@utils.crash_report
+@gitlab_ssh_access
+def rename(course: str = None, exercise: str = None) -> None:
+    """Edit the exercise name listed by Franklin.
+
+    Parameters
+    ----------
+    course : 
+        Course name.
+    exercise : 
+        Exercise name.
+    """
+
+    if course is None:
+        course, danish_course_name = gitlab.pick_course()
+
+    term.echo(f"The GitLab settings page will open in your browser.")
+    term.echo('')
+    term.echo(f'Change the title of the exercise in the "Project description" '
+              'field and click "save"')
+    term.echo(f'(If you want to hide the exercise from students, you add '
+              '"HIDDEN" to the title.)')
+    click.pause(f"Press enter to open GitLab page.")
+
+    repo_settings_gitlab_url = \
+    f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{exercise}/edit'
+
+    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
+    webbrowser.open(repo_settings_gitlab_url, new=1)
 
 
 @options.git_commands
