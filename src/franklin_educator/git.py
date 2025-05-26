@@ -711,7 +711,7 @@ def edit_cycle(commands: bool = False):
 
     update.update_client()
 
-    utils.check_free_disk_space()
+    system.check_free_disk_space()
 
     docker.failsafe_start_docker_desktop()
     time.sleep(2)
