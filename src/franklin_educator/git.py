@@ -665,7 +665,7 @@ def edit_cycle(commands: bool = False):
 
     git_cmd = partial(_git_cmd, commands=commands)
 
-    utils.check_internet_connection()
+    system.check_internet_connection()
 
     update.update_client()
 
