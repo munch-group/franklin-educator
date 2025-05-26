@@ -101,6 +101,9 @@ def gitlab_ssh_access(func: Callable) -> Callable:
 
 def _git_cmd(cmd, path=None, commands=False) -> None:
 
+    assert not (bool('-C' in cmd) == bool(path)), \
+        "dont' use -C and path at the same time"
+
     if path is not None:
         if system.system() == 'Windows':
             path = PurePosixPath(path)
@@ -113,6 +116,8 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
             # don't bother
             pass
         cmd = cmd.replace('git', f'git -C {path}')
+        assert cmd[:4] == 'git '
+        cmd = f'git -C {path}' + cmd[4:]
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
     subprocess.check_call(utils.fmt_cmd(cmd))
@@ -571,8 +576,8 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
         course, danish_course_name = gitlab.pick_course()
 
     term.echo()
-    term.secho(f"You will creating a new exercise for course:", fg='green')
-    term.echo(f"'{danish_course_name}'")
+    term.secho(f"You will creating a new exercise for:", fg='green', nl=False)
+    term.secho(f"'{danish_course_name}'", bold=True)
     click.confirm(f"Do you want to continue?", default=True)
 
     def validate_repo_name(name):
@@ -634,12 +639,12 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
 
 
 
+@exercise.command("rename")
 @click.option('--course', default=None)
 @click.option('--exercise', default=None)
-@exercise.command()
 @utils.crash_report
 @gitlab_ssh_access
-def rename(course: str = None, exercise: str = None) -> None:
+def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
     """Edit the exercise name listed by Franklin.
 
     Parameters
