@@ -643,7 +643,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
 
-    print(repo_settings_gitlab_url)
+    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
     webbrowser.open(repo_settings_gitlab_url, new=1)
 
 # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
