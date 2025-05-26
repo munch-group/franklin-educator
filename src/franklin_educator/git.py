@@ -726,7 +726,7 @@ def edit_cycle(commands: bool = False):
 
     system.check_free_disk_space()
 
-    docker.failsafe_start_docker_desktop()
+    docker.failsafe_start_desktop()
     time.sleep(2)
 
     with utils.DelayedKeyboardInterrupt():
