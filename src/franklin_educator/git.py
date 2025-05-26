@@ -115,7 +115,7 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
         except ValueError:
             # don't bother
             pass
-        cmd = cmd.replace('git', f'git -C {path}')
+        # cmd = cmd.replace('git', f'git -C {path}')
         assert cmd[:4] == 'git '
         cmd = f'git -C {path}' + cmd[4:]
     if commands:
