@@ -549,6 +549,9 @@ def repository_exists(course, repo_name):
         f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
     try:        
         cmd = f'git ls-remote --exit-code {remote}'
+        logger.debug(f"Checking if repository {remote} exists")
+        logger.debug(cmd)
+        # Use subprocess.run to check if the repository exists
         p = subprocess.run(utils.fmt_cmd(cmd), check=False, 
                            capture_output=True, timeout=3)
         return p.returncode == 0
