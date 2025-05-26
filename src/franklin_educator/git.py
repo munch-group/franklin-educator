@@ -546,7 +546,7 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
 
 def repository_exists(course, repo_name):
     remote = \
-        f'git@{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{repo_name}'
+        f'git@{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{repo_name}.git'
     try:        
         cmd = f'git ls-remote --exit-code {remote}'
         p = subprocess.run(utils.fmt_cmd(cmd), check=False, 
