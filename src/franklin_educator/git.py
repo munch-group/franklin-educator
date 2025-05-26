@@ -106,7 +106,12 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
             path = PurePosixPath(path)
         else:
             path = Path(path)
-        path = path.relative_to(os.getcwd())
+        try:
+            # make the path sorter for cosmetic reasons if possible
+            path = path.relative_to(os.getcwd())
+        except ValueError:
+            # don't bother
+            pass
         cmd = cmd.replace('git', f'git -C {path}')
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
@@ -562,7 +567,8 @@ def create_exercise():
 
     course, danish_course_name = gitlab.pick_course()
 
-    term.echo(f"You will creating a new exercise for course:")
+    term.echo()
+    term.secho(f"You will creating a new exercise for course:", fg='green')
     term.echo(f"'{danish_course_name}'")
     click.confirm(f"Do you want to continue?", default=True)
 
@@ -572,8 +578,9 @@ def create_exercise():
 
     repo_name = None
     while not validate_repo_name(repo_name):
+        term.echo()
         term.echo("Enter a short descriptive label for the new exercise "
-                  "repository.")
+                  "repository.", fg='green')
         term.echo("The following restrictions apply:")
         term.echo(" - It must begin with a letter.")
         term.echo(" - It must only contain lowercase letters, numbers, "
@@ -581,11 +588,13 @@ def create_exercise():
         term.echo("")
         repo_name = click.prompt("Repository name", default="my-exercise")
         if not validate_repo_name(repo_name):
-            term.secho("Invalid input. Please try again.", fg='red')
+            term.secho("Invalid name. Read restrictions above and try again.", 
+                       fg='red')
             continue
 
         if repository_exists(course, repo_name):
-            term.secho("Invalid input. Please try again.", fg='red')
+            term.secho("An exercise with that name already exists. "
+                       "Please try another again.", fg='red')
             continue
 
     create_repository_from_template(course, repo_name)
@@ -609,15 +618,17 @@ def create_exercise():
     print(repo_settings_gitlab_url)
     webbrowser.open(repo_settings_gitlab_url, new=1)
 
-    # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
+# ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
 
     # s = requests.Session()
     # s.headers.update({'PRIVATE-TOKEN': '<token>'})
-    # url = f'{GITLAB_API_URL}/projects?name={new_repo_name}&namespace_id={GITLAB_GROUP}%2F{course_name}'
+    # url = f'{GITLAB_API_URL}/projects?name={new_repo_name}'
+    # f'&namespace_id={GITLAB_GROUP}%2F{course_name}'
     # r  = s.post(url, headers={ "Content-Type" : "application/json"})
     # if not r.ok:
     #     r.raise_for_status()
-    # term.secho(f"New repository '{new_repo_name}' created for '{course_name}'.", fg='green')
+    # term.secho(f"New repository '{new_repo_name}' created for"
+    #            " '{course_name}'.", fg='green')
 
 
 @options.git_commands
