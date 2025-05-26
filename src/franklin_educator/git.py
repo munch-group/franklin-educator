@@ -638,7 +638,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     term.echo('')
     term.echo('You can now use the "franklin exercise edit" command to '
               'edit the exercise.')
-    time.sleep(2)
+    click.pause(f"Press enter to open GitLab page.")
 
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
