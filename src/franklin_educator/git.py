@@ -120,7 +120,13 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
         cmd = f'git -C {path} ' + cmd[4:]
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
-    subprocess.check_call(utils.fmt_cmd(cmd))
+    p = subprocess.run(utils.fmt_cmd(cmd), 
+                       stdout=PIPE, stderr=STDOUT, check=True)
+    if p.stdout:
+        output = p.stdout.decode()
+        if output:
+            logger.debug(output)
+#    subprocess.check_call(utils.fmt_cmd(cmd))
 
 
 def config_local_repo(repo_local_path: str, commands=False) -> None:
@@ -606,8 +612,10 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
                        fg='red')
             continue
         if repository_exists(course, new_repo_name):
+            term.echo()
             term.secho("An exercise with that name already exists. "
-                       "Please try another again.", fg='red')
+                       "Please try another name.")
+            term.echo()
             continue
         else:
             name_avail = True
