@@ -101,7 +101,7 @@ def gitlab_ssh_access(func: Callable) -> Callable:
 
 def _git_cmd(cmd, path=None, commands=False) -> None:
 
-    assert not (bool('-C' in cmd) == bool(path)), \
+    assert not ('-C' in cmd and path), \
         "dont' use -C and path at the same time"
 
     if path is not None:
