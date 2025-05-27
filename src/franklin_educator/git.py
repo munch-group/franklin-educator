@@ -641,7 +641,8 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
               '"Project description" field. If you want to hide the exercise '
               'from students, just add the word HIDDEN')
     term.echo('Remember to to click "Save changes"!')
-    click.pause(f"Press enter to open GitLab page.")
+    term.echo('')
+    click.pause(f"Press enter to open GitLab page")
 
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
@@ -750,8 +751,9 @@ def edit_cycle(commands: bool = False):
         term.echo()
         term.secho("Franklin now launches jupyter for you to edit "
                    "the exercise")
-        term.secho("IMPORTANT: You changed will ONLY be saved to GitLab "
-                   "once you press Q in this window.", fg='red')
+        term.secho("IMPORTANT:\nYour changes are only saved if you complete"
+                   "the workflow by pressing Q in this window once you are "
+                   "done editing the notebook", fg='magenta')
         click.pause("Press Enter to continue.")
 
         jupyter.launch_jupyter(image_url, 
