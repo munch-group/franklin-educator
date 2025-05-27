@@ -598,10 +598,10 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     term.echo()
     term.echo("Enter a short descriptive label for the new exercise "
                 "repository.", fg='green')
-    term.echo("The following restrictions apply:")
+    term.echo()
     term.echo(" - It must begin with a letter.")
-    term.echo(" - It must only contain lowercase letters, numbers, "
-                "underscores, and dashes.")
+    term.echo(" - Only use lowercase letters, numbers, underscores, "
+              "and dashes.")
     term.echo("")
 
     for _ in range(10):
