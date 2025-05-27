@@ -101,10 +101,10 @@ def gitlab_ssh_access(func: Callable) -> Callable:
 
 def _git_cmd(cmd, path=None, commands=False) -> None:
 
-    assert not ('-C' in cmd and path), \
-        "dont' use -C and path at the same time"
 
+   
     if path is not None:
+        assert '-C' not in cmd 
         if system.system() == 'Windows':
             path = PurePosixPath(path)
         else:
@@ -302,7 +302,8 @@ def git_down(commands=False) -> None:
             if merge_conflict:
                 return
             else:
-                term.secho(f"Local repository updated.", fg='green')
+                term.echo()
+                term.secho(f"Local repository updated.")
         else:
             raise click.Abort()
     else:
@@ -312,6 +313,7 @@ def git_down(commands=False) -> None:
             term.secho(f"Failed to clone repository: {e.output.decode()}", 
                        fg='red')
             raise click.Abort()
+        term.echo()        
         term.secho(f"Local repository updated.", fg='green')
 
     config_local_repo(repo_local_path)
@@ -391,9 +393,9 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
             print(e.output.decode())
             raise click.Abort()
 
-        term.secho(f"Changes uploaded to GitLab.", fg='yellow')
+        term.secho(f"Changes uploaded to GitLab.")
     else:
-        term.secho("No changes to your local files.", fg='yellow')
+        term.secho("No changes to your local files.")
 
     if remove_tracked_files:
 
@@ -407,7 +409,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
         if 'nothing to commit, working tree clean' in output:
             shutil.rmtree(repo_local_path)
-            term.secho("Local files removed.", fg='green')
+            term.secho("Local files removed.")
 
         elif 'nothing added to commit but untracked files present' in output:
 
@@ -442,7 +444,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
                 and not os.listdir(repo_local_path):
                 os.rmdir(repo_local_path)
 
-            term.secho(f"Local files removed.", fg='green')
+            term.secho(f"Local files removed.")
 
         else:
             term.secho("There are local changes to repository files. Local "
@@ -624,20 +626,21 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     else:
         click.Abort()
 
-
     create_repository_from_template(course, new_repo_name)
 
-    term.secho(f"Created new repository", fg='green')
+    term.echo('')
+    term.secho(f'The exercise is being created and will be available through'
+               'Franklin in about 10 minutes.')
 
-    term.echo(f"The GitLab settings page will open in your browser.")
     term.echo('')
-    term.echo(f'You only need to add the (brief) title of the exercise '
-              f'in the "Project description" field and click "save"')
-    term.echo(f'(If you want to hide the exercise from students, you add '
-              '"HIDDEN" to the title.)')
+    term.secho(f"Last step is to add the exercise name visible to students:", 
+               fg='green')
     term.echo('')
-    term.echo('You can now use the "franklin exercise edit" command to '
-              'edit the exercise.')
+    term.echo(f'On the GitLab settings page for the exercise, '
+              'add the (brief) Danish title of the exercise in the '
+              '"Project description" field. If you want to hide the exercise '
+              'from students, just add the word HIDDEN')
+    term.echo('Remember to to click "Save changes"!')
     click.pause(f"Press enter to open GitLab page.")
 
     repo_settings_gitlab_url = \
@@ -645,6 +648,10 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
 
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
     webbrowser.open(repo_settings_gitlab_url, new=1)
+
+    term.echo('You can now use the "franklin exercise edit" command to '
+              'edit the exercise.')
+
 
 # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
 
@@ -740,12 +747,12 @@ def edit_cycle(commands: bool = False):
     with utils.DelayedKeyboardInterrupt():
 
         image_url, repo_local_path = git_down()
-
+        term.echo()
         term.secho("Franklin now launches jupyter for you to edit "
-                   "the exercise", fg='green')
-
+                   "the exercise")
         term.secho("IMPORTANT: You changed will ONLY be saved to GitLab "
                    "once you press Q in this window.", fg='red')
+        click.pause("Press Enter to continue.")
 
         jupyter.launch_jupyter(image_url, 
                                cwd=os.path.basename(repo_local_path))
@@ -753,7 +760,7 @@ def edit_cycle(commands: bool = False):
         git_up(repo_local_path, remove_tracked_files=True)
 
         term.secho("Your changes have been save to GitLab and will be "
-                   "available in a few minutes", fg='green')
+                   "available in a few minutes")
 
         sys.exit(0)
         
