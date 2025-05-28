@@ -633,14 +633,28 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
                'Franklin in about 10 minutes.')
 
     term.echo('')
-    term.secho(f"Last step is to add the exercise name visible to students:", 
-               fg='green')
-    term.echo('')
-    term.echo(f'On the GitLab settings page for the exercise, '
-              'add the (brief) Danish title of the exercise in the '
-              '"Project description" field. If you want to hide the exercise '
-              'from students, just add the word HIDDEN')
-    term.echo('Remember to to click "Save changes"!')
+    term.boxed_text("The Last step is to add the Danish name of the exercise"
+                    " name shown in franklin's' menu", 
+                    lines=[
+                        'On the GitLab settings page for the exercise, '
+                        'add the (brief) Danish title of the exercise in the '
+                        '"Project description" text box.',
+                        '',
+                        'If you want to hide the exercise from students, '
+                        'just add the word HIDDEN',
+                        ''
+                        'Remember to to click "Save changes"!'
+                    ], fg='green')
+
+
+    # term.secho(f"Last step is to add the exercise name visible to students:", 
+    #            fg='green')
+    # term.echo('')
+    # term.echo(f'On the GitLab settings page for the exercise, '
+    #           'add the (brief) Danish title of the exercise in the '
+    #           '"Project description" field.\n\nIf you want to hide the exercise '
+    #           'from students, just add the word HIDDEN')
+    # term.echo('Remember to to click "Save changes"!')
     term.echo('')
     click.pause(f"Press enter to open GitLab page")
 
