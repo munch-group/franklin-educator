@@ -459,7 +459,7 @@ def git_status() -> None:
     pass
 
 
-@click.group(cls=utils.AliasedGroup)
+@click.group(cls=utils.AliasedGroup, invoke_without_command=True)
 def exercise():
     """Commands for managing exercises.
     """
@@ -515,7 +515,7 @@ def gitui():
 
     cmd = f"eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa "
     f"&& gitui -t {str(Path.home() / '.gitui/theme.ron')}"
-    subprocess.run(cmd, shell=True)
+    subprocess.check_output(cmd, shell=True)
 
 
 @options.git_commands
