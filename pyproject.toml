@@ -28,7 +28,7 @@ dependencies = [
     'packaging',
     'pyyaml',
     'pyperclip',
-    'importlib_resources',
+    # 'importlib_resources',
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
