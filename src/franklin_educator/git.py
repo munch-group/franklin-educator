@@ -12,7 +12,7 @@ from typing import Tuple, List, Dict, Callable, Any
 import webbrowser
 import pyperclip
 import platform
-import importlib_resources
+# import importlib_resources
 from functools import wraps, partial
 
 from franklin import config as cfg
@@ -491,6 +491,8 @@ def clone(commands=False) -> None:
     (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
     clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
     _git_cmd(f'git clone {clone_url}', commands=commands)
+    term.secho(f"Exercise repository cloned to folder: {exercise}")
+
 
 
 @utils.crash_report
@@ -540,21 +542,24 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
     git_cmd = partial(_git_cmd, commands=commands)
 
     repo_dir = os.path.join(tempfile.gettempdir(), repo_name)
-    if os.path.exists(repo_dir):
-        shutil.rmtree(repo_dir)
+    # if os.path.exists(repo_dir):
+    #     shutil.rmtree(repo_dir)
 
-    repo_template_files = [
-        p for p in (importlib_resources.files()
-        .joinpath('data/repo_templates/exercise')
-        .iterdir())
-        ]
+    # repo_template_files = [
+    #     p for p in (importlib_resources.files()
+    #     .joinpath('data/repo_templates/exercise')
+    #     .iterdir())
+    #     ]
 
-    os.makedirs(repo_dir, exist_ok=False)
-    for path in repo_template_files:
-        path = Path(path)        
-        if path.is_file():
-            logger.debug(f"Copying {path} to {repo_dir}")
-            shutil.copy(path, repo_dir)
+    template_dir = os.path.dirname(sys.modules['franklin'].__file__) + '/data/templates/exercise'
+    shutil.copytree(template_dir, repo_dir, dirs_exist_ok=True)
+
+    # os.makedirs(repo_dir, exist_ok=False)
+    # for path in repo_template_files:
+    #     path = Path(path)        
+    #     if path.is_file():
+    #         logger.debug(f"Copying {path} to {repo_dir}")
+    #         shutil.copy(path, repo_dir)
 
     remote = \
         f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
