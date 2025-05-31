@@ -262,20 +262,6 @@ def finish_any_merge_in_progress(repo_local_path,
 
 @options.git_commands
 @gitlab_ssh_access
-def git_clone(commands=False) -> None:
-    """
-    Clones an exercise repository from GitLab.
-    """
-    url = \
-        f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
-    exercises_images = gitlab.get_registry_listing(url)
-    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
-    clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
-    _git_cmd(f'git clone {clone_url}', commands=commands)
-
-
-@options.git_commands
-@gitlab_ssh_access
 def git_down(commands=False) -> None:
     """
     "Downloads" an exercise from GitLab.
@@ -491,8 +477,24 @@ def exercise():
 #     git_status()
 
 
-@exercise.command(hidden=True)
+
 @utils.crash_report
+@options.git_commands
+@exercise.command(hidden=True)
+@gitlab_ssh_access
+def clone(commands=False) -> None:
+    """Clones an exercise git repository to your local machine
+    """
+    url = \
+        f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
+    exercises_images = gitlab.get_registry_listing(url)
+    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
+    clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
+    _git_cmd(f'git clone {clone_url}', commands=commands)
+
+
+@utils.crash_report
+@exercise.command(hidden=True)
 @gitlab_ssh_access
 def down():
     """Retrieve exercise from GitLab.
@@ -500,10 +502,10 @@ def down():
     git_down()
 
 
-@exercise.command(hidden=True)
+@utils.crash_report
 @click.option('-d', '--directory', default=None)
 @click.option('--remove/--no-remove', default=True, show_default=True)
-@utils.crash_report
+@exercise.command(hidden=True)
 @gitlab_ssh_access
 def up(directory, remove):
     """Upload retrieved exercise to Gitlab.
