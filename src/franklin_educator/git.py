@@ -72,7 +72,7 @@ def ssh_keygen():
         '5. Click the blue "Add key" button',
     ], prompt = "Press Enter to open the GitLab website.", fg='green')
 
-    webbrowser.open('https://gitlab.au.dk/-/user_settings/ssh_keys', new=1)
+    webbrowser.open(f'https://{cfg.gitlab_domain}/-/user_settings/ssh_keys', new=1)
 
     click.pause("Press Enter when you have added the ssh key to GitLab.")
 
@@ -262,6 +262,20 @@ def finish_any_merge_in_progress(repo_local_path,
 
 @options.git_commands
 @gitlab_ssh_access
+def git_clone(commands=False) -> None:
+    """
+    Clones an exercise repository from GitLab.
+    """
+    url = \
+        f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
+    exercises_images = gitlab.get_registry_listing(url)
+    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
+    clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
+    _git_cmd(f'git clone {clone_url}', commands=commands)
+
+
+@options.git_commands
+@gitlab_ssh_access
 def git_down(commands=False) -> None:
     """
     "Downloads" an exercise from GitLab.
@@ -279,7 +293,7 @@ def git_down(commands=False) -> None:
 
     # url for cloning the repository
     repo_name = exercise.split('/')[-1]
-    clone_url = f'git@gitlab.au.dk:{cfg.gitlab_group}/{course}/{repo_name}.git'
+    clone_url = f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
     repo_local_path = os.path.join(os.getcwd(), repo_name)
     if system.system() == 'Windows':
         repo_local_path = PureWindowsPath(repo_local_path)
