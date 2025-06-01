@@ -775,7 +775,7 @@ def edit_cycle(commands: bool = False):
 
     system.check_internet_connection()
 
-    update.update_client()
+    update.update()
 
     system.check_free_disk_space()
 
