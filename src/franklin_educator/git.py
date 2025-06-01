@@ -491,8 +491,9 @@ def clone(commands=False) -> None:
     (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
     clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
     _git_cmd(f'git clone {clone_url}', commands=commands)
+    term.echo()
     term.secho(f"Exercise repository cloned to folder: {exercise}")
-
+    term.echo()
 
 
 @utils.crash_report
