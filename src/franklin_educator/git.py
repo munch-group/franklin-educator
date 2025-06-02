@@ -120,8 +120,12 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
         cmd = f'git -C {path} ' + cmd[4:]
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
-    p = subprocess.run(utils.fmt_cmd(cmd), 
-                       stdout=PIPE, stderr=STDOUT, check=True)
+
+    try:
+        p = subprocess.run(utils.fmt_cmd(cmd), 
+                        stdout=PIPE, stderr=STDOUT, check=True)
+    except subprocess.CalledProcessError as e:
+
     if p.stdout:
         output = p.stdout.decode()
         if output:
@@ -489,6 +493,11 @@ def clone(commands=False) -> None:
         f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
     exercises_images = gitlab.get_registry_listing(url)
     (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
+    if os.path.exists(exercise):
+        term.secho(f"The exercise repository '{exercise}' already exists "
+                   f"at {os.path.abspath(exercise)}.", fg='red')
+        raise click.Abort()
+
     clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
     _git_cmd(f'git clone {clone_url}', commands=commands)
     term.echo()
