@@ -121,10 +121,8 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
 
-    try:
-        p = subprocess.run(utils.fmt_cmd(cmd), 
-                        stdout=PIPE, stderr=STDOUT, check=True)
-    except subprocess.CalledProcessError as e:
+    p = subprocess.run(utils.fmt_cmd(cmd), 
+                    stdout=PIPE, stderr=STDOUT, check=True)
 
     if p.stdout:
         output = p.stdout.decode()
@@ -501,7 +499,7 @@ def clone(commands=False) -> None:
     clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
     _git_cmd(f'git clone {clone_url}', commands=commands)
     term.echo()
-    term.secho(f"Exercise repository cloned to folder: {exercise}")
+    term.secho(f"Exercise repository cloned to folder: {exercise}", fg='green')
     term.echo()
 
 
