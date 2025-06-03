@@ -283,8 +283,6 @@ def git_down(commands=False) -> None:
     repo_name = exercise.split('/')[-1]
     clone_url = f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
     repo_local_path = os.path.join(os.getcwd(), repo_name)
-    if system.system() == 'Windows':
-        repo_local_path = PureWindowsPath(repo_local_path)
 
     # check if we are in an already cloned repo
     os.path.dirname(os.path.realpath(__file__))
@@ -296,7 +294,7 @@ def git_down(commands=False) -> None:
 
     # update or clone the repository
     if os.path.exists(repo_local_path):
-        term.secho(f"The repository '{repo_name}' already exists "
+        term.secho(f"The repository '{repo_local_path.absolute()}' already exists "
                    f"at {repo_local_path}.")
         if click.confirm('\nDo you want to update the existing repository?', 
                          default=True):
