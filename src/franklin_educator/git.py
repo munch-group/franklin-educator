@@ -105,10 +105,11 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
    
     if path is not None:
         assert '-C' not in cmd 
-        if system.system() == 'Windows':
-            path = PurePosixPath(path)
-        else:
-            path = Path(path)
+        # if system.system() == 'Windows':
+        #     path = PurePosixPath(path)
+        # else:
+        #     path = Path(path)
+        path = Path(path)
         try:
             # make the path sorter for cosmetic reasons if possible
             path = path.relative_to(os.getcwd())
@@ -143,7 +144,7 @@ def config_local_repo(repo_local_path: str, commands=False) -> None:
     """
     git_cmd = partial(_git_cmd, commands=commands)
 
-    output = utils.run_cmd(f'git -C {repo_local_path} config --local -l')
+    output = utils.run_cmd(f'git -C "{repo_local_path}" config --local -l')
     local_git_config = {}
     for line in output.splitlines():
         key, val = line.split('=')
@@ -183,13 +184,13 @@ def git_safe_pull(repo_local_path: str) -> bool:
 
     merge_conflict = False
     posix = PurePosixPath(repo_local_path)
-    cmd = f'git -C {posix} diff --name-only --diff-filter=U --relative'
+    cmd = f'git -C "{posix}" diff --name-only --diff-filter=U --relative'
     try:
         subprocess.run(
             utils.fmt_cmd(
                 cmd), stdout=DEVNULL, stderr=STDOUT, check=True)
     except subprocess.CalledProcessError as e:        
-        print(e.output.decode())
+#        print(e.output.decode())
 
         # merge conflict
         output = subprocess.check_output(utils.fmt_cmd(cmd)).decode()
@@ -294,7 +295,7 @@ def git_down(commands=False) -> None:
 
     # update or clone the repository
     if os.path.exists(repo_local_path):
-        term.secho(f"The repository '{repo_local_path.absolute()}' already exists "
+        term.secho(f"The repository '{os.path.abspath(repo_local_path)}' already exists "
                    f"at {repo_local_path}.")
         if click.confirm('\nDo you want to update the existing repository?', 
                          default=True):
@@ -497,7 +498,7 @@ def clone(commands=False) -> None:
     clone_url = f'git@{cfg.gitlab_domain}:franklin/{course}/{exercise}.git'
     _git_cmd(f'git clone {clone_url}', commands=commands)
     term.echo()
-    term.secho(f"Exercise repository cloned to folder: {exercise}", fg='green')
+    term.secho(f"Exercise repository cloned to folder: {os.path.abspath(exercise)}", fg='green')
     term.echo()
 
 
@@ -577,7 +578,7 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
     git_cmd(f'git commit -m "Initial commit"', repo_dir)
     git_cmd(f'git push -u origin main', repo_dir)
 
-    shutil.rmtree(repo_dir)
+    #shutil.rmtree(repo_dir)
 
 
 def repository_exists(course, repo_name):
@@ -634,7 +635,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
 
     for _ in range(10):
         name_valid, name_avail = False, False
-        new_repo_name = click.prompt("Repository name", default="my-exercise")
+        new_repo_name = click.prompt("Repository name")
         if validate_repo_name(new_repo_name):
             name_valid = True
         else:
@@ -684,7 +685,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     #           'from students, just add the word HIDDEN')
     # term.echo('Remember to to click "Save changes"!')
     term.echo('')
-    click.pause(f"Press enter to open GitLab page")
+    click.pause(f"Press enter to open this GitLab page:")
 
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
@@ -692,8 +693,10 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
     webbrowser.open(repo_settings_gitlab_url, new=1)
 
+    term.echo()
     term.echo('You can now use the "franklin exercise edit" command to '
-              'edit the exercise.')
+              'edit the exercise.', fg='green')
+    term.echo()
 
 
 # ssh git@gitlab.au.dk personal_access_token GITLAB-API-TMP api,write_repository 1
