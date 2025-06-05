@@ -279,8 +279,7 @@ def git_down(commands=False, only_with_image=False) -> None:
         exercises_images = gitlab.get_registry_listing(url)
 
         # pick course and exercise
-        (course, _), (exercise, _) = gitlab.select_exercise(
-            exercises_images, only_with_images=True)
+        (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
     else:
         # pick course and exercise
         (course, _), (exercise, _) = gitlab.select_exercise()
@@ -328,7 +327,7 @@ def git_down(commands=False, only_with_image=False) -> None:
         image = exercises_images[(course, exercise)]
         return image, repo_local_path
     else:
-        return image, repo_local_path
+        return None, repo_local_path
     
 
 @gitlab_ssh_access
