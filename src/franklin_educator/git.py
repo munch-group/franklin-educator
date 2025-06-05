@@ -265,21 +265,26 @@ def finish_any_merge_in_progress(repo_local_path,
 
 @options.git_commands
 @gitlab_ssh_access
-def git_down(commands=False) -> None:
+def git_down(commands=False, only_with_image=False) -> None:
     """
     "Downloads" an exercise from GitLab.
     """
 
     git_cmd = partial(_git_cmd, commands=commands)
 
-    # get images for available exercises
-    url = \
-        f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
-    exercises_images = gitlab.get_registry_listing(url)
+    if only_with_image:
+        # get images for available exercises
+        url = \
+            f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
+        exercises_images = gitlab.get_registry_listing(url)
 
-    # pick course and exercise
-    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
-
+        # pick course and exercise
+        (course, _), (exercise, _) = gitlab.select_exercise(
+            exercises_images, only_with_images=True)
+    else:
+        # pick course and exercise
+        (course, _), (exercise, _) = gitlab.select_exercise()
+        
     # url for cloning the repository
     repo_name = exercise.split('/')[-1]
     clone_url = f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
@@ -319,9 +324,12 @@ def git_down(commands=False) -> None:
 
     config_local_repo(repo_local_path)
 
-    image = exercises_images[(course, exercise)]
-    return image, repo_local_path
-
+    if only_with_image:
+        image = exercises_images[(course, exercise)]
+        return image, repo_local_path
+    else:
+        return image, repo_local_path
+    
 
 @gitlab_ssh_access
 def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
@@ -792,7 +800,7 @@ def edit_cycle(commands: bool = False):
 
     with utils.DelayedKeyboardInterrupt():
 
-        image_url, repo_local_path = git_down()
+        image_url, repo_local_path = git_down(only_with_image=True)
         term.echo()
         term.secho("Franklin now launches jupyter for you to edit "
                    "the exercise")
