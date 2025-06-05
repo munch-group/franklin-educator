@@ -118,7 +118,7 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
             pass
         # cmd = cmd.replace('git', f'git -C {path}')
         assert cmd[:4] == 'git '
-        cmd = f'git -C {path} ' + cmd[4:]
+        cmd = f'git -C "{path}" ' + cmd[4:]
     if commands:
         term.secho(f"  {cmd}", fg='blue', nowrap=True)
 
@@ -355,7 +355,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
     # Fetch the latest changes from the remote repository
     output = subprocess.check_output(
-        utils.fmt_cmd(f'git -C {repo_local_path} fetch')).decode()
+        utils.fmt_cmd(f'git -C "{repo_local_path}" fetch')).decode()
 
     # Finish any umcompleted merge
     finish_any_merge_in_progress(repo_local_path)
@@ -365,14 +365,14 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     # add
     try:
         output = subprocess.check_output(
-            utils.fmt_cmd(f'git -C {repo_local_path} add -u')).decode()
+            utils.fmt_cmd(f'git -C "{repo_local_path}" add -u')).decode()
     except subprocess.CalledProcessError as e:        
         print(e.output.decode())
         raise click.Abort()
     
     try:
         staged_changes = subprocess.check_output(
-            utils.fmt_cmd(f'git -C {repo_local_path} diff --cached')).decode()
+            utils.fmt_cmd(f'git -C "{repo_local_path}" diff --cached')).decode()
     except subprocess.CalledProcessError as e:        
         print(e.output.decode())
         raise click.Abort()
@@ -384,7 +384,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
         try:
             output = subprocess.check_output(
                 utils.fmt_cmd(
-                    f'git -C {repo_local_path} commit -m "{msg}"')).decode()
+                    f'git -C "{repo_local_path}" commit -m "{msg}"')).decode()
         except subprocess.CalledProcessError as e:        
             print(e.output.decode())
             raise click.Abort()
@@ -397,7 +397,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
         # push
         try:
             output = subprocess.check_output(
-                utils.fmt_cmd(f'git -C {repo_local_path} push')).decode()
+                utils.fmt_cmd(f'git -C "{repo_local_path}" push')).decode()
         except subprocess.CalledProcessError as e:        
             print(e.output.decode())
             raise click.Abort()
@@ -411,7 +411,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
         try:
             output = subprocess.check_output(
                 utils.fmt_cmd(
-                    f'git -C {repo_local_path} status')).decode()
+                    f'git -C "{repo_local_path}" status')).decode()
         except subprocess.CalledProcessError as e:        
             print(e.output.decode())
             raise click.Abort()
@@ -434,7 +434,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
                 os.remove(path)
             output = subprocess.check_output(
                 utils.fmt_cmd(
-                    f'git -C {repo_local_path} ls-files')).decode()
+                    f'git -C "{repo_local_path}" ls-files')).decode()
             tracked_dirs = set()
             for line in output.splitlines():
                 path = os.path.join(repo_local_path, *(line.split('/')))
