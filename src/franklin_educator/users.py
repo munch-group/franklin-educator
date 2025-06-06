@@ -17,7 +17,7 @@ from . import git
 
 import requests
 
-token_path_templ = os.path.dirname(sys.modules['franklin'].__file__) + '/data/admin/{}_token.enc'
+token_path_templ = os.path.dirname(sys.modules['franklin-educator'].__file__) + '/data/admin/{}_token.enc'
 
 def update_project_permissions(user_id: int, project_id: int, access_level: int, api_token: str):
     # API endpoint to update existing member
@@ -95,14 +95,14 @@ def get_user_id(user_name, api_token):
     return user['id']
 
 
-def update_permissions(user, role, course, admin_user, admin_password, project=None):
+def update_permissions(user_name, role, course, user, password, project=None):
 
     with open(token_path_templ.format(user), "rb") as f:
         encrypted = f.read()
-    api_token = encrypt.decrypt_token(encrypted, admin_password)
+    api_token = encrypt.decrypt_token(encrypted, password)
 
 
-    user_id = get_user_id(user)
+    user_id = get_user_id(user_name)
     group_id = get_group_id(cfg.gitlab_group)
     subgroup_id = get_group_id(course)
 

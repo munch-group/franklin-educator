@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.74'
+version = '0.3.75'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -18,7 +18,7 @@ classifiers = [
 ]
 requires-python = ">= 3.9"
 dependencies = [
-#    'franklin::franklin',
+#    'munch-group::franklin',
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
@@ -59,4 +59,9 @@ admin = "franklin_educator.users:admin"
 # docker = "franklin_educator.howto:docker"
 
 [tool.setuptools.package-data]
-franklin_educator = ["data/*.yaml", "data/gitui/*"]
+franklin_educator = [
+  "data/*.yaml",
+  "data/gitui/*",
+  "data/admin/*.enc", 
+  ]
+

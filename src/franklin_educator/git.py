@@ -229,6 +229,19 @@ def merge_in_progress(repo_local_path: str) -> bool:
     return os.path.exists(os.path.join(repo_local_path, '.git/MERGE_HEAD'))
 
 
+def config_gitui() -> None:
+    """
+    Copies gitui config files to the user's config directory.
+    """
+    path = str(Path.home() / '.gitui')
+
+    if not os.path.exists(path):
+        os.makedirs(path)       
+    for file in Path('data/gitui').glob('*'):
+        print(f'Copying {file} to {path}')
+        shutil.copy(file, path)
+
+
 @options.git_commands 
 def launch_mergetool(repo_local_path: str, commands=False) -> None:
     """
@@ -555,7 +568,7 @@ def up(directory, remove):
 def gitui():
     """Launch terminal git GUI
     """
-    utils.config_gitui()
+    config_gitui()
 
     cmd = f"eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa "
     f"&& gitui -t {str(Path.home() / '.gitui/theme.ron')}"
