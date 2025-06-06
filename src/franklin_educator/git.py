@@ -330,6 +330,18 @@ def git_down(commands=False, only_with_image=False) -> None:
         return None, repo_local_path
     
 
+@click.command()
+@click.option('--admin-password', prompt=True, hide_input=True,
+              confirmation_prompt=False, help='Admin password')
+def main(admin_password):
+    # Use the password in your logic
+    if admin_password == "expected_password":
+        click.echo("Access granted.")
+    else:
+        click.echo("Access denied.")
+
+
+
 @gitlab_ssh_access
 def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     """
@@ -467,7 +479,7 @@ def git_status() -> None:
     pass
 
 
-@click.group(cls=utils.AliasedGroup, invoke_without_command=True)
+@click.group(cls=utils.AliasedGroup)
 def exercise():
     """Commands for managing exercises.
     """

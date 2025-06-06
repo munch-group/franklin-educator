@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.72'
+version = '0.3.73'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -18,17 +18,7 @@ classifiers = [
 ]
 requires-python = ">= 3.9"
 dependencies = [
-    'requests>=2.32.3',
-    'colorama>=0.4.6',
-    'readchar>=4.0.5',
-    'click',
-    'click-plugins',
-    'psutil',
-    'jupyter',
-    'packaging',
-    'pyyaml',
-    'pyperclip',
-    # 'importlib_resources',
+    'franklin',
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
@@ -43,15 +33,15 @@ readme = "README.md"
 
 [project.urls]
 Homepage = "https://munch-group.org/franklin-educator"
-Documentation = "https://munch-group.org/franklin-educator"
-Repository = "https://github.com/munch-group/franklin-git.educator"
+Documentation = "https://munch-group.org/franklin"
+Repository = "https://github.com/munch-group/franklin-educator.git"
 Issues = "https://github.com/munch-group/franklin-educator/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [project.entry-points."franklin.plugins"]
-exercise = "franklin_educator.git:exercise"
+admin = "franklin_educator.users:admin"
 
 
 # [project.entry-points."franklin.plugins"]
@@ -69,4 +59,4 @@ exercise = "franklin_educator.git:exercise"
 # docker = "franklin_educator.howto:docker"
 
 [tool.setuptools.package-data]
-franklin_educator = ["data/*.yaml", "data/gitui/*", "data/repo_templates/exercise/*", "data/repo_templates/base/*"]
+franklin_educator = ["data/*.yaml", "data/gitui/*"]
