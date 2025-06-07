@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.78'
+version = '0.3.79'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -67,10 +67,14 @@ franklin_educator = [
 
 
 [tool.pixi.workspace]
-channels = ["conda-forge"]
+channels = ["conda-forge", "munch-group"]
 platforms = ["osx-arm64"]
 
 [tool.pixi.pypi-dependencies]
 franklin-educator = { path = ".", editable = true }
 
 [tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+franklin = ">=0.24.93,<0.25"
+rapidfuzz = ">=3.13.0,<4"

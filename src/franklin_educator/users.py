@@ -5,6 +5,7 @@ import os
 from subprocess import DEVNULL, STDOUT, PIPE
 from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Tuple, List, Dict, Callable, Any
+import requests
 
 from franklin import config as cfg
 from franklin import utils
@@ -14,63 +15,88 @@ from franklin.logger import logger
 from . import encrypt
 from . import git
 
+from rapidfuzz import process, fuzz
+import unicodedata
+import re
 
-import requests
 
-token_path_templ = os.path.dirname(sys.modules['franklin_educator'].__file__) + '/data/admin/{}_token.enc'
 
-def update_project_permissions(user_id: int, project_id: int, access_level: int, api_token: str):
-    # API endpoint to update existing member
-    url = f"{cfg.gitlab_domain}/api/v4/projects/{project_id}/members/{user_id}"
+perm = {
+    'No access': 0,
+    'Reporter': 20,
+    'Maintainer': 40,
+    'Owner': 50,
+    'Admin': 60
+}
 
-    headers = {
-        "PRIVATE-TOKEN": api_token,
-        "Content-Type": "application/json"
-    }
+permission_levels = {
+    'guest': (perm['Reporter'], perm['Reporter'], perm['Reporter']),
+    'ta': (perm['Reporter'], perm['Maintainer'], perm['Maintainer']),
+    'prof': (perm['Reporter'], perm['Owner'], perm['Owner']),
+    'admin': (perm['Admin'], perm['Admin'],  perm['Admin']),
+}
+# mbg aliases
+permission_levels['vip'] = permission_levels['prof']
+permission_levels['inst'] = permission_levels['ta']
 
-    payload = {
-        "access_level": access_level
-    }
 
-    # Execute request
-    response = requests.put(url, headers=headers, json=payload)
+def get_group_members(group_id: str, api_token: str):
+    """Get all members of a group in GitLab."""
 
-    # Output response
+    headers = {'PRIVATE-TOKEN': api_token}
+    url = f'https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/members/all'
+
+    response = requests.get(url, headers=headers)
+    members = {}
+    for member in response.json():
+        members[member['id']] = member['access_level']
+    return members
+
+# def update_project_permissions(user_id: int, project_id: int, access_level: int, api_token: str):
+
+
+#     # API endpoint to update existing member
+#     url = f"https://{cfg.gitlab_domain}/api/v4/projects/{project_id}/members/{user_id}"
+
+#     headers = {
+#         "PRIVATE-TOKEN": api_token,
+#         "Content-Type": "application/json"
+#     }
+
+#     payload = {
+#         "access_level": access_level
+#     }
+
+#     # Execute request
+#     response = requests.put(url, headers=headers, json=payload)
+
+#     # Output response
+#     if response.status_code == 200:
+#         print("Access level updated successfully.")
+#     elif response.status_code == 404:
+#         print("User is not a member of the project.")
+#     else:
+#         print(f"Error {response.status_code}: {response.json()}")
+
+
+def get_user_info(user_id: int, api_token: str):
+    """Get user information from GitLab by user ID."""
+    
+    # API endpoint to get user information
+    # Note: Replace 'your_token' with your actual GitLab private token
+    headers = {'PRIVATE-TOKEN': api_token}
+    url = f'https://{cfg.gitlab_domain}/api/v4/users/{user_id}'
+
+    response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        print("Access level updated successfully.")
-    elif response.status_code == 404:
-        print("User is not a member of the project.")
+        return response.json()
     else:
-        print(f"Error {response.status_code}: {response.json()}")
-
-
-def update_group_permissions(user_id: int, group_id: int, access_level: int, api_token: str):
-    # API endpoint to update existing member
-    url = f"{cfg.gitlab_domain}/api/v4/groups/{group_id}/members/{user_id}"
-
-    headers = {
-        "PRIVATE-TOKEN": api_token,
-        "Content-Type": "application/json"
-    }
-
-    payload = {
-        "access_level": access_level
-    }
-
-    # Execute request
-    response = requests.put(url, headers=headers, json=payload)
-
-    # Output response
-    if response.status_code == 200:
-        print("Access level updated successfully.")
-    elif response.status_code == 404:
-        print("User is not a member of the project.")
-    else:
-        print(f"Error {response.status_code}: {response.json()}")
+        print(f"Error fetching user info: {response.status_code}")
+        return None
 
 
 def get_group_id(group_name, api_token):
-    url = f"{cfg.gitlab_domain}/api/v4/groups"
+    url = f"https://{cfg.gitlab_domain}/api/v4/groups"
     headers = {"PRIVATE-TOKEN": api_token}
     response = requests.get(url, headers=headers, params={"search": group_name})
     for group in response.json():
@@ -79,7 +105,7 @@ def get_group_id(group_name, api_token):
 
 
 def get_project_id(project_name, group_id, api_token):
-    url = f"{cfg.gitlab_domain}/api/v4/groups/{group_id}/projects"
+    url = f"https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/projects"
     headers = {"PRIVATE-TOKEN": api_token}
     response = requests.get(url, headers=headers)
     for project in response.json():
@@ -88,25 +114,68 @@ def get_project_id(project_name, group_id, api_token):
 
 
 def get_user_id(user_name, api_token):
-    url = f"{cfg.gitlab_domain}/api/v4/users?username={user_name}"
+    url = f"https://{cfg.gitlab_domain}/api/v4/users?username={user_name}"
     headers = {"PRIVATE-TOKEN": api_token}
     response = requests.get(url, headers=headers)
     user = response.json()[0]
     return user['id']
 
 
-def update_permissions(user_name, role, course, user, password, project=None):
+def update_group_permissions(user_id: int, group_id: int, access_level: int, api_token: str):
 
-    with open(token_path_templ.format(user), "rb") as f:
-        encrypted = f.read()
-    api_token = encrypt.decrypt_token(encrypted, password)
+    members = get_group_members(group_id, api_token)
 
+    headers = {"PRIVATE-TOKEN": api_token, "Content-Type": "application/json"}
+    if user_id not in members:
+        url = f"https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/members"
+        response = requests.post(url, headers=headers, json={
+            "user_id": user_id,
+            "access_level": access_level
+        })
+        if response.status_code == 200:
+            print("Member added and permissions set successfully.")
+        else:
+            print(f"Error {response.status_code}: {response.json()}")
+    else:
+        url = f"https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/members/{user_id}"
+        response = requests.put(
+            url, 
+            headers=headers, 
+            json={"access_level": access_level}
+            )
+        if response.status_code == 200:
+            print("Access level updated successfully.")
+        # elif response.status_code == 404:
+        #     print("User is not a member of the project.")
+        else:
+            print(f"Error {response.status_code}: {response.json()}")
+
+
+def update_permissions(user_name, role, course, listed_course_name, user, password, project=None):
+
+    api_token = encrypt.get_api_token(user, password)
 
     user_id = get_user_id(user_name, api_token)
     group_id = get_group_id(cfg.gitlab_group, api_token)
     subgroup_id = get_group_id(course, api_token)
 
-    group_perm, subgroup_perm, project_perm = cfg.permissions[role]
+    # term.echo(f"Updating permissions for user '{user_name}' "
+    #           f"({get_user_info(user_id, api_token)['name']}) "
+    #           f"with role '{role}' in course '{listed_course_name}' "
+    #           f"(repo: {course}).")
+    term.secho()
+    term.secho(f"Granting access to")
+    term.secho(f'To user:')
+    term.secho(f"  {user_name} ({get_user_info(user_id, api_token)['name']})", fg='green')
+    term.secho(f'as:')
+    term.secho(f"  {role}", fg='green')
+    term.secho(f'for course:')
+    name = f', ({listed_course_name})' if listed_course_name else ''
+    term.secho(f'  {course}' + name, fg='green')
+    term.secho()
+    click.confirm("Do you want to continue?", abort=True, default=True)
+
+    group_perm, subgroup_perm, project_perm = permission_levels[role]
 
     update_group_permissions(user_id, group_id, group_perm, api_token)
     update_group_permissions(user_id, subgroup_id, subgroup_perm, api_token)
@@ -129,6 +198,7 @@ def admin():
     """Admin commands for access control.
     """
 
+
 @admin.group(cls=utils.AliasedGroup)
 def token():
     """Admin commands for admin tokens.
@@ -145,7 +215,7 @@ def token():
 def set_admin_token(user, password, api_token, ):
     """Stores an encrypted token for the admin user.
     """
-    encrypt.store_encrypted_token(token_path_templ.format(user), api_token, password)
+    encrypt.store_encrypted_token(user, password, api_token)
 
 
 @token.command('get')
@@ -156,10 +226,70 @@ def set_admin_token(user, password, api_token, ):
 def get_admin_token(user, password):
     """Stores an encrypted token for the admin user.
     """
-    with open(token_path_templ.format(user), "rb") as f:
-        encrypted = f.read()
-    decrypted_token = encrypt.decrypt_token(encrypted, password)
-    term.echo(f'Stored personal access token: {decrypted_token}')
+    api_token = encrypt.get_api_token(user, password)
+    term.echo(f'Stored personal access token: {api_token}')
+
+
+
+
+@admin.command('find')
+@click.option('--user', prompt=True,
+              confirmation_prompt=False, help='User name')
+@click.option('--password', prompt=True, hide_input=True,
+              confirmation_prompt=False, help='Password')
+@click.argument("query", nargs=-1)
+def find_users(query, user, password):
+    api_token = encrypt.get_api_token(user, password)
+    
+    users = []
+    page = 1
+    while True:
+        response = requests.get(
+            f"http://{cfg.gitlab_domain}/api/v4/users",
+            headers = {"PRIVATE-TOKEN": api_token},
+            params={"per_page": 100, "page": page}
+        )
+        data = response.json()
+        if not data:
+            break
+        users.extend(data)
+        page += 1
+
+    # Output user info
+    user_names = []
+    names = []
+    for user in users:
+        user_names.append(user['username'])
+        names.append(user['name'])
+
+    def normalize(name):
+        name = name.lower()
+        name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode()
+        name = re.sub(r"[^\w\s]", "", name)
+        return name.strip()
+
+    normalized_names = [normalize(n) for n in names]
+
+    for q in query:
+        term.echo()
+        query_normalized = normalize(q)
+        # match = process.extractOne(query_normalized, normalized_names, scorer=fuzz.WRatio)
+#        match = process.extractOne(query_normalized, normalized_names, scorer=fuzz.WRatio, score_cutoff=90.0)
+        matches = process.extract(query_normalized, normalized_names, scorer=fuzz.WRatio, score_cutoff=80.0, limit=5)
+        prev = 0
+        if matches:
+            for match in matches:
+                name, score, index = match
+                # term.secho(str(round(score, 1)).ljust(4), nl=False)
+                term.secho(user_names[index].ljust(9), fg='green', nl=False)
+                term.secho(names[index])
+                if score - prev > 1:
+                    break
+                prev = score
+        else:
+            print(f"No match above threshold for '{q}'")
+    term.echo()
+
 
 
 
@@ -168,19 +298,41 @@ def grant():
     """Commands for granting/revoking user permissions.
     """
 
+
+@grant.command('guest')
+@click.argument('user_name')
+@click.option('--user', prompt=True,
+              confirmation_prompt=False, help='Admin user')
+@click.option('--password', prompt=True, hide_input=True,
+              confirmation_prompt=False, help='Admin password')
+@click.option('--course', '-c', prompt=True, required=False, help='Course name')
+@utils.crash_report
+@git.gitlab_ssh_access
+def grant_ta_role(user_name, user, password, course=None):
+    """Grant guest permissions to a user (read only).
+    """
+    listed_course_name = None
+    if not course:
+        course, listed_course_name = gitlab.pick_course()
+    update_permissions(user_name, 'guest', course, listed_course_name, user, password)
+
+
 @grant.command('ta')
 @click.argument('user_name')
 @click.option('--user', prompt=True,
               confirmation_prompt=False, help='Admin user')
 @click.option('--password', prompt=True, hide_input=True,
               confirmation_prompt=False, help='Admin password')
-@click.option('course', '--course', '-c', required=False, help='Course name')
+@click.option('--course', '-c', prompt=True, required=False, help='Course name')
 @utils.crash_report
 @git.gitlab_ssh_access
 def grant_ta_role(user_name, user, password, course=None):
     """Grant TA permissions to a user.
     """
-    update_permissions(user_name, 'ta', course, user, password)
+    listed_course_name = None
+    if not course:
+        course, listed_course_name = gitlab.pick_course()
+    update_permissions(user_name, 'ta', course, listed_course_name, user, password)
 
 
 @grant.command('prof')
@@ -189,14 +341,17 @@ def grant_ta_role(user_name, user, password, course=None):
               confirmation_prompt=False, help='Admin user')
 @click.option('--password', prompt=True, hide_input=True,
               confirmation_prompt=False, help='Admin password')
-@click.option('course', '--course', '-c', required=False, help='Course name')
+@click.option('--course', '-c', prompt=True, required=False, help='Course name')
 @utils.crash_report
 @git.gitlab_ssh_access
 def grant_prof_role(user_name, user, password, course=None):
     """Grant course responsible permissions to a user.
     """
-    update_permissions(user_name, 'prof', course, user, password)
-
+    listed_course_name = None
+    if not course:
+        course, listed_course_name = gitlab.pick_course()
+    
+    update_permissions(user_name, 'prof', course, listed_course_name, user, password)
 
 # @grant.command('admin')
 # @click.argument('user')
