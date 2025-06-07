@@ -17,7 +17,7 @@ from . import git
 
 import requests
 
-token_path_templ = os.path.dirname(sys.modules['franklin-educator'].__file__) + '/data/admin/{}_token.enc'
+token_path_templ = os.path.dirname(sys.modules['franklin_educator'].__file__) + '/data/admin/{}_token.enc'
 
 def update_project_permissions(user_id: int, project_id: int, access_level: int, api_token: str):
     # API endpoint to update existing member
