@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.79'
+version = '0.3.80'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -42,6 +42,7 @@ where = ["src"]
 
 [project.entry-points."franklin.plugins"]
 admin = "franklin_educator.users:admin"
+exercise = "franklin_educator.git:exercise"
 
 
 # [project.entry-points."franklin.plugins"]
