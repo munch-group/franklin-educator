@@ -102,9 +102,9 @@ def update_permissions(user_name, role, course, user, password, project=None):
     api_token = encrypt.decrypt_token(encrypted, password)
 
 
-    user_id = get_user_id(user_name)
-    group_id = get_group_id(cfg.gitlab_group)
-    subgroup_id = get_group_id(course)
+    user_id = get_user_id(user_name, api_token)
+    group_id = get_group_id(cfg.gitlab_group, api_token)
+    subgroup_id = get_group_id(course, api_token)
 
     group_perm, subgroup_perm, project_perm = cfg.permissions[role]
 

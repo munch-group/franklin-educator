@@ -169,3 +169,6 @@ docs/.gitignore
 **/.DS_Store
 
 franklin.log
+# pixi environments
+.pixi
+*.egg-info
