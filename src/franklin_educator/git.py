@@ -782,6 +782,28 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
     webbrowser.open(repo_settings_gitlab_url, new=1)
 
+import signal
+
+class EditCycleKeyboardInterrupt:
+    """
+    Context manager to suppress KeyboardInterrupt
+    """
+    def __enter__(self):
+        self.signal_received = False
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+                
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        # logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+        term.boxed_text("Do not interrupt this workflow",
+                        ['Your changes are only saved when the workflow is '''
+                        ' completed'], fg='red'
+                        )
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+
+
 
 @options.git_commands
 @exercise.command('edit')
@@ -826,16 +848,9 @@ def edit_cycle(commands: bool = False):
     docker.failsafe_start_desktop()
     time.sleep(2)
 
-    with utils.DelayedKeyboardInterrupt():
+    with EditCycleKeyboardInterrupt():
 
         image_url, repo_local_path = git_down(only_with_image=True)
-        term.echo()
-        term.secho("Franklin now launches jupyter for you to edit "
-                   "the exercise")
-        term.secho("IMPORTANT:\nYour changes are only saved if you complete"
-                   "the workflow by pressing Q in this window once you are "
-                   "done editing the notebook", fg='magenta')
-        click.pause("Press Enter to continue.")
 
         jupyter.launch_jupyter(image_url, 
                                cwd=os.path.basename(repo_local_path))
