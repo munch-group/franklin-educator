@@ -384,7 +384,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     # Finish any umcompleted merge
     finish_any_merge_in_progress(repo_local_path)
 
-    term.secho("\nChecking for changes to local files.", fg='red')
+#    term.secho("Inspecting file changes")
 
     # add
     try:
@@ -396,7 +396,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     
     try:
         staged_changes = subprocess.check_output(
-            utils.fmt_cmd(f'git -C "{repo_local_path}" diff --cached')).decode()
+           utils.fmt_cmd(f'git -C "{repo_local_path}" diff --cached')).decode()
     except subprocess.CalledProcessError as e:        
         print(e.output.decode())
         raise click.Abort()
@@ -404,7 +404,11 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
     if staged_changes:
 
         # commit
-        msg = click.prompt("Files changed. Enter short description of the nature of the changes made", default="an update", show_default=True)
+        term.echo("Your exercise files changed")
+        term.echo("Enter *short* description of the nature of the '" \
+        "'changes made:", fg='green')        
+        msg = click.prompt("Description", default="Exercise update",
+                           show_default=True)
         try:
             output = subprocess.check_output(
                 utils.fmt_cmd(

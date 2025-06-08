@@ -230,8 +230,6 @@ def get_admin_token(user, password):
     term.echo(f'Stored personal access token: {api_token}')
 
 
-
-
 @admin.command('find')
 @click.option('--user', prompt=True,
               confirmation_prompt=False, help='User name')
@@ -239,6 +237,8 @@ def get_admin_token(user, password):
               confirmation_prompt=False, help='Password')
 @click.argument("query", nargs=-1)
 def find_users(query, user, password):
+    """Find users in GitLab by name.
+    """
     api_token = encrypt.get_api_token(user, password)
     
     users = []
@@ -289,8 +289,6 @@ def find_users(query, user, password):
         else:
             print(f"No match above threshold for '{q}'")
     term.echo()
-
-
 
 
 @admin.group(cls=utils.AliasedGroup)
