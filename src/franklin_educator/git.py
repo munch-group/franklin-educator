@@ -573,10 +573,13 @@ def gitui():
     """Launch terminal git GUI
     """
     config_gitui()
-
+    config_file = Path.home() / '.gitui/theme.ron'
     cmd = f"eval $(ssh-agent) && ssh-add ~/.ssh/id_rsa "
-    f"&& gitui -t {str(Path.home() / '.gitui/theme.ron')}"
-    subprocess.check_output(cmd, shell=True)
+    f"&& gitui -t {config_file}"
+    logger.debug(f"Launching gitui with command: {cmd}")
+    subprocess.run(cmd, shell=True,
+                    stdout=PIPE, stderr=STDOUT)
+    # subprocess.check_output(cmd, shell=True)
 
 
 @options.git_commands
