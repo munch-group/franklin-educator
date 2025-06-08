@@ -330,8 +330,15 @@ def git_down(commands=False, only_with_image=False) -> None:
         try:
             git_cmd(f'git clone {clone_url}')
         except subprocess.CalledProcessError as e:
-            term.secho(f"Failed to clone repository: {e.output.decode()}", 
+            output = e.output.decode()
+            term.secho(f"Cloning of repository failed:\n{output}", 
                        fg='red')
+            if 'Your SSH key has expired' in output:
+                term.secho("The SSH key for your GitLab account has expired. "
+                           "See the documentation for how to register your "
+                           "SSH key again")
+                term.secho(f'{cfg.documentation_url}/pages/about/ssh.html',
+                            fg='blue')
             raise click.Abort()
         term.echo()        
         term.secho(f"Cloned repository to {repo_local_path}.", fg='green')
@@ -607,7 +614,7 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
     #     ]
 
     # template files are stored in franklin because we need them there too
-    template_dir = os.path.dirname(sys.modules['franklin_educator'].__file__) + '/data/templates/exercise'
+    template_dir = Path(os.path.dirname(sys.modules['franklin_educator'].__file__)) / 'data' / 'templates' / 'exercise'
     shutil.copytree(template_dir, repo_dir, dirs_exist_ok=True)
 
     # os.makedirs(repo_dir, exist_ok=False)
