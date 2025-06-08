@@ -334,7 +334,7 @@ def git_down(commands=False, only_with_image=False) -> None:
                        fg='red')
             raise click.Abort()
         term.echo()        
-        term.secho(f"Local repository updated.", fg='green')
+        term.secho(f"Cloned repository to {repo_local_path}.", fg='green')
 
     config_local_repo(repo_local_path)
 
@@ -550,7 +550,8 @@ def down():
 
 
 @utils.crash_report
-@click.option('-d', '--directory', default=None)
+# @click.option('-d', '--directory', default=None)
+@click.argument('directory', default=None, type=click.Path(exists=True))
 @click.option('--remove/--no-remove', default=True, show_default=True)
 @exercise.command(hidden=True)
 @gitlab_ssh_access
