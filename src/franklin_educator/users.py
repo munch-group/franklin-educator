@@ -124,9 +124,12 @@ def get_user_id(user_name, api_token):
 def update_group_permissions(user_id: int, group_id: int, access_level: int, api_token: str):
 
     members = get_group_members(group_id, api_token)
+    logger.debug('existing members', members)
 
     headers = {"PRIVATE-TOKEN": api_token, "Content-Type": "application/json"}
     if user_id not in members:
+        logger.debug('Adding usr to group', user_id, group_id, access_level)
+
         url = f"https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/members"
         response = requests.post(url, headers=headers, json={
             "user_id": user_id,
@@ -137,6 +140,8 @@ def update_group_permissions(user_id: int, group_id: int, access_level: int, api
         else:
             print(f"Error {response.status_code}: {response.json()}")
     else:
+        logger.debug('Updating access to group', user_id, group_id, access_level)
+        
         url = f"https://{cfg.gitlab_domain}/api/v4/groups/{group_id}/members/{user_id}"
         response = requests.put(
             url, 
@@ -206,12 +211,9 @@ def token():
 
 
 @token.command('set')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='User name')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Password')
-@click.option('--api-token', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Admin personal API token')
+@click.option('--user', prompt=True, help='User name')
+@click.option('--password', prompt=True, hide_input=True, help='Password')
+@click.option('--api-token', prompt=True, hide_input=True, help='Admin personal API token')
 def set_admin_token(user, password, api_token, ):
     """Stores an encrypted token for the admin user.
     """
@@ -219,10 +221,8 @@ def set_admin_token(user, password, api_token, ):
 
 
 @token.command('get')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='User name')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Password')
+@click.option('--user', prompt=True, help='User name')
+@click.option('--password', prompt=True, hide_input=True, help='Password')
 def get_admin_token(user, password):
     """Stores an encrypted token for the admin user.
     """
@@ -231,10 +231,8 @@ def get_admin_token(user, password):
 
 
 @admin.command('find')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='User name')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Password')
+@click.option('--user', prompt=True, help='User name')
+@click.option('--password', prompt=True, hide_input=True, help='Password')
 @click.argument("query", nargs=-1)
 def find_users(query, user, password):
     """Find users in GitLab by name.
@@ -287,7 +285,7 @@ def find_users(query, user, password):
                     break
                 prev = score
         else:
-            print(f"No match above threshold for '{q}'")
+            print(f"No users found matching '{q}'")
     term.echo()
 
 
@@ -299,54 +297,48 @@ def grant():
 
 @grant.command('guest')
 @click.argument('user_name')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='Admin user')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Admin password')
-@click.option('--course', '-c', prompt=True, required=False, help='Course name')
+@click.option('--user', prompt=True, help='Admin user')
+@click.option('--password', prompt=True, hide_input=True, help='Admin password')
+@click.option('--course', '-c', required=False, help='Course name')
 @utils.crash_report
 @git.gitlab_ssh_access
 def grant_ta_role(user_name, user, password, course=None):
     """Grant guest permissions to a user (read only).
     """
     listed_course_name = None
-    if not course:
+    if course is None:
         course, listed_course_name = gitlab.pick_course()
     update_permissions(user_name, 'guest', course, listed_course_name, user, password)
 
 
 @grant.command('ta')
 @click.argument('user_name')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='Admin user')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Admin password')
-@click.option('--course', '-c', prompt=True, required=False, help='Course name')
+@click.option('--user', prompt=True, help='Admin user')
+@click.option('--password', prompt=True, hide_input=True, help='Admin password')
+@click.option('--course', '-c', required=False, help='Course name')
 @utils.crash_report
 @git.gitlab_ssh_access
 def grant_ta_role(user_name, user, password, course=None):
     """Grant TA permissions to a user.
     """
     listed_course_name = None
-    if not course:
+    if course is None:
         course, listed_course_name = gitlab.pick_course()
     update_permissions(user_name, 'ta', course, listed_course_name, user, password)
 
 
 @grant.command('prof')
 @click.argument('user_name')
-@click.option('--user', prompt=True,
-              confirmation_prompt=False, help='Admin user')
-@click.option('--password', prompt=True, hide_input=True,
-              confirmation_prompt=False, help='Admin password')
-@click.option('--course', '-c', prompt=True, required=False, help='Course name')
+@click.option('--user', prompt=True, help='Admin user')
+@click.option('--password', prompt=True, hide_input=True, help='Admin password')
+@click.option('--course', '-c', required=False, help='Course name')
 @utils.crash_report
 @git.gitlab_ssh_access
 def grant_prof_role(user_name, user, password, course=None):
     """Grant course responsible permissions to a user.
     """
     listed_course_name = None
-    if not course:
+    if course is None:
         course, listed_course_name = gitlab.pick_course()
     
     update_permissions(user_name, 'prof', course, listed_course_name, user, password)
