@@ -234,11 +234,13 @@ def config_gitui() -> None:
     Copies gitui config files to the user's config directory.
     """
     path = str(Path.home() / '.gitui')
+    package_data_dir = os.path.dirname(
+        sys.modules['franklin_educator'].__file__) + '/data/gitui'
 
     if not os.path.exists(path):
         os.makedirs(path)       
-    for file in Path('data/gitui').glob('*'):
-        print(f'Copying {file} to {path}')
+    for file in Path(package_data_dir).glob('*'):
+        logger.debug(f'Copying {file} to {path}')
         shutil.copy(file, path)
 
 
@@ -573,12 +575,19 @@ def gitui():
     """Launch terminal git GUI
     """
     config_gitui()
-    config_file = Path.home() / '.gitui/theme.ron'
+    # config_file = Path.home() / '.gitui/theme.ron'
     rsa_file = Path.home() / '.ssh/id_rsa'
-    cmd = f"eval $(ssh-agent) && ssh-add {rsa_file} && gitui -t {config_file}"
+    # cmd = f"eval $(ssh-agent) && ssh-add {rsa_file} && gitui -t {config_file}"
+    cmd = f"eval $(ssh-agent) && ssh-add {rsa_file} && gitui"
     logger.debug(f"Launching gitui with command: {cmd}")
     subprocess.run(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
     # subprocess.check_output(cmd, shell=True)
+
+# $HOME/.config/gitui/key_bindings.ron (mac)
+# $XDG_CONFIG_HOME/gitui/key_bindings.ron (linux using XDG)
+# $HOME/.config/gitui/key_bindings.ron (linux)
+# %APPDATA%/gitui/key_bindings.ron (Windows)
+
 
 
 @options.git_commands
