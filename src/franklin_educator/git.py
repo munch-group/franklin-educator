@@ -454,8 +454,11 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
             raise click.Abort()
 
         if 'nothing to commit, working tree clean' in output:
-            shutil.rmtree(repo_local_path)
-            term.secho("Local files removed.")
+            try:
+                shutil.rmtree(repo_local_path)
+                term.secho("Local files removed.")
+            except PermissionError as e:
+                term.secho("You can remove the local files.")
 
         elif 'nothing added to commit but untracked files present' in output:
 
