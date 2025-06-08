@@ -607,7 +607,7 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
     #     ]
 
     # template files are stored in franklin because we need them there too
-    template_dir = os.path.dirname(sys.modules['franklin'].__file__) + '/data/templates/exercise'
+    template_dir = os.path.dirname(sys.modules['franklin_educator'].__file__) + '/data/templates/exercise'
     shutil.copytree(template_dir, repo_dir, dirs_exist_ok=True)
 
     # os.makedirs(repo_dir, exist_ok=False)
