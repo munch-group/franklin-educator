@@ -11,5 +11,4 @@ pyperclip
 selenium
 webdriver-manager
 rapidfuzz
-pycrypto
 pycryptodome
