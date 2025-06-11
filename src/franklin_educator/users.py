@@ -43,7 +43,7 @@ permission_levels['inst'] = permission_levels['ta']
 
 def update_group_permissions(user_id: int, group_id: int, access_level: int, api_token: str):
 
-    members = get_group_members(group_id, api_token)
+    members = gitlab.get_group_members(group_id, api_token)
     logger.debug('existing members', members)
 
     headers = {"PRIVATE-TOKEN": api_token, "Content-Type": "application/json"}
@@ -80,9 +80,9 @@ def update_permissions(user_name, role, course, listed_course_name, user, passwo
 
     api_token = encrypt.get_api_token(user, password)
 
-    user_id = get_user_id(user_name, api_token)
-    group_id = get_group_id(cfg.gitlab_group, api_token)
-    subgroup_id = get_group_id(course, api_token)
+    user_id = gitlab.get_user_id(user_name, api_token)
+    group_id = gitlab.get_group_id(cfg.gitlab_group, api_token)
+    subgroup_id = gitlab.get_group_id(course, api_token)
 
     # term.echo(f"Updating permissions for user '{user_name}' "
     #           f"({get_user_info(user_id, api_token)['name']}) "
@@ -91,7 +91,7 @@ def update_permissions(user_name, role, course, listed_course_name, user, passwo
     term.secho()
     term.secho(f"Granting access to")
     term.secho(f'To user:')
-    term.secho(f"  {user_name} ({get_user_info(user_id, api_token)['name']})", fg='green')
+    term.secho(f"  {user_name} ({gitlab.get_user_info(user_id, api_token)['name']})", fg='green')
     term.secho(f'as:')
     term.secho(f"  {role}", fg='green')
     term.secho(f'for course:')
