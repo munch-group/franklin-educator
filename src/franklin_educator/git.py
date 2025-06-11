@@ -601,7 +601,7 @@ def gitui():
 
 
 @options.git_commands
-def create_repository_from_template(course, repo_name, commands: bool = False):
+def create_repository_from_template(course, repo_name, api_token, commands: bool = False):
 
     git_cmd = partial(_git_cmd, commands=commands)
 
@@ -630,9 +630,12 @@ def create_repository_from_template(course, repo_name, commands: bool = False):
         f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
 
     git_cmd(f'git init --initial-branch=main', repo_dir)
-    git_cmd(f'git remote add origin {remote}', repo_dir)
     git_cmd(f'git add .', repo_dir)
     git_cmd(f'git commit -m "Initial commit"', repo_dir)
+
+    gitlab.create_public_gitlab_project(repo_name, course, api_token)
+
+    git_cmd(f'git remote add origin {remote}', repo_dir)
     git_cmd(f'git push -u origin main', repo_dir)
 
     #shutil.rmtree(repo_dir)
@@ -653,12 +656,15 @@ def repository_exists(course, repo_name):
         return False
 
 
+@click.option('--user', default=None, required=False, prompt=True,)
+@click.option('--password', default=None, required=False, prompt=True, hidden=True)
 @click.option('--course', default=None)
 @click.option('--new-repo-name', default=None)
 @exercise.command('new')
 @utils.crash_report
 @gitlab_ssh_access
-def create_exercise(course: str = None, new_repo_name: str = None) -> None:
+def create_exercise(course: str = None, user: str = None, password: str = None,
+                     new_repo_name: str = None) -> None:
     """Create a new exercise repository for a course.
 
     Parameters
@@ -668,6 +674,8 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     new_repo_name : 
         Name of the new repository.
     """
+
+    api_token = gitlab.get_api_token(user, password)
 
     if course is None:
         course, danish_course_name = gitlab.pick_course()
@@ -712,7 +720,7 @@ def create_exercise(course: str = None, new_repo_name: str = None) -> None:
     else:
         click.Abort()
 
-    create_repository_from_template(course, new_repo_name)
+    create_repository_from_template(course, new_repo_name, api_token)
 
     term.echo('')
     term.secho(f'The exercise is being created and will be available through'

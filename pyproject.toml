@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.94'
+version = '0.3.95'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -67,7 +67,6 @@ exercise = "franklin_educator.git:exercise"
 
 # [project.entry-points."franklin.manage.plugins"]
 # create = "franklin_educator.git:create_exercise"
-# edit = "franklin_educator.git:edit_cycle"
 
 # [project.entry-points."franklin.howto.plugins"]
 # docker = "franklin_educator.howto:docker"
@@ -89,7 +88,4 @@ franklin_educator = { path = ".", editable = true }
 franklin = { path = "../franklin", editable = true }
 
 [tool.pixi.tasks]
-
-[tool.pixi.dependencies]
-conda-build = ">=25.5.0,<26"
 
