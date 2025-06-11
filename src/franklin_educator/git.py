@@ -600,7 +600,6 @@ def gitui():
 # %APPDATA%/gitui/key_bindings.ron (Windows)
 
 
-
 @options.git_commands
 def create_repository_from_template(course, repo_name, commands: bool = False):
 

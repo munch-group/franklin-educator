@@ -198,10 +198,78 @@ def update_permissions(user_name, role, course, listed_course_name, user, passwo
     # })
 
 
+# clone password repo into franklin-educator/data/passwords dir and sync that way
+# call th password  repo _passwords and skip all 
+
+# add three levels of access: admin, vip, ta
+
+
+def create_impersonation_token(user_id: int, token_name: str, admin_api_token: str):
+
+    response = requests.post(
+        f"https://{cfg.gitlab_domain}/api/v4/users/{user_id}/impersonation_tokens",
+        headers={
+            "PRIVATE-TOKEN": admin_api_token
+            },
+        json= {
+            "name": 'api_access_token',
+            "scopes": ["api", "read_repository", "write_repository"], 
+            "expires_at": "2025-12-31"  # optional
+            }
+    )
+
+    if response.status_code == 201:
+        token_info = response.json()
+        print("Token created:")
+        print(f"Token: {token_info['token']}")
+        print(f"Scopes: {token_info['scopes']}")
+    else:
+        print(f"Error: {response.status_code} - {response.text}")
+
+
 @click.group(cls=utils.AliasedGroup)
 def admin():
     """Admin commands for access control.
     """
+
+
+@admin.group(cls=utils.AliasedGroup)
+def password():
+    """Admin commands for admin tokens.
+    """
+
+# add_admin(user, password, api_token, admin, admin_password)
+
+# set_password(user, password, admin, admin_password)
+
+# set_token(user, password)
+
+
+@password.command('set')
+@click.option('--admin', prompt=True, help='User name')
+@click.option('--password', prompt=True, hide_input=True, help='Password')
+@click.argument("user")
+def set_password(admin, admin_password, user):
+
+
+
+    encrypt.encrypt(user, user_password, 
+                    admin_passwords={
+                        admin: admin_password
+                        }
+                    )
+
+
+# @password.command('get')
+# @click.option('--admin', prompt=True, help='User name')
+# @click.option('--password', prompt=True, hide_input=True, help='Password')
+# @click.argument("user")
+# def get_password(admin, password, user):
+#     """Stores an encrypted token for the user.
+#     """
+#     api_token = encrypt.decrypt(admin, password)
+#     term.echo(f'Stored personal access token: {api_token}')
+
 
 
 @admin.group(cls=utils.AliasedGroup)
@@ -213,21 +281,32 @@ def token():
 @token.command('set')
 @click.option('--user', prompt=True, help='User name')
 @click.option('--password', prompt=True, hide_input=True, help='Password')
-@click.option('--api-token', prompt=True, hide_input=True, help='Admin personal API token')
-def set_admin_token(user, password, api_token, ):
-    """Stores an encrypted token for the admin user.
+@click.option('--api-token', prompt=True, hide_input=True, help='User API token')
+def set_token(user, password, api_token):
+    """Stores an encrypted token for the user.
     """
-    encrypt.store_encrypted_token(user, password, api_token)
+    encrypt.encrypt(user, password, api_token, "token.json")
 
 
 @token.command('get')
 @click.option('--user', prompt=True, help='User name')
 @click.option('--password', prompt=True, hide_input=True, help='Password')
-def get_admin_token(user, password):
-    """Stores an encrypted token for the admin user.
+def get_token(user, password):
+    """Stores an encrypted token for the user.
     """
-    api_token = encrypt.get_api_token(user, password)
+    api_token = encrypt.decrypt(user, password, "token.json")
     term.echo(f'Stored personal access token: {api_token}')
+
+
+
+# password set
+# password get
+# password change
+
+
+
+
+
 
 
 @admin.command('find')

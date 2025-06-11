@@ -8,4 +8,8 @@ jupyter
 packaging
 pyyaml
 pyperclip
-# importlib_resources
+selenium
+webdriver-manager
+rapidfuzz
+pycrypto
+pycryptodome
