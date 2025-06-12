@@ -12,7 +12,7 @@ from typing import Tuple, List, Dict, Callable, Any
 import webbrowser
 import pyperclip
 import platform
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 # import importlib_resources
 from functools import wraps, partial
 
@@ -788,8 +788,9 @@ def create_exercise(course: str = None,
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
 
     # webbrowser.open(repo_settings_gitlab_url, new=1)
-    with redirect_stderr(LoggerWriter(logger.debug)):
-        chrome.chrome_open_and_wait(repo_settings_gitlab_url)
+    with redirect_stdout(LoggerWriter(logger.debug)):
+        with redirect_stderr(LoggerWriter(logger.debug)):
+            chrome.chrome_open_and_wait(repo_settings_gitlab_url)
 
     visibility = gitlab.get_project_visibility(
         course, new_repo_name, api_token)
@@ -813,7 +814,7 @@ def create_exercise(course: str = None,
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue', 
                initial_indent='   ')
     term.echo()
-    term.secho(' - Once it is ready, you can use the franklin exercise edit" '
+    term.secho(' - Once it is ready, you can use the "franklin exercise edit" '
                'command to develop the exercise.', 
                subsequent_indent='   ')
     term.echo()
@@ -837,7 +838,7 @@ def create_exercise(course: str = None,
 
 
 
-@exercise.command("rename")
+@exercise.command("settings")
 @click.option('--course', default=None)
 @click.option('--exercise', default=None)
 @utils.crash_report
