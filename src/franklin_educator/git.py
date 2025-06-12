@@ -12,6 +12,7 @@ from typing import Tuple, List, Dict, Callable, Any
 import webbrowser
 import pyperclip
 import platform
+from contextlib import redirect_stderr
 # import importlib_resources
 from functools import wraps, partial
 
@@ -23,7 +24,7 @@ from franklin import jupyter
 from franklin import docker
 from franklin import update
 from franklin import options
-from franklin.logger import logger, LoggerWriter, redirect_stderr
+from franklin.logger import logger, LoggerWriter
 from franklin import chrome
 from franklin import system
 
