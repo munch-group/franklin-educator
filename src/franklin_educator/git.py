@@ -25,8 +25,10 @@ from franklin import docker
 from franklin import update
 from franklin import options
 from franklin.logger import logger
+from franklin import chrome
 from franklin import system
 
+from . import encrypt
 
 def check_ssh_set_up():
     cmd = f'ssh -T git@{cfg.gitlab_domain} <<<yes'
@@ -536,8 +538,8 @@ def clone(commands=False) -> None:
     """
     url = \
         f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
-    exercises_images = gitlab.get_registry_listing(url)
-    (course, _), (exercise, _) = gitlab.select_exercise(exercises_images)
+    # exercises_images = gitlab.get_registry_listing(url)
+    (course, _), (exercise, _) = gitlab.select_exercise()
     if os.path.exists(exercise):
         term.secho(f"The exercise repository '{exercise}' already exists "
                    f"at {os.path.abspath(exercise)}.", fg='red')
@@ -633,7 +635,7 @@ def create_repository_from_template(course, repo_name, api_token, commands: bool
     git_cmd(f'git add .', repo_dir)
     git_cmd(f'git commit -m "Initial commit"', repo_dir)
 
-    gitlab.create_public_gitlab_project(repo_name, course, api_token)
+#    gitlab.create_public_gitlab_project(repo_name, course, api_token)
 
     git_cmd(f'git remote add origin {remote}', repo_dir)
     git_cmd(f'git push -u origin main', repo_dir)
@@ -656,14 +658,15 @@ def repository_exists(course, repo_name):
         return False
 
 
-@click.option('--user', default=None, required=False, prompt=True,)
-@click.option('--password', default=None, required=False, prompt=True, hidden=True)
+# @click.option('--user', default=None, required=False, prompt=True,)
+# @click.option('--password', default=None, required=False, prompt=True, hidden=True)
 @click.option('--course', default=None)
 @click.option('--new-repo-name', default=None)
 @exercise.command('new')
 @utils.crash_report
 @gitlab_ssh_access
-def create_exercise(course: str = None, user: str = None, password: str = None,
+def create_exercise(course: str = None, 
+                    # user: str = None, password: str = None,
                      new_repo_name: str = None) -> None:
     """Create a new exercise repository for a course.
 
@@ -675,7 +678,7 @@ def create_exercise(course: str = None, user: str = None, password: str = None,
         Name of the new repository.
     """
 
-    api_token = gitlab.get_api_token(user, password)
+    api_token = 'adsfasdfasdf' #encrypt.get_api_token(user, password)
 
     if course is None:
         course, danish_course_name = gitlab.pick_course()
@@ -727,19 +730,41 @@ def create_exercise(course: str = None, user: str = None, password: str = None,
                'Franklin in about 10 minutes.')
 
     term.echo('')
-    term.boxed_text("The Last step is to add the Danish name of the exercise"
-                    " name shown in franklin's' menu", 
+    # term.boxed_text("The Last step is to add the Danish name of the exercise"
+    #                 " name shown in franklin's' menu", 
+    #                 lines=[
+    #                     'On the GitLab settings page for the exercise, '
+    #                     'add the (brief) Danish title of the exercise in the '
+    #                     '"Project description" text box.',
+    #                     '',
+    #                     'If you want to hide the exercise from students, '
+    #                     'just add the word HIDDEN',
+    #                     ''
+    #                     'Remember to to click "Save changes"!'
+    #                 ], fg='green')
+    term.boxed_text("The final steps", 
                     lines=[
-                        'On the GitLab settings page for the exercise, '
-                        'add the (brief) Danish title of the exercise in the '
-                        '"Project description" text box.',
+                        'The last steps take need to be cond in the '
+                        'GitLab Uer Interface. If you are prompted for login, '
+                        'just click teh UNI-AD button. You need to:',  
                         '',
+                        '1. Add the (brief) Danish title of the exercise. You fill '
+                        'that into the "Project description" text box. '
                         'If you want to hide the exercise from students, '
-                        'just add the word HIDDEN',
-                        ''
-                        'Remember to to click "Save changes"!'
-                    ], fg='green')
-
+                        'just add the word HIDDEN to the name',
+                        '',
+                        '2. Click "Save changes".',                        
+                        '',
+                        '3. Make the repository public. To do that, you '
+                        'click where it says "Visibility, project features, '
+                        'permissions" and change Project visibility from '
+                        '"Private" to "Public."',
+                        '',
+                        '4. Click "Save changes".',
+                        '',
+                        '5. Close the browser window.',
+                    ], fg='green', subsequent_indent='   ')
+    
 
     # term.secho(f"Last step is to add the exercise name visible to students:", 
     #            fg='green')
@@ -750,17 +775,48 @@ def create_exercise(course: str = None, user: str = None, password: str = None,
     #           'from students, just add the word HIDDEN')
     # term.echo('Remember to to click "Save changes"!')
     term.echo('')
-    click.pause(f"Press enter to open this GitLab page:")
+    click.pause(f"Press enter to open this GitLab page")
 
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
 
-    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
-    webbrowser.open(repo_settings_gitlab_url, new=1)
+    repo_pipelines_gitlab_url = \
+    f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
 
     term.echo()
-    term.echo('You can now use the "franklin exercise edit" command to '
-              'edit the exercise.', fg='green')
+    term.echo('Settings page: ', nl=False)
+    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
+
+    # webbrowser.open(repo_settings_gitlab_url, new=1)
+    with logger.redirect_stderr(logger.LoggerWriter(logger.debug)):
+        chrome.chrome_open_and_wait(repo_settings_gitlab_url)
+
+    visibility = gitlab.get_project_visibility(
+        course, new_repo_name, api_token)
+    if visibility != 'public':
+        term.secho("The exercise was not made public. You need to make it public "
+                   "to be able to use it with Franklin. Please follow the instructions above", fg='red')
+        term.echo()
+        click.pause(f"Press enter to open this GitLab page")
+        webbrowser.open(repo_settings_gitlab_url, new=1)
+        return
+
+
+
+    term.secho("Exercise created successfully", fg='green')
+
+    term.echo()
+    term.echo('Next steps:', bold=True)
+    term.echo()
+    term.echo(' - The Docker image is being built. '
+              'You can monitor the process from this page:', subsequent_indent='   ')
+    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
+    term.echo()
+    term.secho(' - Once it is ready, you can use the franklin exercise edit" '
+               'command to develop the exercise.', subsequent_indent='   ')
+    term.echo()
+    term.secho(' - If you know your way around git and vscode, you can clone it '
+               'right away using "franklin exercise clone"', subsequent_indent='   ')
     term.echo()
 
 
