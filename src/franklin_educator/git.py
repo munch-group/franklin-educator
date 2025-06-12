@@ -456,7 +456,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
         if 'nothing to commit, working tree clean' in output:
             try:
-                shutil.rmtree(repo_local_path)
+                shutil.rmtree(repo_local_path, onerror=utils.on_rm_error)
                 term.secho("Local files removed.")
             except PermissionError as e:
                 term.secho("You can remove the lo   cal files.")
@@ -489,7 +489,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
                     os.rmdir(subdir)
             path = os.path.join(repo_local_path, '.git')
             if os.path.exists(path):
-                shutil.rmtree(path)
+                shutil.rmtree(path, onerror=utils.on_rm_error)
             if os.path.exists(repo_local_path) \
                 and not os.listdir(repo_local_path):
                 os.rmdir(repo_local_path)
