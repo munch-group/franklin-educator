@@ -18,13 +18,12 @@ from functools import wraps, partial
 from franklin import config as cfg
 from franklin import utils
 from franklin import terminal as term
-from franklin import logger
 from franklin import gitlab
 from franklin import jupyter
 from franklin import docker
 from franklin import update
 from franklin import options
-from franklin.logger import logger
+from franklin.logger import logger, LoggerWriter, redirect_stderr
 from franklin import chrome
 from franklin import system
 
@@ -363,7 +362,6 @@ def main(admin_password):
         click.echo("Access granted.")
     else:
         click.echo("Access denied.")
-
 
 
 @gitlab_ssh_access
@@ -788,7 +786,7 @@ def create_exercise(course: str = None,
     term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
 
     # webbrowser.open(repo_settings_gitlab_url, new=1)
-    with logger.redirect_stderr(logger.LoggerWriter(logger.debug)):
+    with redirect_stderr(LoggerWriter(logger.debug)):
         chrome.chrome_open_and_wait(repo_settings_gitlab_url)
 
     visibility = gitlab.get_project_visibility(
