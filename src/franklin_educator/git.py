@@ -800,23 +800,26 @@ def create_exercise(course: str = None,
         click.pause(f"Press enter to open this GitLab page")
         webbrowser.open(repo_settings_gitlab_url, new=1)
         return
-
-
-
+    
+    term.echo()
     term.secho("Exercise created successfully", fg='green')
 
     term.echo()
     term.echo('Next steps:', bold=True)
     term.echo()
     term.echo(' - The Docker image is being built. '
-              'You can monitor the process from this page:', subsequent_indent='   ')
-    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue')
+              'You can monitor the process from this page:', 
+              subsequent_indent='   ')
+    term.secho(repo_settings_gitlab_url, nowrap=True, fg='blue', 
+               initial_indent='   ')
     term.echo()
     term.secho(' - Once it is ready, you can use the franklin exercise edit" '
-               'command to develop the exercise.', subsequent_indent='   ')
+               'command to develop the exercise.', 
+               subsequent_indent='   ')
     term.echo()
-    term.secho(' - If you know your way around git and vscode, you can clone it '
-               'right away using "franklin exercise clone"', subsequent_indent='   ')
+    term.secho(' - If you know your way around git and vscode, you can '
+               'clone it right away using "franklin exercise clone"', 
+               subsequent_indent='   ')
     term.echo()
 
 
