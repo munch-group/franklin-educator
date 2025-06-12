@@ -677,7 +677,8 @@ def create_exercise(course: str = None,
         Name of the new repository.
     """
 
-    api_token = 'adsfasdfasdf' #encrypt.get_api_token(user, password)
+    # api_token = encrypt.get_api_token(user, password)
+    api_token = cfg.gitlab_token
 
     if course is None:
         course, danish_course_name = gitlab.pick_course()
