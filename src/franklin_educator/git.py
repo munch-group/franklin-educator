@@ -456,7 +456,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
         if 'nothing to commit, working tree clean' in output:
             try:
-                shutil.rmtree(repo_local_path, onerror=utils.on_rm_error)
+                utils.rmtree(repo_local_path)
                 term.secho("Local files removed.")
             except PermissionError as e:
                 term.secho("You can remove the lo   cal files.")
