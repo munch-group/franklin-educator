@@ -489,7 +489,7 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
                     os.rmdir(subdir)
             path = os.path.join(repo_local_path, '.git')
             if os.path.exists(path):
-                shutil.rmtree(path, onerror=utils.on_rm_error)
+                utils.rmtree(path)
             if os.path.exists(repo_local_path) \
                 and not os.listdir(repo_local_path):
                 os.rmdir(repo_local_path)
@@ -775,7 +775,7 @@ def create_exercise(course: str = None,
     #           'from students, just add the word HIDDEN')
     # term.echo('Remember to to click "Save changes"!')
     term.echo('')
-    click.pause(f"Press enter to open this GitLab page")
+    click.pause(f"Press enter to open the exercise settings page")
 
     repo_settings_gitlab_url = \
     f'https://{cfg.gitlab_domain}/{cfg.gitlab_group}/{course}/{new_repo_name}/edit'
@@ -798,7 +798,7 @@ def create_exercise(course: str = None,
         term.secho("The exercise was not made public. You need to make it public "
                    "to be able to use it with Franklin. Please follow the instructions above", fg='red')
         term.echo()
-        click.pause(f"Press enter to open this GitLab page")
+        click.pause(f"Press enter to open the exercise settings page")
         webbrowser.open(repo_settings_gitlab_url, new=1)
         return
     
@@ -835,6 +835,27 @@ def create_exercise(course: str = None,
     #     r.raise_for_status()
     # term.secho(f"New repository '{new_repo_name}' created for"
     #            " '{course_name}'.", fg='green')
+
+
+# Inputs
+project_id = 123456  # Replace with your project ID
+access_token = 'your_access_token_here'
+new_description = "Updated project description via API."
+
+# Request
+url = f"https://gitlab.com/api/v4/projects/{project_id}"
+headers = {"PRIVATE-TOKEN": access_token}
+data = {
+    "description": new_description
+}
+
+response = requests.put(url, headers=headers, data=data)
+
+# Result
+if response.ok:
+    print("Description updated.")
+else:
+    print(f"Error: {response.status_code}, {response.text}")
 
 
 
