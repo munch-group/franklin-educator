@@ -837,28 +837,6 @@ def create_exercise(course: str = None,
     #            " '{course_name}'.", fg='green')
 
 
-# Inputs
-project_id = 123456  # Replace with your project ID
-access_token = 'your_access_token_here'
-new_description = "Updated project description via API."
-
-# Request
-url = f"https://gitlab.com/api/v4/projects/{project_id}"
-headers = {"PRIVATE-TOKEN": access_token}
-data = {
-    "description": new_description
-}
-
-response = requests.put(url, headers=headers, data=data)
-
-# Result
-if response.ok:
-    print("Description updated.")
-else:
-    print(f"Error: {response.status_code}, {response.text}")
-
-
-
 @exercise.command("settings")
 @click.option('--course', default=None)
 @click.option('--exercise', default=None)
