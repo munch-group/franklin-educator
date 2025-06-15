@@ -1,2 +1,2 @@
 
-from franklin_educator import git, howto
+from franklin_educator import git
