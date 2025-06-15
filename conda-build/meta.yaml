@@ -33,6 +33,7 @@ requirements:
     - pip
   run:  # your library dependencies
     - franklin
+    - franlin_educator
     {% for dep in pyproject.get("project").get("dependencies") %}
     - {{ dep.lower() }}
     {% endfor %}  
