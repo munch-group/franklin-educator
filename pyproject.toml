@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "franklin-educator"
-version = '0.3.125'
+version = '0.3.126'
 classifiers = [
   "Development Status :: 5 - Beta",
   "Intended Audience :: Education",
@@ -19,20 +19,20 @@ classifiers = [
 requires-python = ">= 3.9"
 dependencies = [
     'setuptools'
-    # 'requests>=2.32.3',
-    # 'colorama>=0.4.6',
-    # 'readchar>=4.0.5',
-    # 'click',
-    # 'click-plugins',
-    # 'psutil',
-    # 'jupyter',
-    # 'packaging',
-    # 'pyyaml',
-    # 'pyperclip',
-    # 'selenium',
-    # 'webdriver-manager',
-    # 'rapidfuzz',
-    # 'pycryptodome',
+    'requests>=2.32.3',
+    'colorama>=0.4.6',
+    'readchar>=4.0.5',
+    'click',
+    'click-plugins',
+    'psutil',
+    'jupyter',
+    'packaging',
+    'pyyaml',
+    'pyperclip',
+    'selenium',
+    'webdriver-manager',
+    'rapidfuzz',
+    'pycryptodome',
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
