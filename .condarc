@@ -1,0 +1,5 @@
+channels:
+  - https://conda.anaconda.org/munch-group
+  - conda-forge
+  - defaults
+channel_priority: strict
