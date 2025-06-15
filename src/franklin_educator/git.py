@@ -27,7 +27,7 @@ from franklin import options
 from franklin.logger import logger, LoggerWriter
 from franklin import chrome
 from franklin import system
-from franklin.crash import crash_report
+from franklin import crash
 #from . import encrypt
 
 def check_ssh_set_up():
@@ -516,7 +516,7 @@ def exercise():
 
 
 # @exercise.command()
-# @crash_report
+# @crash.crash_report
 # def status():
 #     """Sync status of retrieved exercise.
 #     """
@@ -528,7 +528,7 @@ def exercise():
 
 
 
-@crash_report
+@crash.crash_report
 @options.git_commands
 @exercise.command(hidden=True)
 @gitlab_ssh_access
@@ -551,7 +551,7 @@ def clone(commands=False) -> None:
     term.echo()
 
 
-@crash_report
+@crash.crash_report
 @exercise.command(hidden=True)
 @gitlab_ssh_access
 def down():
@@ -560,7 +560,7 @@ def down():
     git_down()
 
 
-@crash_report
+@crash.crash_report
 # @click.option('-d', '--directory', default=None)
 @click.argument('directory', default=None, type=click.Path(exists=True))
 @click.option('--remove/--no-remove', default=True, show_default=True)
@@ -581,7 +581,7 @@ def up(directory, remove):
 
 
 @exercise.command()
-@crash_report
+@crash.crash_report
 @gitlab_ssh_access
 def gitui():
     """Launch terminal git GUI
@@ -662,7 +662,7 @@ def repository_exists(course, repo_name):
 @click.option('--course', default=None)
 @click.option('--new-repo-name', default=None)
 @exercise.command('new')
-@crash_report
+@crash.crash_report
 @gitlab_ssh_access
 def create_exercise(course: str = None, 
                     # user: str = None, password: str = None,
@@ -840,7 +840,7 @@ def create_exercise(course: str = None,
 @exercise.command("settings")
 @click.option('--course', default=None)
 @click.option('--exercise', default=None)
-@crash_report
+@crash.crash_report
 @gitlab_ssh_access
 def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
     """Edit the exercise name listed by Franklin.
@@ -895,7 +895,7 @@ class EditCycleKeyboardInterrupt:
 
 @options.git_commands
 @exercise.command('edit')
-@crash_report
+@crash.crash_report
 @gitlab_ssh_access
 def edit_cycle(commands: bool = False):
     """Edit exercise in jupyter
