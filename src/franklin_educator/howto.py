@@ -7,7 +7,7 @@ from franklin import utils
 
 
 @howto.command("use-git")
-@utils.crash_report
+@crash_report
 def _use_git():
     """
     How to use Git with Franklin.

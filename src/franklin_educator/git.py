@@ -27,7 +27,7 @@ from franklin import options
 from franklin.logger import logger, LoggerWriter
 from franklin import chrome
 from franklin import system
-
+from franklin.crash import crash_report
 from . import encrypt
 
 def check_ssh_set_up():
@@ -343,7 +343,7 @@ def git_down(commands=False, only_with_image=False) -> None:
                             fg='blue')
             raise click.Abort()
         term.echo()        
-        term.secho(f"Cloned repository to {repo_local_path}.", fg='green')
+        term.secho(f"Cloned repository to {repo_local_path}.")
 
     config_local_repo(repo_local_path)
 
@@ -516,7 +516,7 @@ def exercise():
 
 
 # @exercise.command()
-# @utils.crash_report
+# @crash_report
 # def status():
 #     """Sync status of retrieved exercise.
 #     """
@@ -528,7 +528,7 @@ def exercise():
 
 
 
-@utils.crash_report
+@crash_report
 @options.git_commands
 @exercise.command(hidden=True)
 @gitlab_ssh_access
@@ -551,7 +551,7 @@ def clone(commands=False) -> None:
     term.echo()
 
 
-@utils.crash_report
+@crash_report
 @exercise.command(hidden=True)
 @gitlab_ssh_access
 def down():
@@ -560,7 +560,7 @@ def down():
     git_down()
 
 
-@utils.crash_report
+@crash_report
 # @click.option('-d', '--directory', default=None)
 @click.argument('directory', default=None, type=click.Path(exists=True))
 @click.option('--remove/--no-remove', default=True, show_default=True)
@@ -581,7 +581,7 @@ def up(directory, remove):
 
 
 @exercise.command()
-@utils.crash_report
+@crash_report
 @gitlab_ssh_access
 def gitui():
     """Launch terminal git GUI
@@ -662,7 +662,7 @@ def repository_exists(course, repo_name):
 @click.option('--course', default=None)
 @click.option('--new-repo-name', default=None)
 @exercise.command('new')
-@utils.crash_report
+@crash_report
 @gitlab_ssh_access
 def create_exercise(course: str = None, 
                     # user: str = None, password: str = None,
@@ -840,7 +840,7 @@ def create_exercise(course: str = None,
 @exercise.command("settings")
 @click.option('--course', default=None)
 @click.option('--exercise', default=None)
-@utils.crash_report
+@crash_report
 @gitlab_ssh_access
 def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
     """Edit the exercise name listed by Franklin.
@@ -895,7 +895,7 @@ class EditCycleKeyboardInterrupt:
 
 @options.git_commands
 @exercise.command('edit')
-@utils.crash_report
+@crash_report
 @gitlab_ssh_access
 def edit_cycle(commands: bool = False):
     """Edit exercise in jupyter
@@ -945,7 +945,7 @@ def edit_cycle(commands: bool = False):
 
         git_up(repo_local_path, remove_tracked_files=True)
 
-        term.secho("Your changes have been save to GitLab and will be "
+        term.secho("Any changes have been saved to GitLab and will be "
                    "available in a few minutes")
 
         sys.exit(0)
