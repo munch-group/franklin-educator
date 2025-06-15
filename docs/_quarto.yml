@@ -88,19 +88,12 @@ quartodoc:
   css: "api/_styles-quartodoc.css"
 
   sections:
-    - title: Jupyter
-      package: franklin.jupyter
+    - title: Exercise
+      package: franklin_educator
       desc: |
         Some description...
       contents:
-        - _run
-    - title: Docker
-      package: franklin.docker
-      desc: |
-        Some description...
-      contents:
-        - run
-        - pull
+        - git
           
 
     # - title: Some other section

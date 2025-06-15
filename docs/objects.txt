@@ -2,6 +2,23 @@
 # Project: franklin
 # Version: 0.0.9999
 # The remainder of this file is compressed using zlib.
-franklin.jupyter._run py:function 1 api/_run.html#franklin.jupyter._run -
-franklin.docker.run py:function 1 api/run.html#franklin.docker.run -
-franklin.docker.pull py:function 1 api/pull.html#franklin.docker.pull -
+franklin_educator.git.EditCycleKeyboardInterrupt py:class 1 api/git.html#franklin_educator.git.EditCycleKeyboardInterrupt -
+franklin_educator.git.clone py:function 1 api/git.html#franklin_educator.git.clone -
+franklin_educator.git.config_gitui py:function 1 api/git.html#franklin_educator.git.config_gitui -
+franklin_educator.git.config_local_repo py:function 1 api/git.html#franklin_educator.git.config_local_repo -
+franklin_educator.git.create_exercise py:function 1 api/git.html#franklin_educator.git.create_exercise -
+franklin_educator.git.down py:function 1 api/git.html#franklin_educator.git.down -
+franklin_educator.git.edit_cycle py:function 1 api/git.html#franklin_educator.git.edit_cycle -
+franklin_educator.git.exercise py:function 1 api/git.html#franklin_educator.git.exercise -
+franklin_educator.git.git_down py:function 1 api/git.html#franklin_educator.git.git_down -
+franklin_educator.git.git_safe_pull py:function 1 api/git.html#franklin_educator.git.git_safe_pull -
+franklin_educator.git.git_status py:function 1 api/git.html#franklin_educator.git.git_status -
+franklin_educator.git.git_up py:function 1 api/git.html#franklin_educator.git.git_up -
+franklin_educator.git.gitlab_ssh_access py:function 1 api/git.html#franklin_educator.git.gitlab_ssh_access -
+franklin_educator.git.gitui py:function 1 api/git.html#franklin_educator.git.gitui -
+franklin_educator.git.launch_mergetool py:function 1 api/git.html#franklin_educator.git.launch_mergetool -
+franklin_educator.git.merge_in_progress py:function 1 api/git.html#franklin_educator.git.merge_in_progress -
+franklin_educator.git.open_gitlab_repo_settings py:function 1 api/git.html#franklin_educator.git.open_gitlab_repo_settings -
+franklin_educator.git.ssh_keygen py:function 1 api/git.html#franklin_educator.git.ssh_keygen -
+franklin_educator.git.up py:function 1 api/git.html#franklin_educator.git.up -
+franklin_educator.git py:module 1 api/git.html#franklin_educator.git -

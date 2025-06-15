@@ -24,8 +24,8 @@ build:
   number: 0
   script: python -m pip install . -vv
   python_version_independent: true
-  entry_points."franklin.plugins":
-    - fruit = "franklin_educator.git:annanas"
+  # entry_points."franklin.plugins":
+  #   - fruit = "franklin_educator.git:annanas"
 
 requirements:
   host:
@@ -38,6 +38,7 @@ requirements:
 
 channels:  # channels for your library dependencies
   - conda-forge
+  - munch-group
 
 dependencies:   # keep this block with only these packages
   - anaconda-client
