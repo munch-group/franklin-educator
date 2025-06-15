@@ -1,7 +1,6 @@
 
 from typing import Tuple, List, Dict, Callable, Any
 
-from franklin.howto import howto
 from franklin import terminal as term
 from franklin import utils
 
