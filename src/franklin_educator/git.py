@@ -28,7 +28,7 @@ from franklin.logger import logger, LoggerWriter
 from franklin import chrome
 from franklin import system
 from franklin.crash import crash_report
-from . import encrypt
+#from . import encrypt
 
 def check_ssh_set_up():
     cmd = f'ssh -T git@{cfg.gitlab_domain} <<<yes'
