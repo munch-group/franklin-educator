@@ -1,0 +1,289 @@
+# git { #franklin_educator.git }
+
+`franklin_educator.git`
+
+
+
+## Classes
+
+| Name | Description |
+| --- | --- |
+| [EditCycleKeyboardInterrupt](#franklin_educator.git.EditCycleKeyboardInterrupt) | Context manager to suppress KeyboardInterrupt |
+
+### EditCycleKeyboardInterrupt { #franklin_educator.git.EditCycleKeyboardInterrupt }
+
+```python
+franklin_educator.git.EditCycleKeyboardInterrupt()
+```
+
+Context manager to suppress KeyboardInterrupt
+
+## Functions
+
+| Name | Description |
+| --- | --- |
+| [clone](#franklin_educator.git.clone) | Clones an exercise git repository to your local machine |
+| [config_gitui](#franklin_educator.git.config_gitui) | Copies gitui config files to the user's config directory. |
+| [config_local_repo](#franklin_educator.git.config_local_repo) | Configures the local repository with the necessary settings for using  |
+| [create_exercise](#franklin_educator.git.create_exercise) | Create a new exercise repository for a course. |
+| [down](#franklin_educator.git.down) | Retrieve exercise from GitLab. |
+| [edit_cycle](#franklin_educator.git.edit_cycle) | Edit exercise in jupyter |
+| [exercise](#franklin_educator.git.exercise) | Commands for managing exercises. |
+| [git_down](#franklin_educator.git.git_down) | "Downloads" an exercise from GitLab. |
+| [git_safe_pull](#franklin_educator.git.git_safe_pull) | Pulls changes from the remote repository and checks for merge conflicts. |
+| [git_status](#franklin_educator.git.git_status) | Displays the status of the local repository. |
+| [git_up](#franklin_educator.git.git_up) | "Uploads" an exercise to GitLab. |
+| [gitlab_ssh_access](#franklin_educator.git.gitlab_ssh_access) | Decorator for functions that require ssh access to gitlab. |
+| [gitui](#franklin_educator.git.gitui) | Launch terminal git GUI |
+| [launch_mergetool](#franklin_educator.git.launch_mergetool) | Launches vscode's mergetool. |
+| [merge_in_progress](#franklin_educator.git.merge_in_progress) | Checks if a merge is in progress. |
+| [open_gitlab_repo_settings](#franklin_educator.git.open_gitlab_repo_settings) | Edit the exercise name listed by Franklin. |
+| [ssh_keygen](#franklin_educator.git.ssh_keygen) | Generate an ssh key pair. |
+| [up](#franklin_educator.git.up) | Upload retrieved exercise to Gitlab. |
+
+### clone { #franklin_educator.git.clone }
+
+```python
+franklin_educator.git.clone(commands=False)
+```
+
+Clones an exercise git repository to your local machine
+
+### config_gitui { #franklin_educator.git.config_gitui }
+
+```python
+franklin_educator.git.config_gitui()
+```
+
+Copies gitui config files to the user's config directory.
+
+### config_local_repo { #franklin_educator.git.config_local_repo }
+
+```python
+franklin_educator.git.config_local_repo(repo_local_path, commands=False)
+```
+
+Configures the local repository with the necessary settings for using 
+vscode as the merge and diff tool.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**repo_local_path**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Path to the local repository.
+
+### create_exercise { #franklin_educator.git.create_exercise }
+
+```python
+franklin_educator.git.create_exercise(course=None, new_repo_name=None)
+```
+
+Create a new exercise repository for a course.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**course**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation} [ = ]{.parameter-default-sep} [None]{.parameter-default}</code>
+
+:   Course name.
+
+<code>[**new_repo_name**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation} [ = ]{.parameter-default-sep} [None]{.parameter-default}</code>
+
+:   Name of the new repository.
+
+### down { #franklin_educator.git.down }
+
+```python
+franklin_educator.git.down()
+```
+
+Retrieve exercise from GitLab.
+
+### edit_cycle { #franklin_educator.git.edit_cycle }
+
+```python
+franklin_educator.git.edit_cycle(commands=False)
+```
+
+Edit exercise in jupyter
+
+The command runs a full cycle of downloading the exercise from GitLab,
+launching JupyterLab, and uploading changes back to GitLab. To avoid
+merge conflicts, and loss of work, the cycle must be completed once stated.
+
+The workflow goes through the following steps:
+
+
+1. Clone the exercise from GitLab.
+2. Download the exercise docker image.
+3. Start the docker container.
+4. Launch Jupyter in the local repository folder.
+5. [The user can now edit the exercise in JupyterLab]
+6. When Jupyter is shut down (by pressing Q), modified files 
+   will be added to git.
+7. The user is prompted for a commit message to label the set of 
+   changes made.
+8. Changes are committed and pushed to GiLab, where a new version
+   of the exercise docker image is generated.
+9. The local repository is removed to avoid future merge conflicts.
+
+NB: Problems may arise if an exercise has more than one ongoing/incomplete 
+edit-cycle at the same time. The best way to avoid this is to complete
+each edit-cycle in one sitting.
+
+### exercise { #franklin_educator.git.exercise }
+
+```python
+franklin_educator.git.exercise()
+```
+
+Commands for managing exercises.
+
+### git_down { #franklin_educator.git.git_down }
+
+```python
+franklin_educator.git.git_down(commands=False, only_with_image=False)
+```
+
+"Downloads" an exercise from GitLab.
+
+### git_safe_pull { #franklin_educator.git.git_safe_pull }
+
+```python
+franklin_educator.git.git_safe_pull(repo_local_path)
+```
+
+Pulls changes from the remote repository and checks for merge conflicts.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**repo_local_path**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Path to the local repository.
+
+#### Returns {.doc-section .doc-section-returns}
+
+<code>[]{.parameter-name} [:]{.parameter-annotation-sep} [[bool](`bool`)]{.parameter-annotation}</code>
+
+:   True if there is a merge conflict, False otherwise.
+
+### git_status { #franklin_educator.git.git_status }
+
+```python
+franklin_educator.git.git_status()
+```
+
+Displays the status of the local repository.
+
+### git_up { #franklin_educator.git.git_up }
+
+```python
+franklin_educator.git.git_up(repo_local_path, remove_tracked_files)
+```
+
+"Uploads" an exercise to GitLab.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**repo_local_path**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Path to the local repository.
+
+<code>[**remove_tracked_files**]{.parameter-name} [:]{.parameter-annotation-sep} [[bool](`bool`)]{.parameter-annotation}</code>
+
+:   Whether to remove the tracked files after uploading
+
+### gitlab_ssh_access { #franklin_educator.git.gitlab_ssh_access }
+
+```python
+franklin_educator.git.gitlab_ssh_access(func)
+```
+
+Decorator for functions that require ssh access to gitlab.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**func**]{.parameter-name} [:]{.parameter-annotation-sep} [[Callable](`typing.Callable`)]{.parameter-annotation}</code>
+
+:   Function.
+
+#### Returns {.doc-section .doc-section-returns}
+
+<code>[]{.parameter-name} [:]{.parameter-annotation-sep} [[Callable](`typing.Callable`)]{.parameter-annotation}</code>
+
+:   Decorated function.
+
+### gitui { #franklin_educator.git.gitui }
+
+```python
+franklin_educator.git.gitui()
+```
+
+Launch terminal git GUI
+
+### launch_mergetool { #franklin_educator.git.launch_mergetool }
+
+```python
+franklin_educator.git.launch_mergetool(repo_local_path, commands=False)
+```
+
+Launches vscode's mergetool.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**repo_local_path**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Path to the local repository
+
+### merge_in_progress { #franklin_educator.git.merge_in_progress }
+
+```python
+franklin_educator.git.merge_in_progress(repo_local_path)
+```
+
+Checks if a merge is in progress.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**repo_local_path**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation}</code>
+
+:   Path to the local repository.
+
+#### Returns {.doc-section .doc-section-returns}
+
+<code>[]{.parameter-name} [:]{.parameter-annotation-sep} [[bool](`bool`)]{.parameter-annotation}</code>
+
+:   True if a merge is in progress, False otherwise.
+
+### open_gitlab_repo_settings { #franklin_educator.git.open_gitlab_repo_settings }
+
+```python
+franklin_educator.git.open_gitlab_repo_settings(course=None, exercise=None)
+```
+
+Edit the exercise name listed by Franklin.
+
+#### Parameters {.doc-section .doc-section-parameters}
+
+<code>[**course**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation} [ = ]{.parameter-default-sep} [None]{.parameter-default}</code>
+
+:   Course name.
+
+<code>[**exercise**]{.parameter-name} [:]{.parameter-annotation-sep} [[str](`str`)]{.parameter-annotation} [ = ]{.parameter-default-sep} [None]{.parameter-default}</code>
+
+:   Exercise name.
+
+### ssh_keygen { #franklin_educator.git.ssh_keygen }
+
+```python
+franklin_educator.git.ssh_keygen()
+```
+
+Generate an ssh key pair.
+
+### up { #franklin_educator.git.up }
+
+```python
+franklin_educator.git.up(directory, remove)
+```
+
+Upload retrieved exercise to Gitlab.
