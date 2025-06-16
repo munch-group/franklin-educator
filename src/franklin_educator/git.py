@@ -853,8 +853,15 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
         Exercise name.
     """
 
+    if course is None and exercise is not None:
+        term.secho(f"If you specify exercise you also need to specify course")
+        click.Abort()
+
+    danish_course_name = None 
     if course is None:
         course, danish_course_name = gitlab.pick_course()
+    if exercise is None:
+        exercise, listed_exercise_name = gitlab.pick_exercise(course, danish_course_name)
 
     term.echo(f"The GitLab settings page will open in your browser.")
     term.echo('')
