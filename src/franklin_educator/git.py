@@ -876,8 +876,9 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
                         '- To add another educator to the course, choose '
                         'Manage > Members in the sidebar. On the '
                         '"Project members" pate, you click the blue '
-                        '"Invite members" button. Select the role "Owner" '
-                        'for Professors and the role "Maintainer" for TAs',
+                        '"Invite members" button. In the '
+                        '"Select maximum role" dropdown, choose "Owner" '
+                        'for other professors and "Maintainer" for TAs',
                         '',                        
                         'Remember to to click "Save changes"!'
                     ], fg='green', subsequent_indent='   ')
