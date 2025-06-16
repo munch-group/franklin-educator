@@ -863,12 +863,25 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
     if exercise is None:
         exercise, listed_exercise_name = gitlab.pick_exercise(course, danish_course_name)
 
-    term.echo(f"The GitLab settings page will open in your browser.")
+    term.boxed_text("Exercise settings",
+                    lines=[
+                        'The GitLab settings page will open in Chrome.',
+                        '',
+                        '- To change the exercise title listed by franklin, '
+                        'you change the text in the "Project description" '
+                        'box. You can hide the exercise from students by '
+                        'adding the word HIDDEN to the title in '
+                        '"Project description" box.',
+                        '',
+                        '- To add another educator to the course, choose '
+                        'Manage > Members in the sidebar. On the '
+                        '"Project members" pate, you click the blue '
+                        '"Invite members" button. Select the role "Owner" '
+                        'for Professors and the role "Maintainer" for TAs',
+                        '',                        
+                        'Remember to to click "Save changes"!'
+                    ], fg='green', subsequent_indent='   ')
     term.echo('')
-    term.echo(f'Change the title of the exercise in the "Project description" '
-              'field and click "save"')
-    term.echo(f'(If you want to hide the exercise from students, you add '
-              '"HIDDEN" to the title.)')
     click.pause(f"Press enter to open GitLab page.")
 
     repo_settings_gitlab_url = \
