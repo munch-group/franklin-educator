@@ -871,7 +871,8 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
                         'you change the text in the "Project description" '
                         'box. You can hide the exercise from students by '
                         'adding the word HIDDEN to the title in '
-                        '"Project description" box.',
+                        '"Project description" box. Remember to to click '
+                        '"Save changes".',
                         '',
                         '- To add another educator to the course, choose '
                         'Manage > Members in the sidebar. On the '
