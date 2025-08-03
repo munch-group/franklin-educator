@@ -1,0 +1,482 @@
+---
+title: "Best Practices for Educators"
+subtitle: "Guidelines for Creating Effective Franklin Exercises"
+---
+
+## Exercise Design Philosophy
+
+### Start with Learning Outcomes
+
+Before creating any exercise, clearly define:
+
+::: {.callout-tip}
+## The SMART Framework
+- **Specific**: Target precise concepts (e.g., "list comprehensions" not "Python")
+- **Measurable**: Include tests that verify understanding
+- **Achievable**: Match difficulty to student level
+- **Relevant**: Connect to course objectives
+- **Time-bound**: Estimate completion time (aim for 30-60 minutes)
+:::
+
+### Cognitive Load Management
+
+Reduce unnecessary complexity:
+
+```python
+# ❌ Too Much at Once
+def complex_analysis(data, threshold=0.5, normalize=True, 
+                    method='pearson', output_format='dict'):
+    """Students struggle with multiple new concepts"""
+    pass
+
+# ✅ Progressive Complexity
+# Step 1: Basic function
+def calculate_mean(data):
+    """Focus on one concept"""
+    pass
+
+# Step 2: Add parameters
+def calculate_mean(data, ignore_zeros=False):
+    """Build on previous knowledge"""
+    pass
+```
+
+## Writing Clear Instructions
+
+### The Three C's
+
+1. **Clear**: Unambiguous language
+2. **Concise**: No unnecessary words
+3. **Complete**: All information needed
+
+### Instruction Template
+
+```markdown
+## Task Title: Descriptive Name
+
+**Objective**: What students will accomplish
+
+**Background**: Brief context (2-3 sentences)
+
+**Requirements**:
+1. First specific requirement
+2. Second specific requirement
+3. Expected output format
+
+**Example**:
+- Input: `[1, 2, 3]`
+- Output: `6`
+
+**Hints**: 
+- Hint 1 (reveal after attempt)
+- Hint 2 (more specific)
+```
+
+## Code Structure
+
+### Scaffolding Strategies
+
+#### Level 1: Fill in the Blanks
+```python
+# Good for beginners
+def calculate_area(length, width):
+    """Calculate rectangle area"""
+    return ___ * ___
+```
+
+#### Level 2: Complete the Function
+```python
+# Intermediate level
+def calculate_area(shape_type, *dimensions):
+    """Calculate area for different shapes"""
+    if shape_type == "rectangle":
+        # Your code here
+        pass
+    elif shape_type == "circle":
+        # Your code here
+        pass
+```
+
+#### Level 3: Design and Implement
+```python
+# Advanced level
+"""
+Create a Shape class hierarchy with:
+- Abstract base class Shape
+- Subclasses: Rectangle, Circle, Triangle
+- Each implements area() and perimeter() methods
+"""
+# Your implementation here
+```
+
+### Error Messages That Teach
+
+```python
+# ❌ Unhelpful Error
+assert result == expected
+
+# ✅ Educational Error
+assert result == expected, (
+    f"Expected {expected} but got {result}. "
+    f"Check your calculation of the mean. "
+    f"Remember to divide by the number of elements."
+)
+```
+
+## Testing Strategies
+
+### Comprehensive Test Coverage
+
+```python
+def test_student_function():
+    """Test with various inputs"""
+    
+    # Test normal cases
+    assert student_func([1, 2, 3]) == 2.0, "Basic case failed"
+    
+    # Test edge cases
+    assert student_func([]) == None, "Empty list should return None"
+    assert student_func([5]) == 5.0, "Single element failed"
+    
+    # Test error handling
+    try:
+        student_func(None)
+        assert False, "Should raise TypeError for None input"
+    except TypeError:
+        pass
+    
+    # Test performance (if relevant)
+    import time
+    start = time.time()
+    student_func(list(range(10000)))
+    duration = time.time() - start
+    assert duration < 1.0, "Function too slow for large inputs"
+```
+
+### Progressive Testing
+
+```python
+# Cell 1: Basic Test
+assert len(result) > 0, "Result should not be empty"
+print("✅ Basic test passed")
+
+# Cell 2: Intermediate Test
+assert all(isinstance(x, int) for x in result), "All elements should be integers"
+print("✅ Type test passed")
+
+# Cell 3: Complete Test
+expected = [2, 3, 5, 7, 11]
+assert result[:5] == expected, f"First 5 primes should be {expected}"
+print("✅ All tests passed!")
+```
+
+## Dependency Management
+
+### Minimal Dependencies
+
+```toml
+# pixi.toml - Keep it simple
+[project]
+name = "basic-exercise"
+platforms = ["linux-64", "osx-arm64", "win-64"]
+
+[dependencies]
+python = "3.11.*"
+jupyter = "*"
+# Only add what's absolutely necessary
+numpy = "*"  # If needed
+pandas = "*"  # If needed
+
+[feature.exercise.dependencies]
+# Exercise-specific packages here
+```
+
+### Version Pinning Strategy
+
+```toml
+# For stability
+numpy = "1.24.*"  # Pin major.minor, allow patches
+
+# For features
+pandas = ">=2.0,<3.0"  # Allow minor updates
+
+# For specific requirements
+scikit-learn = "1.3.0"  # Exact version when needed
+```
+
+## Documentation Standards
+
+### README Template
+
+```markdown
+# Exercise: Name Here
+
+## Overview
+Brief description of what students will learn.
+
+## Prerequisites
+- Concept 1
+- Concept 2
+
+## Learning Objectives
+By completing this exercise, you will:
+1. Understand X
+2. Be able to Y
+3. Practice Z
+
+## Instructions
+1. Open `exercise.ipynb`
+2. Follow the tasks in order
+3. Run tests to check your work
+
+## Files
+- `exercise.ipynb`: Main exercise notebook
+- `data/`: Dataset files
+- `tests/`: Automated tests
+
+## Getting Help
+- Check hints in notebook cells
+- Review lecture notes on [topic]
+- Ask in course forum
+
+## Submission
+Save your completed notebook and submit via [platform].
+```
+
+### In-Notebook Documentation
+
+```python
+# Cell 1: Clear Section Headers
+"""
+# Part 1: Data Loading
+Load and explore the dataset to understand its structure.
+"""
+
+# Cell 2: Inline Guidance
+# TODO: Load the CSV file from 'data/sales.csv'
+# Hint: Use pandas read_csv() function
+df = ___
+
+# Cell 3: Checkpoint Feedback
+print(f"Dataset loaded: {df.shape[0]} rows, {df.shape[1]} columns")
+print(f"Columns: {', '.join(df.columns)}")
+```
+
+## Common Pitfalls to Avoid
+
+### 1. Hidden Dependencies
+
+```python
+# ❌ Bad: Assumes environment
+import cv2  # Might not be installed
+
+# ✅ Good: Check and guide
+try:
+    import cv2
+except ImportError:
+    print("OpenCV not installed. Run: %franklin opencv-python")
+    raise
+```
+
+### 2. Platform-Specific Code
+
+```python
+# ❌ Bad: Windows-specific path
+file_path = "C:\\Users\\data\\file.csv"
+
+# ✅ Good: Platform-independent
+from pathlib import Path
+file_path = Path("data") / "file.csv"
+```
+
+### 3. Absolute Paths
+
+```python
+# ❌ Bad: Absolute path
+df = pd.read_csv("/home/user/exercises/data.csv")
+
+# ✅ Good: Relative path
+df = pd.read_csv("data/data.csv")
+```
+
+### 4. Large Data in Repository
+
+```python
+# ❌ Bad: 100MB file in repo
+df = pd.read_csv("huge_dataset.csv")
+
+# ✅ Good: Download when needed
+import urllib.request
+import os
+
+data_url = "https://example.com/huge_dataset.csv"
+data_file = "data/huge_dataset.csv"
+
+if not os.path.exists(data_file):
+    print("Downloading dataset...")
+    urllib.request.urlretrieve(data_url, data_file)
+    
+df = pd.read_csv(data_file)
+```
+
+## Accessibility Considerations
+
+### Visual Accessibility
+
+```python
+# Use colorblind-friendly palettes
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-colorblind')
+
+# Add text labels, not just colors
+plt.scatter(x, y, c=labels)
+for i, txt in enumerate(labels):
+    plt.annotate(txt, (x[i], y[i]))
+
+# Provide alternative representations
+print("Correlation matrix:")
+print(df.corr().round(2))  # Text version
+plt.matshow(df.corr())  # Visual version
+```
+
+### Clear Variable Names
+
+```python
+# ❌ Bad: Cryptic names
+x = df.groupby('c')['v'].mean()
+
+# ✅ Good: Descriptive names
+average_scores = grades_df.groupby('course')['score'].mean()
+```
+
+## Performance Optimization
+
+### For Large Datasets
+
+```python
+# Provide sample data for development
+if DEBUG_MODE:
+    df = pd.read_csv("data/sample_100.csv")
+    print("Using sample data (100 rows)")
+else:
+    df = pd.read_csv("data/full_dataset.csv")
+    print(f"Using full data ({len(df)} rows)")
+```
+
+### Efficient Notebook Execution
+
+```python
+# Cache expensive computations
+import pickle
+cache_file = "cache/processed_data.pkl"
+
+if os.path.exists(cache_file):
+    print("Loading cached data...")
+    processed_data = pickle.load(open(cache_file, 'rb'))
+else:
+    print("Processing data...")
+    processed_data = expensive_processing(raw_data)
+    pickle.dump(processed_data, open(cache_file, 'wb'))
+```
+
+## Student Engagement
+
+### Gamification Elements
+
+```python
+# Progress tracking
+tasks_completed = 0
+total_tasks = 5
+
+def complete_task(task_name):
+    global tasks_completed
+    tasks_completed += 1
+    print(f"✅ {task_name} complete! ({tasks_completed}/{total_tasks})")
+    
+    if tasks_completed == total_tasks:
+        print("🎉 Congratulations! You've completed all tasks!")
+```
+
+### Interactive Feedback
+
+```python
+import ipywidgets as widgets
+from IPython.display import display
+
+def create_quiz(question, options, correct_index):
+    """Create interactive multiple choice question"""
+    
+    radio = widgets.RadioButtons(
+        options=options,
+        description='',
+        disabled=False
+    )
+    
+    button = widgets.Button(description="Check Answer")
+    output = widgets.Output()
+    
+    def check_answer(b):
+        with output:
+            output.clear_output()
+            if radio.index == correct_index:
+                print("✅ Correct!")
+            else:
+                print(f"❌ Try again. Hint: {hints[radio.index]}")
+    
+    button.on_click(check_answer)
+    
+    print(question)
+    display(radio, button, output)
+```
+
+## Maintenance and Updates
+
+### Version Control Best Practices
+
+```bash
+# Semantic versioning for exercises
+git tag -a v1.0.0 -m "Initial release"
+git tag -a v1.0.1 -m "Fix typo in instructions"
+git tag -a v1.1.0 -m "Add bonus challenge"
+git tag -a v2.0.0 -m "Complete redesign for new curriculum"
+```
+
+### Update Notifications
+
+```python
+# In exercise notebook
+EXERCISE_VERSION = "1.2.0"
+MINIMUM_FRANKLIN_VERSION = "0.24.0"
+
+import franklin
+if franklin.__version__ < MINIMUM_FRANKLIN_VERSION:
+    print(f"⚠️ Please update Franklin: conda update franklin")
+    
+print(f"Exercise version: {EXERCISE_VERSION}")
+```
+
+## Quality Assurance Checklist
+
+Before publishing any exercise:
+
+- [ ] **Runs completely** without errors
+- [ ] **Clear instructions** at each step
+- [ ] **Tests pass** with correct solution
+- [ ] **Tests fail** with common wrong answers
+- [ ] **Works on all platforms** (Windows, Mac, Linux)
+- [ ] **Dependencies specified** in pixi.toml
+- [ ] **Data files included** or downloadable
+- [ ] **Solution tested** separately
+- [ ] **Time estimate** is accurate
+- [ ] **Accessibility** considered
+- [ ] **Error messages** are helpful
+- [ ] **Code style** is consistent
+- [ ] **Documentation** is complete
+- [ ] **Version tagged** in git
+
+## Getting Help
+
+- [Educator Community Forum](https://github.com/munch-group/franklin/discussions)
+- [Exercise Gallery](https://github.com/munch-group/franklin-exercises)
+- [Video Tutorials](https://youtube.com/franklin-tutorials)
+- [Office Hours](https://calendly.com/franklin-support)

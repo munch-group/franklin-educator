@@ -1,0 +1,224 @@
+---
+title: "Franklin Educator Documentation"
+subtitle: "Creating and Managing Educational Jupyter Exercises"
+---
+
+## Overview
+
+Franklin Educator is a plugin for the Franklin ecosystem that provides educators with powerful tools to create, manage, and distribute Jupyter notebook exercises. This extension simplifies the entire workflow from exercise creation to student distribution.
+
+## Quick Start
+
+### Installation
+
+```bash
+# Install Franklin with educator tools
+conda install -c conda-forge -c munch-group franklin franklin-educator
+
+# Or using Pixi
+pixi add franklin franklin-educator
+```
+
+### Your First Exercise
+
+```bash
+# 1. Create a new exercise
+franklin exercise new
+
+# 2. Select course and name your exercise
+> Course: Introduction to Python
+> Exercise: Hello World Lab
+
+# 3. Edit the exercise
+cd "Hello World Lab"
+jupyter lab exercise.ipynb
+
+# 4. Test your exercise
+pixi run test-notebook
+
+# 5. Publish for students
+franklin exercise publish
+```
+
+## Key Features
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+### 📝 **Exercise Templates**
+Pre-configured templates with:
+- Dockerfile for containerization
+- Pixi configuration for dependencies
+- Jupyter notebook structure
+- Testing framework
+- GitLab CI/CD pipeline
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### 🔄 **Version Control**
+Full Git integration:
+- Automatic repository creation
+- Version tracking
+- Collaborative editing
+- Rollback capabilities
+- Branch management
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### 🧪 **Automated Testing**
+Validate exercises before release:
+- Notebook execution tests
+- Dependency verification
+- Output validation
+- Cross-platform testing
+- CI/CD integration
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### 📦 **Smart Dependencies**
+Automatic package management:
+- Detect imports from notebooks
+- Pixi integration for reproducibility
+- Platform-specific handling
+- Version pinning support
+:::
+
+:::
+
+## Core Commands
+
+### Exercise Management
+
+| Command | Description |
+|---------|-------------|
+| `franklin exercise new` | Create a new exercise from template |
+| `franklin exercise edit` | Edit existing exercise |
+| `franklin exercise list` | List all your exercises |
+| `franklin exercise publish` | Make exercise available to students |
+| `franklin exercise test` | Run local tests |
+| `franklin exercise clone <url>` | Clone existing exercise |
+
+### Git Integration
+
+| Command | Description |
+|---------|-------------|
+| `franklin exercise status` | Check Git status |
+| `franklin exercise commit` | Commit changes |
+| `franklin exercise push` | Push to GitLab |
+| `franklin exercise pull` | Pull latest changes |
+
+## Workflow Overview
+
+```mermaid
+graph TD
+    A[Create Exercise] --> B[Edit Notebook]
+    B --> C[Add Dependencies]
+    C --> D[Test Locally]
+    D --> E{Tests Pass?}
+    E -->|No| B
+    E -->|Yes| F[Publish]
+    F --> G[Available to Students]
+    G --> H[Monitor & Update]
+    H --> B
+```
+
+## Exercise Structure
+
+Every Franklin exercise follows this structure:
+
+```
+exercise-name/
+├── Dockerfile              # Container configuration
+├── pixi.toml              # Dependency management
+├── exercise.ipynb         # Main notebook
+├── README.md              # Instructions for students
+├── .gitlab-ci.yml         # CI/CD pipeline
+├── tests/                 # Automated tests
+│   └── test_notebook.py
+├── data/                  # Data files
+│   └── dataset.csv
+├── solutions/             # Hidden from students
+│   └── solution.ipynb
+└── .pixi.py              # Pixi configuration script
+```
+
+## Documentation Sections
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+### [Getting Started](getting_started.qmd)
+Complete setup guide for educators new to Franklin
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [Creating Exercises](creating_exercises.qmd)
+Step-by-step guide to exercise development
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [Best Practices](best_practices.qmd)
+Tips for creating effective exercises
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [Testing Guide](testing.qmd)
+How to test and validate exercises
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [Dependency Management](dependencies.qmd)
+Managing packages and environments
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [GitLab Integration](gitlab.qmd)
+Working with GitLab repositories
+:::
+
+:::
+
+## Common Tasks
+
+### Adding Packages to an Exercise
+
+```python
+# In the notebook
+%load_ext magic
+%franklin numpy pandas matplotlib
+
+# Or from command line
+pixi add numpy pandas matplotlib
+```
+
+### Testing an Exercise
+
+```bash
+# Run automated tests
+pixi run test-notebook
+
+# Manual testing
+franklin jupyter --exercise "My Exercise"
+```
+
+### Updating an Exercise
+
+```bash
+# Pull latest changes
+franklin exercise pull
+
+# Make edits
+jupyter lab exercise.ipynb
+
+# Test changes
+pixi run test-notebook
+
+# Publish update
+franklin exercise publish
+```
+
+## Support
+
+- **Documentation**: [Full Educator Guide](getting_started.qmd)
+- **Issues**: [GitHub Issues](https://github.com/munch-group/franklin-educator/issues)
+- **Main Franklin Docs**: [franklin.munch-group.org](https://munch-group.org/franklin)

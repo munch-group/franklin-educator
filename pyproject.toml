@@ -18,21 +18,8 @@ classifiers = [
 ]
 requires-python = ">= 3.9"
 dependencies = [
-    'setuptools',
-    'requests>=2.32.3',
-    'colorama>=0.4.6',
-    'readchar>=4.0.5',
-    'click',
-    'click-plugins',
-    'psutil',
-    'jupyter',
-    'packaging',
-    'pyyaml',
-    'pyperclip',
-    'selenium',
-    'webdriver-manager',
-    'rapidfuzz',
-    'pycryptodome',
+    'franklin>=0.24.165',  # Core dependency
+    # Plugin-specific dependencies only
 ]
 authors = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
@@ -40,7 +27,7 @@ authors = [
 maintainers = [
   {name = "Kasper Munch", email = "kaspermunch@birc.au.dk"},
 ]
-description = "Terminal client for Jupyter exercises"
+description = "Educator plugin for Franklin - adds exercise management commands"
 keywords = ["teaching", "jupyter", "docker", "gitlab"]
 readme = "README.md"
 # license = "MIT"
@@ -84,7 +71,7 @@ franklin_educator = [
 channels = ["conda-forge", "munch-group"]
 platforms = ["osx-arm64", "win-64", "osx-64", "linux-64"]
 
-[target.osx-arm64.dependencies]
+[tool.pixi.target.osx-arm64.dependencies]
 setuptools = "*"
 
 # [target.osx-arm64.tool.pixi.pypi-dependencies]

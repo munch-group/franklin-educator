@@ -1,0 +1,595 @@
+---
+title: "Creating Effective Exercises"
+subtitle: "Advanced Guide to Exercise Development"
+---
+
+## Exercise Design Principles
+
+### Learning Objectives First
+
+Before writing any code, clearly define:
+
+1. **What students will learn**: Specific concepts and skills
+2. **How they'll demonstrate understanding**: Observable outcomes
+3. **Common misconceptions to address**: Typical errors to prevent
+4. **Prerequisites**: What students should already know
+
+### Progressive Difficulty
+
+Structure exercises to build confidence:
+
+```python
+# Level 1: Guided Practice
+# Provide most of the code, students fill in blanks
+def calculate_area(length, width):
+    return ___ * ___
+
+# Level 2: Scaffolded Implementation  
+# Provide structure, students implement logic
+def calculate_area(___):
+    # Your code here
+    pass
+
+# Level 3: Independent Problem Solving
+# Students create entire solution
+# Write a function that calculates the area of a rectangle
+```
+
+## Exercise Types
+
+{{< video videos/exercise-types-overview.mp4 
+    title="Overview of Different Exercise Types (4 min)"
+    width="100%" 
+    height="400"
+>}}
+
+### 1. Tutorial Exercises
+
+Step-by-step guided learning:
+
+```python
+# Cell 1: Explanation
+"""
+# Lists in Python
+Lists are ordered, mutable collections that can hold multiple items.
+"""
+
+# Cell 2: Demonstration
+# Creating a list
+fruits = ['apple', 'banana', 'orange']
+print(f"Original list: {fruits}")
+
+# Cell 3: Guided Practice
+# TODO: Add 'grape' to the end of the list
+fruits.___('grape')
+print(f"After adding grape: {fruits}")
+
+# Cell 4: Test Understanding
+assert len(fruits) == 4, "List should have 4 items"
+assert fruits[-1] == 'grape', "Last item should be 'grape'"
+```
+
+### 2. Problem-Solving Exercises
+
+Challenge students to apply knowledge:
+
+```python
+# Cell 1: Problem Statement
+"""
+## FizzBuzz Challenge
+Write a function that:
+- Takes a number n as input
+- Returns "Fizz" if n is divisible by 3
+- Returns "Buzz" if n is divisible by 5
+- Returns "FizzBuzz" if divisible by both
+- Returns the number as a string otherwise
+"""
+
+# Cell 2: Starter Code
+def fizzbuzz(n):
+    # Your solution here
+    pass
+
+# Cell 3: Test Cases
+test_cases = [
+    (3, "Fizz"),
+    (5, "Buzz"),
+    (15, "FizzBuzz"),
+    (7, "7")
+]
+
+for input_val, expected in test_cases:
+    result = fizzbuzz(input_val)
+    assert result == expected, f"fizzbuzz({input_val}) should return {expected}, got {result}"
+    print(f"✅ fizzbuzz({input_val}) = {result}")
+```
+
+### 3. Data Analysis Exercises
+
+Work with real datasets:
+
+```python
+# Cell 1: Setup
+"""
+## Analyzing Student Performance
+Load and analyze the student grades dataset to answer questions about performance patterns.
+"""
+
+# Cell 2: Data Loading
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('data/student_grades.csv')
+print(f"Dataset shape: {df.shape}")
+print(df.head())
+
+# Cell 3: Analysis Tasks
+"""
+### Tasks:
+1. Calculate the average grade for each subject
+2. Find the student with the highest overall average
+3. Create a visualization showing grade distribution
+"""
+
+# Cell 4: Student Solution Space
+# Task 1: Average grade per subject
+subject_averages = ___
+print(subject_averages)
+
+# Task 2: Top student
+top_student = ___
+print(f"Top student: {top_student}")
+
+# Task 3: Visualization
+# Your code here
+```
+
+### 4. Debugging Exercises
+
+Teach problem-solving skills:
+
+```python
+# Cell 1: Instructions
+"""
+## Debug the Code
+The following function should calculate factorial, but it has bugs.
+Fix the errors to make it work correctly.
+"""
+
+# Cell 2: Buggy Code
+def factorial(n):
+    if n = 0:  # Bug 1: Assignment instead of comparison
+        return 0  # Bug 2: Should return 1
+    else:
+        return n * factorial(n)  # Bug 3: Missing n-1
+
+# Cell 3: Test Cases
+# These should all pass after fixing the bugs
+assert factorial(0) == 1
+assert factorial(5) == 120
+assert factorial(10) == 3628800
+print("All tests passed!")
+```
+
+## Adding Interactivity
+
+{{< video videos/adding-interactive-widgets.mp4 
+    title="Creating Interactive Exercises with Widgets (3 min)"
+    width="100%" 
+    height="400"
+>}}
+
+### Using Widgets
+
+Make exercises interactive with ipywidgets:
+
+```python
+# Cell 1: Setup
+import ipywidgets as widgets
+from IPython.display import display
+
+# Cell 2: Interactive Function Explorer
+def plot_function(a, b, c):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    
+    x = np.linspace(-10, 10, 100)
+    y = a * x**2 + b * x + c
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, y)
+    plt.grid(True)
+    plt.title(f'y = {a}x² + {b}x + {c}')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.show()
+
+# Cell 3: Interactive Controls
+interactive_plot = widgets.interactive(
+    plot_function,
+    a=widgets.FloatSlider(min=-5, max=5, step=0.1, value=1),
+    b=widgets.FloatSlider(min=-5, max=5, step=0.1, value=0),
+    c=widgets.FloatSlider(min=-5, max=5, step=0.1, value=0)
+)
+display(interactive_plot)
+```
+
+### Real-time Feedback
+
+Provide immediate validation:
+
+```python
+# Cell 1: Input Validation
+def check_answer(answer):
+    correct = 42
+    if answer == correct:
+        print("🎉 Correct! Well done!")
+        return True
+    elif answer < correct:
+        print("❌ Too low. Try again!")
+    else:
+        print("❌ Too high. Try again!")
+    return False
+
+# Cell 2: Interactive Input
+answer_input = widgets.IntText(
+    description='Answer:',
+    value=0
+)
+
+check_button = widgets.Button(description='Check')
+output = widgets.Output()
+
+def on_check_clicked(b):
+    with output:
+        output.clear_output()
+        check_answer(answer_input.value)
+
+check_button.on_click(on_check_clicked)
+display(answer_input, check_button, output)
+```
+
+## Working with Data
+
+### Including Datasets
+
+```python
+# In your exercise directory structure
+data/
+├── README.md          # Describe datasets
+├── students.csv       # Small dataset (<1MB)
+├── download_data.py   # Script for large datasets
+└── sample_output.json # Expected results
+
+# download_data.py example
+import urllib.request
+import os
+
+def download_dataset():
+    """Download large dataset if not present"""
+    url = "https://example.com/large_dataset.csv"
+    filename = "data/large_dataset.csv"
+    
+    if not os.path.exists(filename):
+        print("Downloading dataset...")
+        urllib.request.urlretrieve(url, filename)
+        print("Download complete!")
+    else:
+        print("Dataset already present")
+
+if __name__ == "__main__":
+    download_dataset()
+```
+
+### Generating Synthetic Data
+
+Create reproducible datasets:
+
+```python
+# Cell 1: Generate Practice Data
+import numpy as np
+import pandas as pd
+
+np.random.seed(42)  # For reproducibility
+
+# Generate student performance data
+n_students = 100
+students = pd.DataFrame({
+    'student_id': range(1000, 1000 + n_students),
+    'attendance': np.random.uniform(0.6, 1.0, n_students),
+    'homework': np.random.uniform(0.4, 1.0, n_students),
+    'midterm': np.random.normal(75, 15, n_students),
+    'final': np.random.normal(70, 18, n_students)
+})
+
+# Add calculated grade
+students['grade'] = (
+    students['attendance'] * 10 +
+    students['homework'] * 20 +
+    students['midterm'] * 0.35 +
+    students['final'] * 0.35
+)
+
+students.to_csv('data/students.csv', index=False)
+print(f"Generated {len(students)} student records")
+```
+
+## Automated Testing
+
+{{< video videos/setting-up-automated-tests.mp4 
+    title="Setting Up Automated Testing (4 min)"
+    width="100%" 
+    height="400"
+>}}
+
+### Writing Test Files
+
+Create `tests/test_notebook.py`:
+
+```python
+import pytest
+import json
+import subprocess
+from pathlib import Path
+
+def test_notebook_runs():
+    """Test that the notebook executes without errors"""
+    result = subprocess.run(
+        ['jupyter', 'nbconvert', '--to', 'notebook', '--execute',
+         '--output', '/tmp/test_output.ipynb', 'exercise.ipynb'],
+        capture_output=True
+    )
+    assert result.returncode == 0, f"Notebook execution failed: {result.stderr}"
+
+def test_required_outputs():
+    """Test that notebook produces expected outputs"""
+    # Run notebook and capture outputs
+    result = subprocess.run(
+        ['jupyter', 'nbconvert', '--to', 'script', 'exercise.ipynb'],
+        capture_output=True
+    )
+    
+    # Check for expected variables/functions
+    exec_globals = {}
+    exec(result.stdout, exec_globals)
+    
+    assert 'calculate_mean' in exec_globals, "Function calculate_mean not defined"
+    assert callable(exec_globals['calculate_mean']), "calculate_mean should be a function"
+
+def test_data_files_exist():
+    """Test that required data files are present"""
+    required_files = [
+        'data/students.csv',
+        'README.md',
+        'exercise.ipynb'
+    ]
+    
+    for file in required_files:
+        assert Path(file).exists(), f"Required file {file} not found"
+
+def test_dependencies():
+    """Test that all required packages can be imported"""
+    required_packages = ['numpy', 'pandas', 'matplotlib']
+    
+    for package in required_packages:
+        try:
+            __import__(package)
+        except ImportError:
+            pytest.fail(f"Required package {package} not installed")
+```
+
+### Continuous Integration
+
+Add `.gitlab-ci.yml`:
+
+```yaml
+stages:
+  - test
+  - build
+  - deploy
+
+test-notebook:
+  stage: test
+  image: registry.gitlab.com/franklin/base:latest
+  script:
+    - pixi install
+    - pixi run test-notebook
+    - pytest tests/
+  artifacts:
+    reports:
+      junit: test-results.xml
+
+build-image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  only:
+    - main
+
+deploy-exercise:
+  stage: deploy
+  script:
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+```
+
+## Solutions Management
+
+### Creating Solution Notebooks
+
+Structure your solutions directory:
+
+```
+solutions/
+├── solution.ipynb        # Complete solution
+├── solution_notes.md     # Teaching notes
+└── common_errors.md      # Common mistakes to discuss
+```
+
+Example solution with annotations:
+
+```python
+# solution.ipynb
+# Cell 1: Instructor Note
+"""
+INSTRUCTOR NOTE: This solution demonstrates the optimal approach.
+Point out the use of list comprehension for efficiency.
+"""
+
+# Cell 2: Complete Solution
+def find_primes(n):
+    """Find all prime numbers up to n using Sieve of Eratosthenes"""
+    # TEACHING POINT: Discuss algorithm efficiency O(n log log n)
+    if n < 2:
+        return []
+    
+    sieve = [True] * (n + 1)
+    sieve[0] = sieve[1] = False
+    
+    for i in range(2, int(n**0.5) + 1):
+        if sieve[i]:
+            # TEACHING POINT: Why do we start at i*i?
+            for j in range(i*i, n + 1, i):
+                sieve[j] = False
+    
+    return [i for i, is_prime in enumerate(sieve) if is_prime]
+
+# Cell 3: Alternative Solutions
+# TEACHING POINT: Show less efficient but simpler approach
+def find_primes_simple(n):
+    """Simple but less efficient approach"""
+    primes = []
+    for num in range(2, n + 1):
+        is_prime = True
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0:
+                is_prime = False
+                break
+        if is_prime:
+            primes.append(num)
+    return primes
+```
+
+## Advanced Features
+
+### Multi-language Support
+
+Support Python, R, and Julia in the same exercise:
+
+```python
+# Cell 1: Python
+import pandas as pd
+df_python = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 5, 6]})
+print("Python DataFrame:", df_python.shape)
+
+# Cell 2: R (using rpy2)
+%%R
+df_r <- data.frame(x=c(1,2,3), y=c(4,5,6))
+print(paste("R DataFrame:", nrow(df_r), "x", ncol(df_r)))
+
+# Cell 3: Julia (using julia magic)
+%%julia
+using DataFrames
+df_julia = DataFrame(x=[1,2,3], y=[4,5,6])
+println("Julia DataFrame: ", size(df_julia))
+```
+
+### Custom Magic Commands
+
+Create exercise-specific magic commands:
+
+```python
+# In magic.py
+from IPython.core.magic import register_line_magic
+
+@register_line_magic
+def check(line):
+    """Check exercise progress"""
+    parts = line.split()
+    task = parts[0] if parts else ""
+    
+    checks = {
+        'task1': check_task1,
+        'task2': check_task2,
+        'task3': check_task3
+    }
+    
+    if task in checks:
+        result = checks[task]()
+        print("✅ Passed!" if result else "❌ Not yet complete")
+    else:
+        print(f"Unknown task: {task}")
+
+def check_task1():
+    """Check if task 1 is complete"""
+    import __main__
+    return hasattr(__main__, 'calculate_mean')
+
+# Usage in notebook:
+# %check task1
+```
+
+## Publishing Best Practices
+
+### Pre-publication Checklist
+
+```bash
+#!/bin/bash
+# pre-publish.sh
+
+echo "Running pre-publication checks..."
+
+# 1. Test notebook execution
+echo "Testing notebook execution..."
+jupyter nbconvert --to notebook --execute exercise.ipynb --output /tmp/test.ipynb
+
+# 2. Check for sensitive information
+echo "Checking for sensitive data..."
+grep -r "password\|token\|secret\|key" . --exclude-dir=.git
+
+# 3. Validate data files
+echo "Validating data files..."
+python -c "import pandas as pd; pd.read_csv('data/students.csv')"
+
+# 4. Run tests
+echo "Running tests..."
+pytest tests/
+
+# 5. Check Docker build
+echo "Testing Docker build..."
+docker build -t test-exercise .
+
+echo "✅ All checks passed!"
+```
+
+### Version Management
+
+Tag exercises with semantic versioning:
+
+```bash
+# Tag version
+git tag -a v1.0.0 -m "Initial release of Variables exercise"
+
+# Update for new semester
+git tag -a v1.1.0 -m "Updated for Fall 2024"
+
+# Bug fix
+git tag -a v1.1.1 -m "Fix typo in instructions"
+
+# Push tags
+git push origin --tags
+```
+
+## Next Steps
+
+- Review [Best Practices](best_practices.qmd) for exercise design
+- Learn about [Automated Testing](testing.qmd) strategies
+- Explore [Dependency Management](dependencies.qmd) for complex exercises
+- Read about [GitLab Integration](gitlab.qmd) for collaboration

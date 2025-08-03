@@ -1,0 +1,372 @@
+---
+title: "Getting Started as an Educator"
+subtitle: "Complete Setup Guide for Franklin Educators"
+---
+
+## Prerequisites
+
+Before you begin creating exercises with Franklin, ensure you have:
+
+1. **Python Environment**: Miniforge or Anaconda installed
+2. **Docker Desktop**: Running and configured
+3. **GitLab Account**: Access to your institution's GitLab
+4. **Basic Git Knowledge**: Understanding of commits and branches
+5. **Jupyter Experience**: Familiarity with notebooks
+
+## Installation
+
+### Step 1: Install Franklin Educator
+
+::: {.panel-tabset}
+
+### Using Conda
+
+```bash
+# Add necessary channels
+conda config --add channels conda-forge
+conda config --add channels munch-group
+
+# Install Franklin with educator plugin
+conda install franklin franklin-educator
+
+# Verify installation
+franklin --version
+franklin exercise --help
+```
+
+### Using Pixi
+
+```bash
+# Add the munch-group channel
+pixi config append default-channels munch-group
+
+# Install packages
+pixi global install franklin franklin-educator
+
+# Verify installation
+franklin --version
+```
+
+### Development Setup
+
+```bash
+# Clone repositories
+git clone https://github.com/munch-group/franklin-educator.git
+cd franklin-educator
+
+# Install in development mode
+pip install -e .
+
+# Install franklin core first if needed
+pip install franklin
+```
+
+:::
+
+### Step 2: Configure GitLab Access
+
+```bash
+# Set your GitLab instance (if not using gitlab.com)
+franklin config set gitlab_url https://gitlab.your-institution.edu
+
+# Set your access token
+franklin config set gitlab_token YOUR_PERSONAL_ACCESS_TOKEN
+```
+
+To create a GitLab personal access token:
+1. Go to GitLab → Settings → Access Tokens
+2. Create token with `api`, `read_repository`, `write_repository` scopes
+3. Copy the token immediately (shown only once)
+
+### Step 3: Verify Setup
+
+Run the diagnostic tool to ensure everything is configured:
+
+```bash
+franklin doctor --educator
+```
+
+This checks:
+- ✅ Franklin core installation
+- ✅ Educator plugin installation
+- ✅ Docker availability
+- ✅ GitLab connectivity
+- ✅ Git configuration
+- ✅ Write permissions
+
+## Your First Exercise
+
+{{< video videos/educator-create-first-exercise.mp4 
+    title="Creating Your First Exercise (5 min)"
+    width="100%" 
+    height="400"
+>}}
+
+### Creating an Exercise
+
+1. **Start the creation wizard**:
+   ```bash
+   franklin exercise new
+   ```
+
+2. **Follow the prompts**:
+   ```
+   Course name: Introduction to Python
+   Exercise name: Variables and Types
+   Template: default
+   ```
+
+3. **Navigate to the exercise**:
+   ```bash
+   cd "Variables and Types"
+   ls -la
+   ```
+
+### Understanding the Structure
+
+```
+Variables and Types/
+├── Dockerfile           # Defines the container environment
+├── pixi.toml           # Package dependencies
+├── exercise.ipynb      # The main notebook students will work on
+├── README.md           # Instructions visible to students
+├── .gitlab-ci.yml      # Automated testing pipeline
+├── tests/
+│   └── test_notebook.py # Automated tests for the exercise
+├── data/               # Place datasets here
+└── solutions/          # Your solution (hidden from students)
+    └── solution.ipynb
+```
+
+### Editing the Exercise
+
+1. **Open in JupyterLab**:
+   ```bash
+   jupyter lab exercise.ipynb
+   ```
+
+2. **Structure your notebook**:
+   - **Title Cell**: Exercise name and description
+   - **Learning Objectives**: What students will learn
+   - **Instructions**: Clear, step-by-step tasks
+   - **Code Cells**: Starter code with comments
+   - **Test Cells**: Self-check questions
+
+Example notebook structure:
+
+```python
+# Cell 1: Title (Markdown)
+"""
+# Variables and Types
+Learn how to create and manipulate variables in Python.
+"""
+
+# Cell 2: Instructions (Markdown)
+"""
+## Task 1: Creating Variables
+Create three variables:
+- `name` containing your name as a string
+- `age` containing your age as an integer
+- `height` containing your height in meters as a float
+"""
+
+# Cell 3: Starter Code
+# Your code here
+name = ___
+age = ___
+height = ___
+
+# Cell 4: Test
+assert isinstance(name, str), "name should be a string"
+assert isinstance(age, int), "age should be an integer"
+assert isinstance(height, float), "height should be a float"
+print("✅ All tests passed!")
+```
+
+### Adding Dependencies
+
+Dependencies are automatically detected from imports, but you can also add them manually:
+
+```bash
+# Add packages via command line
+pixi add numpy pandas matplotlib
+
+# Or in the notebook
+%load_ext magic
+%franklin numpy pandas matplotlib
+```
+
+### Testing Your Exercise
+
+1. **Run automated tests**:
+   ```bash
+   pixi run test-notebook
+   ```
+
+2. **Test as a student would**:
+   ```bash
+   franklin jupyter --exercise "Variables and Types"
+   ```
+
+3. **Validate the solution**:
+   ```bash
+   cd solutions
+   jupyter lab solution.ipynb
+   # Run all cells to ensure they work
+   ```
+
+## Publishing Exercises
+
+### Pre-publish Checklist
+
+- [ ] All cells run without errors
+- [ ] Instructions are clear and complete
+- [ ] Tests validate the expected solution
+- [ ] Dependencies are properly specified
+- [ ] Data files are included (if needed)
+- [ ] Solution notebook works correctly
+
+### Publishing Process
+
+1. **Commit your changes**:
+   ```bash
+   git add -A
+   git commit -m "Add Variables and Types exercise"
+   ```
+
+2. **Publish to students**:
+   ```bash
+   franklin exercise publish
+   ```
+
+3. **Verify publication**:
+   ```bash
+   franklin exercise list --published
+   ```
+
+## Managing Multiple Courses
+
+### Course Organization
+
+Create a folder structure for your courses:
+
+```
+~/Teaching/
+├── CS101-Introduction/
+│   ├── Week01-Variables/
+│   ├── Week02-Conditionals/
+│   └── Week03-Loops/
+├── CS201-DataStructures/
+│   ├── Lab01-Arrays/
+│   └── Lab02-LinkedLists/
+└── CS301-MachineLearning/
+    ├── Project01-LinearRegression/
+    └── Project02-Classification/
+```
+
+### Batch Operations
+
+```bash
+# List all exercises for a course
+franklin exercise list --course "CS101"
+
+# Update all exercises in a directory
+for dir in Week*/; do
+    cd "$dir"
+    franklin exercise update
+    cd ..
+done
+
+# Test all exercises
+find . -name "exercise.ipynb" -execdir pixi run test-notebook \;
+```
+
+## Collaboration
+
+### Working with Teaching Assistants
+
+1. **Grant TA access**:
+   ```bash
+   franklin grant ta assistant@university.edu --course "CS101"
+   ```
+
+2. **Share repository**:
+   ```bash
+   franklin exercise share "Variables and Types" --with assistant@university.edu
+   ```
+
+3. **Review changes**:
+   ```bash
+   franklin exercise diff
+   franklin exercise merge
+   ```
+
+### Version Control Best Practices
+
+```bash
+# Create a new branch for updates
+git checkout -b update-fall-2024
+
+# Make changes
+jupyter lab exercise.ipynb
+
+# Commit with descriptive message
+git add -A
+git commit -m "Update exercise for Fall 2024: Add type hints section"
+
+# Push to GitLab
+git push origin update-fall-2024
+
+# Create merge request
+franklin exercise merge-request
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Exercise won't publish**
+```bash
+# Check GitLab connection
+franklin doctor --gitlab
+
+# Verify permissions
+franklin exercise permissions
+
+# Force republish
+franklin exercise publish --force
+```
+
+**Dependencies not installing**
+```bash
+# Clear Pixi cache
+pixi cache clear
+
+# Manually specify versions
+pixi add "numpy==1.24.0" "pandas>=2.0,<3.0"
+```
+
+**Students can't access exercise**
+```bash
+# Check exercise visibility
+franklin exercise visibility "Exercise Name"
+
+# Make public to course
+franklin exercise visibility "Exercise Name" --set course
+
+# Verify student enrollment
+franklin list students --course "CS101"
+```
+
+## Next Steps
+
+- Read the [Exercise Creation Guide](creating_exercises.qmd) for advanced techniques
+- Explore [Best Practices](best_practices.qmd) for effective exercises
+- Learn about [Automated Testing](testing.qmd) for quality assurance
+- Understand [Dependency Management](dependencies.qmd) for complex exercises
+
+## Getting Help
+
+- **Documentation**: [Educator Guide](index.qmd)
+- **Support**: [GitHub Issues](https://github.com/munch-group/franklin-educator/issues)
+- **Community**: [Franklin Discussions](https://github.com/munch-group/franklin/discussions)
