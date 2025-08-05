@@ -8,7 +8,7 @@ from subprocess import DEVNULL, STDOUT, PIPE
 import os
 import shutil
 from pathlib import Path, PurePosixPath, PureWindowsPath
-from typing import Tuple, List, Dict, Callable, Any
+from typing import Tuple, List, Dict, Callable, Any, Optional, Union
 import webbrowser
 import pyperclip
 import platform
@@ -30,7 +30,14 @@ from franklin import system
 from franklin import crash
 #from . import encrypt
 
-def check_ssh_set_up():
+def check_ssh_set_up() -> bool:
+    """Check if SSH connection to GitLab is properly configured.
+    
+    Returns
+    -------
+    bool
+        True if SSH connection to GitLab is working, False otherwise.
+    """
     cmd = f'ssh -T git@{cfg.gitlab_domain} <<<yes'
     logger.debug(cmd)
     logger.debug(f"Checking encrypted connection to GitLab")
@@ -44,9 +51,17 @@ def check_ssh_set_up():
     return False
 
 
-def ssh_keygen():
-    """
-    Generate an ssh key pair.
+def ssh_keygen() -> None:
+    """Generate an SSH key pair and guide user through adding it to GitLab.
+    
+    Creates an RSA SSH key pair if it doesn't exist, copies the public key
+    to clipboard, displays instructions for adding it to GitLab, and opens
+    the GitLab SSH keys page in a browser.
+    
+    Raises
+    ------
+    FileNotFoundError
+        If SSH key generation fails or key files cannot be read.
     """
     path = Path.home() / '.ssh/id_rsa'
     if platform.system() == 'Windows':
@@ -79,19 +94,18 @@ def ssh_keygen():
     click.pause("Press Enter when you have added the ssh key to GitLab.")
 
 
-def gitlab_ssh_access(func: Callable) -> Callable:
-    """
-    Decorator for functions that require ssh access to gitlab.
+def gitlab_ssh_access(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Decorator for functions that require SSH access to GitLab.
 
     Parameters
     ----------
-    func : 
-        Function.
+    func : Callable[..., Any]
+        Function that requires SSH access to GitLab.
 
     Returns
     -------
-    :
-        Decorated function.
+    Callable[..., Any]
+        Decorated function that ensures SSH access is configured.
     """
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -101,7 +115,27 @@ def gitlab_ssh_access(func: Callable) -> Callable:
     return wrapper
 
 
-def _git_cmd(cmd, path=None, commands=False) -> None:
+def _git_cmd(cmd: str, path: Optional[Union[str, Path]] = None, commands: bool = False) -> None:
+    """Execute a git command with optional path and command display.
+    
+    Parameters
+    ----------
+    cmd : str
+        Git command to execute.
+    path : Optional[Union[str, Path]], optional
+        Path to repository directory. If provided, command will be executed
+        in this directory using git -C option.
+    commands : bool, optional
+        Whether to display the command being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git command fails.
+    AssertionError
+        If path is provided but cmd already contains -C option, or if
+        cmd doesn't start with 'git '.
+    """
 
 
    
@@ -134,15 +168,20 @@ def _git_cmd(cmd, path=None, commands=False) -> None:
 #    subprocess.check_call(utils.fmt_cmd(cmd))
 
 
-def config_local_repo(repo_local_path: str, commands=False) -> None:
-    """
-    Configures the local repository with the necessary settings for using 
-    vscode as the merge and diff tool.
+def config_local_repo(repo_local_path: str, commands: bool = False) -> None:
+    """Configure local repository with VS Code as merge and diff tool.
 
     Parameters
     ----------
-    repo_local_path : 
+    repo_local_path : str
         Path to the local repository.
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git configuration commands fail.
     """
     git_cmd = partial(_git_cmd, commands=commands)
 
@@ -170,18 +209,22 @@ def config_local_repo(repo_local_path: str, commands=False) -> None:
 
 
 def git_safe_pull(repo_local_path: str) -> bool:
-    """
-    Pulls changes from the remote repository and checks for merge conflicts.
+    """Pull changes from remote repository and check for merge conflicts.
 
     Parameters
     ----------
-    repo_local_path : 
+    repo_local_path : str
         Path to the local repository.
 
     Returns
     -------
-    :
+    bool
         True if there is a merge conflict, False otherwise.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git commands fail.
     """
 
     merge_conflict = False
@@ -215,25 +258,31 @@ def git_safe_pull(repo_local_path: str) -> bool:
 
 
 def merge_in_progress(repo_local_path: str) -> bool:
-    """
-    Checks if a merge is in progress.
+    """Check if a git merge is currently in progress.
 
     Parameters
     ----------
-    repo_local_path : 
+    repo_local_path : str
         Path to the local repository.
 
     Returns
     -------
-    :
+    bool
         True if a merge is in progress, False otherwise.
     """
     return os.path.exists(os.path.join(repo_local_path, '.git/MERGE_HEAD'))
 
 
 def config_gitui() -> None:
-    """
-    Copies gitui config files to the user's config directory.
+    """Copy gitui configuration files to user's config directory.
+    
+    Copies gitui configuration files from the franklin_admin package
+    data directory to the user's home .gitui directory.
+    
+    Raises
+    ------
+    OSError
+        If directory creation or file copying fails.
     """
     path = str(Path.home() / '.gitui')
     package_data_dir = os.path.dirname(
@@ -247,14 +296,20 @@ def config_gitui() -> None:
 
 
 @options.git_commands 
-def launch_mergetool(repo_local_path: str, commands=False) -> None:
-    """
-    Launches vscode's mergetool.
+def launch_mergetool(repo_local_path: str, commands: bool = False) -> None:
+    """Launch VS Code's merge tool for resolving conflicts.
 
     Parameters
     ----------
-    repo_local_path : 
-        Path to the local repository
+    repo_local_path : str
+        Path to the local repository.
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git mergetool command fails.
     """
     git_cmd = partial(_git_cmd, commands=commands)
     try:
@@ -264,8 +319,22 @@ def launch_mergetool(repo_local_path: str, commands=False) -> None:
    
 
 @options.git_commands
-def finish_any_merge_in_progress(repo_local_path, 
+def finish_any_merge_in_progress(repo_local_path: str, 
                                  commands: bool = False) -> None:
+    """Complete any ongoing git merge process.
+    
+    Parameters
+    ----------
+    repo_local_path : str
+        Path to the local repository.
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git merge continue command fails.
+    """
     git_cmd = partial(_git_cmd, commands=commands)
     if merge_in_progress(repo_local_path):
         try:
@@ -282,9 +351,29 @@ def finish_any_merge_in_progress(repo_local_path,
 
 @options.git_commands
 @gitlab_ssh_access
-def git_down(commands=False, only_with_image=False) -> None:
-    """
-    "Downloads" an exercise from GitLab.
+def git_down(commands: bool = False, only_with_image: bool = False) -> Tuple[Optional[str], str]:
+    """Download an exercise repository from GitLab.
+    
+    Parameters
+    ----------
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+    only_with_image : bool, optional
+        If True, only show exercises that have Docker images available,
+        by default False.
+        
+    Returns
+    -------
+    Tuple[Optional[str], str]
+        Tuple containing (image_url, repo_local_path). If only_with_image
+        is False, image_url will be None.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git clone or pull operations fail.
+    click.Abort
+        If user cancels operation or SSH key has expired.
     """
 
     git_cmd = partial(_git_cmd, commands=commands)
@@ -357,7 +446,14 @@ def git_down(commands=False, only_with_image=False) -> None:
 @click.command()
 @click.option('--admin-password', prompt=True, hide_input=True,
               confirmation_prompt=False, help='Admin password')
-def main(admin_password):
+def main(admin_password: str) -> None:
+    """Main command for admin password verification.
+    
+    Parameters
+    ----------
+    admin_password : str
+        Admin password to verify.
+    """
     # Use the password in your logic
     if admin_password == "expected_password":
         click.echo("Access granted.")
@@ -367,15 +463,23 @@ def main(admin_password):
 
 @gitlab_ssh_access
 def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
-    """
-    "Uploads" an exercise to GitLab.
+    """Upload exercise changes to GitLab.
 
     Parameters
     ----------
-    repo_local_path : 
+    repo_local_path : str
         Path to the local repository.
-    remove_tracked_files : 
-        Whether to remove the tracked files after uploading
+    remove_tracked_files : bool
+        Whether to remove tracked files after uploading.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git operations (add, commit, push) fail.
+    click.Abort
+        If user cancels operation or if repository operations fail.
+    PermissionError
+        If local files cannot be removed when remove_tracked_files is True.
     """
 
     if not os.path.exists(repo_local_path):
@@ -504,14 +608,19 @@ def git_up(repo_local_path: str, remove_tracked_files: bool) -> None:
 
 @gitlab_ssh_access
 def git_status() -> None:
-    """Displays the status of the local repository.
+    """Display the status of the local repository.
+    
+    Currently a placeholder function that performs no operations.
     """
     pass
 
 
 @click.group(cls=utils.AliasedGroup)
-def exercise():
+def exercise() -> None:
     """Commands for managing exercises.
+    
+    This group contains subcommands for creating, editing, cloning,
+    and managing exercise repositories.
     """
 
 
@@ -532,8 +641,20 @@ def exercise():
 @options.git_commands
 @exercise.command(hidden=True)
 @gitlab_ssh_access
-def clone(commands=False) -> None:
-    """Clones an exercise git repository to your local machine
+def clone(commands: bool = False) -> None:
+    """Clone an exercise git repository to local machine.
+    
+    Parameters
+    ----------
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git clone operation fails.
+    click.Abort
+        If repository already exists.
     """
     url = \
         f'{cfg.gitlab_api_url}/groups/{cfg.gitlab_group}/registry/repositories'
@@ -554,8 +675,10 @@ def clone(commands=False) -> None:
 @crash.crash_report
 @exercise.command(hidden=True)
 @gitlab_ssh_access
-def down():
+def down() -> None:
     """Retrieve exercise from GitLab.
+    
+    Downloads an exercise repository from GitLab by calling git_down().
     """
     git_down()
 
@@ -566,8 +689,20 @@ def down():
 @click.option('--remove/--no-remove', default=True, show_default=True)
 @exercise.command(hidden=True)
 @gitlab_ssh_access
-def up(directory, remove):
-    """Upload retrieved exercise to Gitlab.
+def up(directory: Optional[str], remove: bool) -> None:
+    """Upload retrieved exercise to GitLab.
+    
+    Parameters
+    ----------
+    directory : Optional[str]
+        Directory containing the exercise repository. If None, uses current directory.
+    remove : bool
+        Whether to remove local files after upload.
+        
+    Raises
+    ------
+    click.Abort
+        If not in a git repository directory.
     """
     if directory is None:
         directory = os.getcwd()
@@ -583,8 +718,10 @@ def up(directory, remove):
 @exercise.command()
 @crash.crash_report
 @gitlab_ssh_access
-def gitui():
-    """Launch terminal git GUI
+def gitui() -> None:
+    """Launch terminal git GUI (gitui).
+    
+    Configures gitui and launches it with SSH agent for GitLab access.
     """
     config_gitui()
     # config_file = Path.home() / '.gitui/theme.ron'
@@ -602,7 +739,27 @@ def gitui():
 
 
 @options.git_commands
-def create_repository_from_template(course, repo_name, api_token, commands: bool = False):
+def create_repository_from_template(course: str, repo_name: str, api_token: str, commands: bool = False) -> None:
+    """Create a new repository from the exercise template.
+    
+    Parameters
+    ----------
+    course : str
+        Course name where the repository will be created.
+    repo_name : str
+        Name of the new repository.
+    api_token : str
+        GitLab API token for authentication.
+    commands : bool, optional
+        Whether to display git commands being executed, by default False.
+        
+    Raises
+    ------
+    subprocess.CalledProcessError
+        If git operations fail.
+    OSError
+        If template directory copying fails.
+    """
 
     git_cmd = partial(_git_cmd, commands=commands)
 
@@ -642,7 +799,26 @@ def create_repository_from_template(course, repo_name, api_token, commands: bool
     #shutil.rmtree(repo_dir)
 
 
-def repository_exists(course, repo_name):
+def repository_exists(course: str, repo_name: str) -> bool:
+    """Check if a repository exists on GitLab.
+    
+    Parameters
+    ----------
+    course : str
+        Course name containing the repository.
+    repo_name : str
+        Name of the repository to check.
+        
+    Returns
+    -------
+    bool
+        True if repository exists, False otherwise.
+        
+    Raises
+    ------
+    subprocess.TimeoutExpired
+        If git ls-remote command times out.
+    """
     remote = \
         f'git@{cfg.gitlab_domain}:{cfg.gitlab_group}/{course}/{repo_name}.git'
     try:        
@@ -664,17 +840,23 @@ def repository_exists(course, repo_name):
 @exercise.command('new')
 @crash.crash_report
 @gitlab_ssh_access
-def create_exercise(course: str = None, 
+def create_exercise(course: Optional[str] = None, 
                     # user: str = None, password: str = None,
-                     new_repo_name: str = None) -> None:
+                     new_repo_name: Optional[str] = None) -> None:
     """Create a new exercise repository for a course.
 
     Parameters
     ----------
-    course : 
-        Course name.
-    new_repo_name : 
-        Name of the new repository.
+    course : Optional[str], optional
+        Course name. If None, user will be prompted to select from available courses.
+    new_repo_name : Optional[str], optional
+        Name of the new repository. If None, user will be prompted to enter one.
+        
+    Raises
+    ------
+    click.Abort
+        If user cancels operation, repository name is invalid, or repository
+        already exists.
     """
 
     # api_token = encrypt.get_api_token(user, password)
@@ -842,15 +1024,20 @@ def create_exercise(course: str = None,
 @click.option('--exercise', default=None)
 @crash.crash_report
 @gitlab_ssh_access
-def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
-    """Edit the exercise name listed by Franklin.
+def open_gitlab_repo_settings(course: Optional[str] = None, exercise: Optional[str] = None) -> None:
+    """Open GitLab settings page for an exercise repository.
 
     Parameters
     ----------
-    course : 
-        Course name.
-    exercise : 
-        Exercise name.
+    course : Optional[str], optional
+        Course name. If None, user will be prompted to select from available courses.
+    exercise : Optional[str], optional
+        Exercise name. If None, user will be prompted to select from available exercises.
+        
+    Raises
+    ------
+    click.Abort
+        If user cancels operation or if exercise is specified without course.
     """
 
     if course is None and exercise is not None:
@@ -895,14 +1082,42 @@ def open_gitlab_repo_settings(course: str = None, exercise: str = None) -> None:
 import signal
 
 class EditCycleKeyboardInterrupt:
+    """Context manager to handle KeyboardInterrupt during edit cycle.
+    
+    Suppresses KeyboardInterrupt signals and displays a warning message
+    to prevent users from interrupting the edit workflow which could
+    result in data loss.
+    
+    Attributes
+    ----------
+    signal_received : Union[bool, Tuple[int, Any]]
+        Flag indicating if SIGINT was received. False by default,
+        or tuple of (signal, frame) if signal was caught.
+    old_handler : Callable
+        Original signal handler to restore on exit.
     """
-    Context manager to suppress KeyboardInterrupt
-    """
-    def __enter__(self):
+    def __enter__(self) -> 'EditCycleKeyboardInterrupt':
+        """Enter the context manager and set up signal handling.
+        
+        Returns
+        -------
+        EditCycleKeyboardInterrupt
+            Self instance.
+        """
         self.signal_received = False
         self.old_handler = signal.signal(signal.SIGINT, self.handler)
+        return self
                 
-    def handler(self, sig, frame):
+    def handler(self, sig: int, frame: Any) -> None:
+        """Handle SIGINT signal during edit cycle.
+        
+        Parameters
+        ----------
+        sig : int
+            Signal number.
+        frame : Any
+            Current stack frame.
+        """
         self.signal_received = (sig, frame)
         # logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
         term.boxed_text("Do not interrupt this workflow",
@@ -910,7 +1125,18 @@ class EditCycleKeyboardInterrupt:
                         ' completed'], fg='red'
                         )
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, exc_type: Optional[type], exc_value: Optional[Exception], traceback: Optional[Any]) -> None:
+        """Exit the context manager and restore original signal handler.
+        
+        Parameters
+        ----------
+        exc_type : Optional[type]
+            Exception type if an exception was raised.
+        exc_value : Optional[Exception]
+            Exception value if an exception was raised.
+        traceback : Optional[Any]
+            Traceback if an exception was raised.
+        """
         signal.signal(signal.SIGINT, self.old_handler)
 
 
@@ -919,7 +1145,7 @@ class EditCycleKeyboardInterrupt:
 @exercise.command('edit')
 @crash.crash_report
 @gitlab_ssh_access
-def edit_cycle(commands: bool = False):
+def edit_cycle(commands: bool = False) -> None:
     """Edit exercise in jupyter
 
     The command runs a full cycle of downloading the exercise from GitLab,

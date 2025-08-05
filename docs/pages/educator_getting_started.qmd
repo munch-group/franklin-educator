@@ -19,6 +19,17 @@ Before you begin creating exercises with Franklin, ensure you have:
 
 ::: {.panel-tabset}
 
+### Using Pixi (Recommended)
+
+```bash
+# Install Franklin with educator plugin
+pixi global install franklin franklin-educator --channel conda-forge --channel munch-group
+
+# Verify installation
+franklin --version
+franklin exercise --help
+```
+
 ### Using Conda
 
 ```bash
@@ -32,19 +43,6 @@ conda install franklin franklin-educator
 # Verify installation
 franklin --version
 franklin exercise --help
-```
-
-### Using Pixi
-
-```bash
-# Add the munch-group channel
-pixi config append default-channels munch-group
-
-# Install packages
-pixi global install franklin franklin-educator
-
-# Verify installation
-franklin --version
 ```
 
 ### Development Setup
