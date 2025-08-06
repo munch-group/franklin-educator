@@ -8,6 +8,6 @@ if [[ `git status --porcelain` ]]; then
   echo -e "${RED}Changes to pyproject.toml must be pushed first.${NC}"
 else
   v=$(python setup.py --version) || exit
-  git tag -a "v${v}" -m "${1:-Release}" && git push origin --tags
-  echo -e "${GREEN}Released version v${v} ${NC}"
+  git tag -a "v${v}" -m "${1:-Release}" && git push origin --tags && echo -e "${GREEN}Released version v${v} ${NC}" && exit
+  echo -e "${RED}Failed${NC}"
 fi
