@@ -153,6 +153,10 @@ graph G {
 
 
 ```{mermaid}
+%%| echo: false
+%%| label: fig-diagram
+%%| fig-cap: "Mermaid diagram"
+
 flowchart LR
   A[Beginning] --> B[Middle]
   B --> C[End]
@@ -162,6 +166,7 @@ flowchart LR
 ::: {.column-margin}
 
 ```{mermaid}
+%%| echo: false
 flowchart LR
   A[Beginning] --> B[Middle]
   B --> C[End]

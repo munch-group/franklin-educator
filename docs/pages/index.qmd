@@ -109,7 +109,10 @@ Automatic package management:
 
 ## Workflow Overview
 
-```mermaid
+```{mermaid}
+%%| echo: false
+%%| label: fig-diagram
+%%| fig-cap: "Workflow overview"
 graph TD
     A[Create Exercise] --> B[Edit Notebook]
     B --> C[Add Dependencies]
