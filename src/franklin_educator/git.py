@@ -16,18 +16,18 @@ from contextlib import redirect_stderr, redirect_stdout
 # import importlib_resources
 from functools import wraps, partial
 
-from franklin import config as cfg
-from franklin import utils
-from franklin import terminal as term
-from franklin import gitlab
-from franklin import jupyter
-from franklin import docker
-from franklin import update
-from franklin import options
-from franklin.logger import logger, LoggerWriter
-from franklin import chrome
-from franklin import system
-from franklin import crash
+from franklin_cli import config as cfg
+from franklin_cli import utils
+from franklin_cli import terminal as term
+from franklin_cli import gitlab
+from franklin_cli import jupyter
+from franklin_cli import docker
+from franklin_cli import update
+from franklin_cli import options
+from franklin_cli.logger import logger, LoggerWriter
+from franklin_cli import chrome
+from franklin_cli import system
+from franklin_cli import crash
 #from . import encrypt
 
 def check_ssh_set_up() -> bool:

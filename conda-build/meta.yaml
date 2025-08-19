@@ -24,7 +24,7 @@ build:
   number: 0
   script: python -m pip install . -vv
   python_version_independent: true
-  # entry_points."franklin.plugins":
+  # entry_points."franklin_cli.plugins":
   #   - fruit = "franklin_educator.git:annanas"
 
 requirements:
@@ -33,7 +33,7 @@ requirements:
     - pip
   run:  # your library dependencies
     - python >=3.9
-    - franklin
+    - franklin-cli
     {% for dep in pyproject.get("project").get("dependencies") %}
     - {{ dep.lower() }}
     {% endfor %}  

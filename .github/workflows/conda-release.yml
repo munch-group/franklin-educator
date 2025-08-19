@@ -1,21 +1,16 @@
 name: Build and upload conda packages
 
-# # only run when a release tag is pushed to main
-# on:
+on:
+  push:
 #   release:
 #     types:
 #       - 'released'
-#   # push:
-#   #   branches:
-#   #     - 'main'    
-
-# # workflow_dispatch:        # Un comment line if you also want to trigger action manually
-
-
-on:
-  push:
+#   branches:
+#     - 'main'      
     tags:
+      - v[0-9]+.[0-9]+
       - v[0-9]+.[0-9]+.[0-9]+
+      - v[0-9]+.[0-9]+.[0-9]+.rc[0-9]+
 
 jobs:
 
@@ -32,16 +27,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Update CHANGELOG
-        id: changelog
-        uses: requarks/changelog-action@v1
-        with:
-          token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
-          includeInvalidCommits: true
-          reverseOrder: true
-          useGitmojis: false
-          excludeTypes: build,docs,other,style
+      # - name: Update CHANGELOG
+      #   id: changelog
+      #   uses: requarks/changelog-action@v1
+      #   with:
+      #     token: ${{ github.token }}
+      #     tag: ${{ github.ref_name }}
+      #     includeInvalidCommits: true
+      #     reverseOrder: true
+      #     useGitmojis: false
+      #     excludeTypes: build,docs,other,style
 
       - name: Create Release
         uses: ncipollo/release-action@v1.12.0
@@ -69,7 +64,7 @@ jobs:
       matrix:
         # os: [macOS-latest, ubuntu-latest, windows-latest]
         os: [ubuntu-latest]
-        # python-version: ["3.9", "3.10", "3.11", "3.12"] 
+        # python-version: ["3.10", "3.11", "3.12", "3.13"] 
         python-version: ["3.12"] 
 
     steps:
@@ -109,3 +104,32 @@ jobs:
           # label: auto
           token: ${{ secrets.ANACONDA_TOKEN }}
           overwrite: true
+
+  pypi_deployment_with_new_tag:
+    name: Build and upload Python package to PyPI
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write  # Required for trusted publishing
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build
+      
+      - name: Build package
+        run: python -m build
+      
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          # No password needed - uses trusted publishing via OIDC
