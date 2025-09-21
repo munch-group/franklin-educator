@@ -476,7 +476,7 @@ Before publishing any exercise:
 
 ## Getting Help
 
-- [Educator Community Forum](https://github.com/munch-group/franklin/discussions)
+- [Educator Community Forum](https://github.com/munch-group/franklin-cli/discussions)
 - [Exercise Gallery](https://github.com/munch-group/franklin-exercises)
 - [Video Tutorials](https://youtube.com/franklin-tutorials)
 - [Office Hours](https://calendly.com/franklin-support)

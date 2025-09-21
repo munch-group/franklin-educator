@@ -367,4 +367,4 @@ franklin list students --course "CS101"
 
 - **Documentation**: [Educator Guide](index.qmd)
 - **Support**: [GitHub Issues](https://github.com/munch-group/franklin-educator/issues)
-- **Community**: [Franklin Discussions](https://github.com/munch-group/franklin/discussions)
+- **Community**: [Franklin Discussions](https://github.com/munch-group/franklin-cli/discussions)

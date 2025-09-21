@@ -246,7 +246,7 @@ def git_safe_pull(repo_local_path: str) -> bool:
         term.echo("Please resolve any conflicts and then run the "
                   "command again.")
         term.echo("For more information on resolving conflicts, see:")
-        term.echo("https://munch-group/franklin/git.html#resolving-conflicts", 
+        term.echo("https://munch-group/franklin-cli/git.html#resolving-conflicts", 
                   fg='blue')
         click.pause("Press Enter to launch vscode's mergetool")
 
